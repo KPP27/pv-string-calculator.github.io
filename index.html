@@ -1,27 +1,133 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Калькулятор количества фотомодулей</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Калькулятор фотомодулей</title>
+
 <style>
-  body { font-family: Arial; padding: 20px; max-width: 400px; margin: auto; }
-  input { width: 100%; padding: 8px; margin: 5px 0; }
-  button { padding: 10px; width: 100%; margin-top: 10px; }
-  .result { margin-top: 15px; font-weight: bold; }
+    :root {
+        --bg: #f5f5f5;
+        --card-bg: #ffffff;
+        --text: #222;
+        --accent: #2a8cff;
+        --border: #ddd;
+    }
+
+    /* Адаптация к тёмной теме Telegram MiniApps */
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --bg: #1c1c1e;
+            --card-bg: #2c2c2e;
+            --text: #f2f2f7;
+            --accent: #0a84ff;
+            --border: #3a3a3c;
+        }
+    }
+
+    body {
+        font-family: system-ui, Arial;
+        background: var(--bg);
+        color: var(--text);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 420px;
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 16px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        border: 1px solid var(--border);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-weight: 600;
+    }
+
+    label {
+        font-size: 14px;
+        margin-top: 12px;
+        display: block;
+        opacity: 0.85;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border-radius: 10px;
+        border: 1px solid var(--border);
+        background: var(--bg);
+        color: var(--text);
+        font-size: 16px;
+        box-sizing: border-box;
+        transition: 0.2s;
+    }
+
+    input:focus {
+        border-color: var(--accent);
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0,122,255,0.2);
+    }
+
+    button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 14px;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        opacity: 0.9;
+    }
+
+    .result {
+        margin-top: 20px;
+        padding: 15px;
+        background: var(--bg);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+    }
 </style>
 </head>
+
 <body>
-<h2>Калькулятор количества фотомодулей</h2>
+<div class="container">
+    <h2>📟 Калькулятор фотомодулей</h2>
 
-<input type="number" id="E13" placeholder="Максимально допустимое напряжение DC на входе инвертора ">
-<input type="number" id="E14" placeholder="Напряжение холостого хода фотомодуля (STC)">
-<input type="number" id="E15" placeholder="Минимальная ожидаемая температура на объекте">
-<input type="number" id="E16" placeholder="Температурный коэфициент для Voc">
+    <label>Максимально допустимое напряжение DC на входе инвертора</label>
+    <input type="number" id="E13" placeholder="Например: 1100">
 
-<button onclick="calculate()">Рассчитать</button>
+    <label>Voc фотомодуля (STC)</label>
+    <input type="number" id="E14" placeholder="Например: 41.5">
 
-<div class="result" id="result"></div>
+    <label>Минимальная температура на объекте (°C)</label>
+    <input type="number" id="E15" placeholder="Например: -25">
+
+    <label>Температурный коэффициент Voc (%)</label>
+    <input type="number" id="E16" placeholder="Например: -0.29">
+
+    <button onclick="calculate()">Рассчитать</button>
+
+    <div class="result" id="result">Введите данные и нажмите "Рассчитать"</div>
+</div>
 
 <script>
 function calculate() {
@@ -31,13 +137,17 @@ function calculate() {
     let E16 = parseFloat(document.getElementById('E16').value);
 
     if (!E13 || !E14 || !E15 || !E16) {
-        document.getElementById('result').innerText = "Пожалуйста, заполните все поля";
+        document.getElementById('result').innerText = "⚠️ Заполните все поля";
         return;
     }
 
-    let count = Math.floor(E13 / (E14 * (1 + (E15 - 25) * E16 / 100)));
-    document.getElementById('result').innerText = "Максимальное количество фотомодулей: " + count + " шт.";
+    let Voc_corrected = E14 * (1 + (E15 - 25) * (E16 / 100));
+    let count = Math.floor(E13 / Voc_corrected);
+
+    document.getElementById('result').innerText =
+        "🔋 Максимальное количество фотомодулей:\n" + count + " шт.";
 }
 </script>
+
 </body>
 </html>
