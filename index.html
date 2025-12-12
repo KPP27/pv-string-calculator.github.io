@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
 
-  <!-- Google tag (gtag.js) -->
+<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
@@ -27,41 +27,23 @@
         --radius: 14px;
     }
 
-    @media (prefers-color-scheme: dark) {
-        :root {
-            --bg: #1c1c1e;
-            --card-bg: #2c2c2e;
-            --text: #f2f2f7;
-            --accent: #0a84ff;
-            --border: #3a3a3c;
-        }
-    }
-
     body {
         font-family: system-ui, Arial;
         background: var(--bg);
-        color: var(--text);
         margin: 0;
         padding: 20px;
         display: flex;
         justify-content: center;
-        animation: fadeIn 0.5s ease;
-    }
-
-    @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
     }
 
     .container {
-        width: 100%;
         max-width: 420px;
+        width: 100%;
         background: var(--card-bg);
         padding: 20px;
         border-radius: var(--radius);
         box-shadow: var(--shadow);
         border: 1px solid var(--border);
-        animation: fadeIn 0.7s ease;
     }
 
     .top-bar {
@@ -71,9 +53,7 @@
     }
 
     h2 {
-        margin-bottom: 15px;
-        font-weight: 600;
-        font-size: 20px;
+        margin: 0 0 10px 0;
     }
 
     .lang-switch {
@@ -86,10 +66,8 @@
         font-size: 12px;
         border-radius: 6px;
         border: 1px solid var(--border);
-        background: var(--card-bg);
-        color: var(--text);
         cursor: pointer;
-        transition: 0.25s ease;
+        transition: 0.2s;
     }
 
     .lang-btn.active {
@@ -102,26 +80,16 @@
         font-size: 14px;
         margin-top: 14px;
         display: block;
-        opacity: 0.85;
     }
 
     input {
         width: 100%;
         padding: 12px;
-        margin-top: 5px;
+        margin-top: 6px;
         border-radius: 10px;
         border: 1px solid var(--border);
-        background: var(--bg);
-        color: var(--text);
         font-size: 16px;
-        box-sizing: border-box;
-        transition: 0.25s;
-    }
-
-    input:focus {
-        border-color: var(--accent);
-        outline: none;
-        box-shadow: 0 0 0 3px rgba(0,120,255,0.25);
+        transition: 0.2s;
     }
 
     button {
@@ -133,30 +101,19 @@
         border: none;
         border-radius: 12px;
         font-size: 16px;
-        font-weight: 600;
         cursor: pointer;
-        transition: 0.2s;
-        box-shadow: 0 4px 14px rgba(0,120,255,0.35);
-    }
-
-    button:active {
-        box-shadow: 0 2px 8px rgba(0,120,255,0.25);
-        transform: translateY(2px);
     }
 
     .result {
         margin-top: 20px;
         padding: 15px;
-        background: var(--bg);
         border-radius: 12px;
         border: 1px solid var(--border);
+        font-weight: bold;
         font-size: 16px;
-        font-weight: 600;
         text-align: center;
-        animation: fadeIn 0.5s ease;
     }
 </style>
-
 </head>
 <body>
 
@@ -164,7 +121,6 @@
 
     <div class="top-bar">
         <h2 id="title">📟 Калькулятор фотомодулей</h2>
-
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
@@ -173,44 +129,54 @@
         </div>
     </div>
 
-    <label id="l1">Максимально допустимое напряжение DC на входе инвертора</label>
-    <input type="number" id="E13" placeholder="Например: 1100">
+    <label id="l1"></label>
+    <input type="number" id="E13">
 
-    <label id="l2">Voc фотомодуля (STC)</label>
-    <input type="number" id="E14" placeholder="Например: 41.5">
+    <label id="l2"></label>
+    <input type="number" id="E14">
 
-    <label id="l3">Минимальная температура на объекте (°C)</label>
-    <input type="number" id="E15" placeholder="Например: -25">
+    <label id="l3"></label>
+    <input type="number" id="E15">
 
-    <label id="l4">Температурный коэффициент Voc (%)</label>
-    <input type="number" id="E16" placeholder="Например: -0.29">
+    <label id="l4"></label>
+    <input type="number" id="E16">
 
-    <button onclick="calculate()" id="calcBtn">Рассчитать</button>
+    <button onclick="calculate()" id="calcBtn"></button>
 
-    <div class="result" id="result">Введите данные и нажмите "Рассчитать"</div>
+    <div class="result" id="result"></div>
+
 </div>
 
 <script>
+// Мультиязычный пакет
 const T = {
     ru: {
         title: "📟 Калькулятор фотомодулей",
         l1: "Максимально допустимое напряжение DC на входе инвертора",
-        l2: "Voc фотомодуля (STC)",
+        l2: "Напряжение холостого хода модуля (STC)",
         l3: "Минимальная температура на объекте (°C)",
         l4: "Температурный коэффициент Voc (%)",
+        ph1: "Например: 1100",
+        ph2: "Например: 41.5",
+        ph3: "Например: -25",
+        ph4: "Например: -0.29",
         calc: "Рассчитать",
         empty: "⚠️ Заполните все поля",
-        result: "🔋 Максимальное количество фотомодулей: "
+        result: "🔋 Максимальное количество модулей: "
     },
     ua: {
-        title: "📟 Калькулятор кількості фотомодулів",
-        l1: "Максимальна допустима напруга DC інвертора",
-        l2: "Voc фотомодуля (STC)",
+        title: "📟 Калькулятор фотомодулів",
+        l1: "Максимальна напруга DC інвертора",
+        l2: "Voc модуля (STC)",
         l3: "Мінімальна температура на об'єкті (°C)",
         l4: "Температурний коефіцієнт Voc (%)",
+        ph1: "Наприклад: 1100",
+        ph2: "Наприклад: 41.5",
+        ph3: "Наприклад: -25",
+        ph4: "Наприклад: -0.29",
         calc: "Розрахувати",
         empty: "⚠️ Заповніть всі поля",
-        result: "🔋 Максимальна кількість фотомодулів: "
+        result: "🔋 Максимальна кількість модулів: "
     },
     en: {
         title: "📟 PV Module Calculator",
@@ -218,9 +184,13 @@ const T = {
         l2: "Module Voc (STC)",
         l3: "Minimum ambient temperature (°C)",
         l4: "Temperature coefficient Voc (%)",
+        ph1: "Example: 1100",
+        ph2: "Example: 41.5",
+        ph3: "Example: -25",
+        ph4: "Example: -0.29",
         calc: "Calculate",
-        empty: "⚠️ Please fill in all fields",
-        result: "🔋 Maximum number of PV modules: "
+        empty: "⚠️ Please fill all fields",
+        result: "🔋 Maximum number of modules: "
     },
     pl: {
         title: "📟 Kalkulator modułów PV",
@@ -228,57 +198,72 @@ const T = {
         l2: "Voc modułu (STC)",
         l3: "Minimalna temperatura otoczenia (°C)",
         l4: "Współczynnik temperaturowy Voc (%)",
+        ph1: "Przykład: 1100",
+        ph2: "Przykład: 41.5",
+        ph3: "Przykład: -25",
+        ph4: "Przykład: -0.29",
         calc: "Oblicz",
         empty: "⚠️ Uzupełnij wszystkie pola",
-        result: "🔋 Maksymalna liczba modułów PV: "
+        result: "🔋 Maksymalna liczba modułów: "
     }
 };
 
+// Установка языка
 function applyLang(lang) {
     localStorage.setItem("lang", lang);
+    const t = T[lang];
 
-    document.getElementById("title").textContent = T[lang].title;
-    document.getElementById("l1").textContent = T[lang].l1;
-    document.getElementById("l2").textContent = T[lang].l2;
-    document.getElementById("l3").textContent = T[lang].l3;
-    document.getElementById("l4").textContent = T[lang].l4;
-    document.getElementById("calcBtn").textContent = T[lang].calc;
+    title.textContent = t.title;
+    l1.textContent = t.l1;
+    l2.textContent = t.l2;
+    l3.textContent = t.l3;
+    l4.textContent = t.l4;
+
+    E13.placeholder = t.ph1;
+    E14.placeholder = t.ph2;
+    E15.placeholder = t.ph3;
+    E16.placeholder = t.ph4;
+
+    calcBtn.textContent = t.calc;
 
     document.querySelectorAll(".lang-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.lang === lang)
     );
 }
 
-// переключение языка
+// Выбор вручную
 document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.onclick = () => applyLang(btn.dataset.lang);
 });
 
-// автоопределение языка Telegram
+// Автоопределение Telegram
 try {
     const tgLang = Telegram?.WebApp?.initDataUnsafe?.user?.language_code?.slice(0,2);
     if (tgLang && T[tgLang]) applyLang(tgLang);
 } catch {}
 
-// применение сохранённого языка
+// Если нет saved language — включим русский
 applyLang(localStorage.getItem("lang") || "ru");
 
+// Расчёт
 function calculate() {
     let lang = localStorage.getItem("lang") || "ru";
+    let t = T[lang];
+
     let E13v = +E13.value;
     let E14v = +E14.value;
     let E15v = +E15.value;
     let E16v = +E16.value;
 
     if (!E13v || !E14v || !E15v || !E16v) {
-        result.textContent = T[lang].empty;
+        result.textContent = t.empty;
         return;
     }
 
     let VocCorr = E14v * (1 + (E15v - 25) * (E16v / 100));
     let count = Math.floor(E13v / VocCorr);
 
-    result.textContent = T[lang].result + count + " шт.";
+    result.textContent = t.result + count;
 }
 </script>
 
