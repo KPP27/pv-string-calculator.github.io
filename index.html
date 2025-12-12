@@ -123,17 +123,26 @@
     transform: translateY(0);
 }
 
-.share-btn {
+.copy-btn {
     width: 100%;
     margin-top: 12px;
     padding: 12px;
     border-radius: 12px;
-    background: var(--accent);
+    background: #28a745;
     color: white;
     border: none;
     font-size: 15px;
     cursor: pointer;
     display: none;
+    transition: background 0.3s;
+}
+
+.copy-btn:hover {
+    background: #218838;
+}
+
+.copy-btn.copied {
+    background: #6c757d;
 }
 
 </style>
@@ -167,7 +176,7 @@
     <button onclick="calculate()" id="calcBtn"></button>
 
     <div class="result" id="result"></div>
-    <button id="shareBtn" class="share-btn">📤 Поделиться в Telegram</button>
+    <button id="copyBtn" class="copy-btn">📋 Скопировать результат</button>
 
 </div>
 
@@ -186,7 +195,9 @@ const T = {
         ph4: "Например: -0.29",
         calc: "Рассчитать",
         empty: "⚠️ Заполните все поля",
-        result: "🔋 Максимальное количество модулей: "
+        result: "🔋 Максимальное количество модулей: ",
+        copyBtn: "📋 Скопировать результат",
+        copied: "✅ Скопировано!"
     },
     ua: {
         title: "📟 Калькулятор фотомодулів",
@@ -200,7 +211,9 @@ const T = {
         ph4: "Наприклад: -0.29",
         calc: "Розрахувати",
         empty: "⚠️ Заповніть всі поля",
-        result: "🔋 Максимальна кількість модулів: "
+        result: "🔋 Максимальна кількість модулів: ",
+        copyBtn: "📋 Копіювати результат",
+        copied: "✅ Скопійовано!"
     },
     en: {
         title: "📟 PV Module Calculator",
@@ -214,7 +227,9 @@ const T = {
         ph4: "Example: -0.29",
         calc: "Calculate",
         empty: "⚠️ Please fill all fields",
-        result: "🔋 Maximum number of modules: "
+        result: "🔋 Maximum number of modules: ",
+        copyBtn: "📋 Copy result",
+        copied: "✅ Copied!"
     },
     pl: {
         title: "📟 Kalkulator modułów PV",
@@ -228,7 +243,9 @@ const T = {
         ph4: "Przykład: -0.29",
         calc: "Oblicz",
         empty: "⚠️ Uzupełnij wszystkie pola",
-        result: "🔋 Maksymalna liczba modułów: "
+        result: "🔋 Maksymalna liczba modułów: ",
+        copyBtn: "📋 Skopiuj wynik",
+        copied: "✅ Skopiowano!"
     }
 };
 
@@ -249,6 +266,7 @@ function applyLang(lang) {
     E16.placeholder = t.ph4;
 
     calcBtn.textContent = t.calc;
+    copyBtn.textContent = t.copyBtn;
 
     document.querySelectorAll(".lang-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.lang === lang)
@@ -269,9 +287,11 @@ try {
 // Если нет saved language — включим русский
 applyLang(localStorage.getItem("lang") || "ru");
 
-// Расчёт
-let lastResult = ""; // сохраняем результат
+// Глобальные переменные для хранения данных
+let lastResult = "";
+let lastCalculationData = {};
 
+// Расчёт
 function calculate() {
     let lang = localStorage.getItem("lang") || "ru";
     let t = T[lang];
@@ -284,7 +304,7 @@ function calculate() {
     if (!E13v || !E14v || !E15v || !E16v) {
         result.textContent = t.empty;
         result.classList.add("show");
-        document.getElementById("shareBtn").style.display = "none";
+        copyBtn.style.display = "none";
         return;
     }
 
@@ -292,6 +312,17 @@ function calculate() {
     let count = Math.floor(E13v / VocCorr);
 
     lastResult = t.result + count;
+    
+    // Сохраняем данные расчета
+    lastCalculationData = {
+        maxVoltage: E13v,
+        moduleVoc: E14v,
+        minTemp: E15v,
+        tempCoefficient: E16v,
+        correctedVoc: VocCorr.toFixed(2),
+        maxModules: count,
+        lang: lang
+    };
 
     result.textContent = lastResult;
 
@@ -299,19 +330,63 @@ function calculate() {
     result.classList.remove("show");
     setTimeout(() => result.classList.add("show"), 20);
 
-    // Показать кнопку
-    document.getElementById("shareBtn").style.display = "block";
-//}
+    // Показать кнопку копирования
+    copyBtn.style.display = "block";
+    copyBtn.classList.remove("copied");
+    copyBtn.textContent = t.copyBtn;
+}
 
-// Кнопка "Поделиться"
-//document.getElementById("shareBtn").onclick = function () {
-    //try {
-        //Telegram.WebApp.sendData(lastResult);
-        //Telegram.WebApp.close();
-    //} catch (e) {
-       // alert("Telegram WebApp недоступен");
- //   }
-};
+// Функция копирования в буфер обмена
+function copyToClipboard() {
+    let lang = localStorage.getItem("lang") || "ru";
+    let t = T[lang];
+    
+    // Формируем текст для копирования
+    let textToCopy = `📟 ${t.title}\n\n`;
+    textToCopy += `✅ ${t.l1}: ${lastCalculationData.maxVoltage} V\n`;
+    textToCopy += `✅ ${t.l2}: ${lastCalculationData.moduleVoc} V\n`;
+    textToCopy += `✅ ${t.l3}: ${lastCalculationData.minTemp} °C\n`;
+    textToCopy += `✅ ${t.l4}: ${lastCalculationData.tempCoefficient}%\n`;
+    textToCopy += `🔧 Исправленное Voc: ${lastCalculationData.correctedVoc} V\n\n`;
+    textToCopy += `📊 ${lastResult}`;
+    
+    // Используем современный Clipboard API
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        // Успешное копирование
+        copyBtn.textContent = t.copied;
+        copyBtn.classList.add("copied");
+        
+        // Возвращаем оригинальный текст через 2 секунды
+        setTimeout(() => {
+            copyBtn.textContent = t.copyBtn;
+            copyBtn.classList.remove("copied");
+        }, 2000);
+    }).catch(err => {
+        // Fallback для старых браузеров
+        console.error('Не удалось скопировать: ', err);
+        // Пытаемся использовать старый метод
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            copyBtn.textContent = t.copied;
+            copyBtn.classList.add("copied");
+            
+            setTimeout(() => {
+                copyBtn.textContent = t.copyBtn;
+                copyBtn.classList.remove("copied");
+            }, 2000);
+        } catch (err) {
+            alert('Не удалось скопировать. Пожалуйста, скопируйте результат вручную.');
+        }
+        document.body.removeChild(textArea);
+    });
+}
+
+// Назначаем обработчик для кнопки копирования
+document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
 
 </script>
 
