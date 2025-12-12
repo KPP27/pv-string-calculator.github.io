@@ -5,243 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PV String Calculator</title>
 
-<!-- Telegram Mini App API -->
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-
 <style>
-  :root {
-    --bg: #f4f7fb;
-    --card-bg: #ffffff;
-    --accent: #1976d2;
-    --text: #1d1d1d;
-    --radius: 14px;
-    --shadow: 0 4px 18px rgba(0,0,0,0.08);
-    --trans: 0.25s ease;
-  }
-
   body {
-    font-family: "Helvetica Neue", Arial;
-    background: var(--bg);
+    font-family: Arial, sans-serif;
+    background: #f5f7fa;
     padding: 20px;
-    margin: 0;
-    max-width: 480px;
-    margin-left: auto;
-    margin-right: auto;
-    animation: fadeIn 0.6s ease;
+    max-width: 420px;
+    margin: auto;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(8px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .card {
-    background: var(--card-bg);
-    padding: 20px;
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    animation: fadeIn 0.6s ease;
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   h2 {
-    margin-top: 0;
-    font-size: 22px;
-    text-align: center;
-    color: var(--text);
-    margin-bottom: 15px;
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .lang-switch {
+    display: flex;
+    gap: 5px;
+  }
+
+  .lang-btn {
+    padding: 5px 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    font-size: 12px;
+    transition: 0.2s;
+  }
+
+  .lang-btn.active {
+    background: #4a6cf7;
+    color: white;
+    border-color: #4a6cf7;
   }
 
   input {
     width: 100%;
     padding: 12px;
-    margin: 10px 0;
-    border-radius: var(--radius);
-    border: 1px solid #dce1e9;
-    font-size: 16px;
-    transition: var(--trans);
+    margin-top: 10px;
+    box-sizing: border-box;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    transition: 0.3s;
   }
 
   input:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(25,118,210,0.15);
-    outline: none;
+    border-color: #4a6cf7;
+    box-shadow: 0 0 6px rgba(74,108,247,0.3);
   }
 
   button {
-    width: 100%;
     padding: 14px;
-    background: var(--accent);
-    color: white;
+    width: 100%;
+    margin-top: 15px;
     border: none;
-    border-radius: var(--radius);
-    font-size: 17px;
-    margin-top: 10px;
+    background: #4a6cf7;
+    color: white;
+    border-radius: 10px;
+    font-size: 16px;
     cursor: pointer;
-    transition: var(--trans);
-    box-shadow: 0 3px 10px rgba(25,118,210,0.3);
+    transition: 0.3s;
   }
 
-  button:active {
-    transform: translateY(2px);
-    box-shadow: 0 1px 5px rgba(25,118,210,0.25);
+  button:hover {
+    background: #3a59d4;
   }
 
   .result {
-    font-weight: 600;
+    margin-top: 20px;
+    font-weight: bold;
     font-size: 18px;
-    margin-top: 15px;
-    text-align: center;
-    color: var(--text);
-    animation: fadeIn 0.5s ease;
+    animation: fadeIn 0.4s ease;
   }
 
-  .lang-select {
-    width: 100%;
-    padding: 12px;
-    border-radius: var(--radius);
-    margin-bottom: 15px;
-    border: 1px solid #d1d6de;
-    font-size: 16px;
-    background: white;
-    transition: var(--trans);
-  }
-
-  .lang-select:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(25,118,210,0.15);
-    outline: none;
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
   }
 </style>
-
 </head>
+
 <body>
 
-<div class="card">
-  <select class="lang-select" id="lang-switch" onchange="manualLangChange()">
-    <option value="ru">Русский</option>
-    <option value="ua">Українська</option>
-    <option value="en">English</option>
-    <option value="pl">Polski</option>
-  </select>
+<div class="header">
+  <h2 id="title">Калькулятор количества фотомодулей</h2>
 
-  <h2 id="title"></h2>
-
-  <input type="number" id="E13">
-  <input type="number" id="E14">
-  <input type="number" id="E15">
-  <input type="number" id="E16">
-
-  <button onclick="calculate()" id="calc-btn"></button>
-
-  <div class="result" id="result"></div>
+  <div class="lang-switch">
+    <div class="lang-btn" data-lang="ru">RU</div>
+    <div class="lang-btn" data-lang="ua">UA</div>
+    <div class="lang-btn" data-lang="en">EN</div>
+    <div class="lang-btn" data-lang="pl">PL</div>
+  </div>
 </div>
 
+<input type="number" id="E13" placeholder="Максимально допустимое напряжение DC на входе инвертора">
+<input type="number" id="E14" placeholder="Voc фотомодуля (STC)">
+<input type="number" id="E15" placeholder="Минимальная температура">
+<input type="number" id="E16" placeholder="Температурный коэффициент Voc (%)">
+
+<button id="calcBtn">Рассчитать</button>
+
+<div class="result" id="result"></div>
+
 <script>
-/* ----------------------------
-   МУЛЬТИЯЗЫЧНОСТЬ
------------------------------ */
-const texts = {
+const translations = {
   ru: {
     title: "Калькулятор количества фотомодулей",
-    p1: "Максимально допустимое напряжение DC на входе инвертора",
-    p2: "Напряжение холостого хода фотомодуля (STC)",
-    p3: "Минимальная ожидаемая температура на объекте",
-    p4: "Температурный коэффициент для Voc",
-    btn: "Рассчитать",
-    empty: "Пожалуйста, заполните все поля",
+    phE13: "Максимально допустимое напряжение DC на входе инвертора",
+    phE14: "Voc фотомодуля (STC)",
+    phE15: "Минимальная температура",
+    phE16: "Температурный коэффициент Voc (%)",
+    calc: "Рассчитать",
+    error: "Пожалуйста, заполните все поля",
     result: "Максимальное количество фотомодулей: "
   },
   ua: {
     title: "Калькулятор кількості фотомодулів",
-    p1: "Максимально допустима напруга DC на вході інвертора",
-    p2: "Напруга холостого ходу модуля (STC)",
-    p3: "Мінімальна температура на об’єкті",
-    p4: "Температурний коефіцієнт Voc",
-    btn: "Розрахувати",
-    empty: "Будь ласка, заповніть всі поля",
+    phE13: "Максимальна допустима напруга DC інвертора",
+    phE14: "Voc фотомодуля (STC)",
+    phE15: "Мінімальна температура",
+    phE16: "Температурний коефіцієнт Voc (%)",
+    calc: "Розрахувати",
+    error: "Будь ласка, заповніть всі поля",
     result: "Максимальна кількість фотомодулів: "
   },
   en: {
-    title: "PV String Calculator",
-    p1: "Max DC input voltage of inverter",
-    p2: "Open-circuit voltage of module (STC)",
-    p3: "Minimum expected ambient temperature",
-    p4: "Temperature coefficient for Voc",
-    btn: "Calculate",
-    empty: "Please fill all fields",
-    result: "Maximum number of PV modules: "
+    title: "PV Module Count Calculator",
+    phE13: "Max DC inverter voltage",
+    phE14: "Module Voc (STC)",
+    phE15: "Minimum temperature",
+    phE16: "Temperature coefficient Voc (%)",
+    calc: "Calculate",
+    error: "Please fill in all fields",
+    result: "Maximum number of modules: "
   },
   pl: {
     title: "Kalkulator liczby modułów PV",
-    p1: "Maksymalne napięcie DC na wejściu falownika",
-    p2: "Napięcie jałowe modułu (STC)",
-    p3: "Minimalna spodziewana temperatura",
-    p4: "Współczynnik temperaturowy Voc",
-    btn: "Oblicz",
-    empty: "Proszę wypełnić wszystkie pola",
-    result: "Maksymalna liczba modułów PV: "
+    phE13: "Maksymalne dopuszczalne napięcie DC falownika",
+    phE14: "Voc modułu (STC)",
+    phE15: "Minimalna temperatura",
+    phE16: "Współczynnik temperaturowy Voc (%)",
+    calc: "Oblicz",
+    error: "Proszę wypełnić wszystkie pola",
+    result: "Maksymalna liczba modułów: "
   }
 };
 
-/* ----------------------------
-   ОПРЕДЕЛЕНИЕ ЯЗЫКА
------------------------------ */
-function detectLanguage() {
-  let saved = localStorage.getItem("lang");
-  if (saved) return saved;
-
-  let tgLang = Telegram?.WebApp?.initDataUnsafe?.user?.language_code;
-  let browserLang = navigator.language.slice(0, 2);
-
-  let supported = ["ru", "ua", "en", "pl"];
-
-  if (supported.includes(tgLang)) return tgLang;
-  if (supported.includes(browserLang)) return browserLang;
-
-  return "en";
-}
-
-let lang = detectLanguage();
-
-/* ----------------------------
-   ПРИМЕНЕНИЕ ЯЗЫКА
------------------------------ */
-function applyLang() {
-  document.getElementById("lang-switch").value = lang;
-  document.getElementById("title").innerText = texts[lang].title;
-  document.getElementById("E13").placeholder = texts[lang].p1;
-  document.getElementById("E14").placeholder = texts[lang].p2;
-  document.getElementById("E15").placeholder = texts[lang].p3;
-  document.getElementById("E16").placeholder = texts[lang].p4;
-  document.getElementById("calc-btn").innerText = texts[lang].btn;
-}
-
-function manualLangChange() {
-  lang = document.getElementById("lang-switch").value;
+function applyLang(lang) {
   localStorage.setItem("lang", lang);
-  applyLang();
+  const t = translations[lang];
+
+  document.getElementById("title").textContent = t.title;
+  document.getElementById("E13").placeholder = t.phE13;
+  document.getElementById("E14").placeholder = t.phE14;
+  document.getElementById("E15").placeholder = t.phE15;
+  document.getElementById("E16").placeholder = t.phE16;
+  document.getElementById("calcBtn").textContent = t.calc;
+
+  document.querySelectorAll(".lang-btn").forEach(btn =>
+    btn.classList.toggle("active", btn.dataset.lang === lang)
+  );
 }
 
-/* ----------------------------
-   РАСЧЁТ
------------------------------ */
-function calculate() {
-  let E13 = parseFloat(document.getElementById('E13').value);
-  let E14 = parseFloat(document.getElementById('E14').value);
-  let E15 = parseFloat(document.getElementById('E15').value);
-  let E16 = parseFloat(document.getElementById('E16').value);
+document.querySelectorAll(".lang-btn").forEach(btn => {
+  btn.onclick = () => applyLang(btn.dataset.lang);
+});
 
-  if (!E13 || !E14 || !E15 || !E16) {
-    document.getElementById('result').innerText = texts[lang].empty;
-    return;
+// auto-language detection (Telegram WebApp)
+try {
+  const tgLang = window.Telegram.WebApp.initDataUnsafe.user.language_code;
+  if (tgLang && translations[tgLang.slice(0,2)]) {
+    applyLang(tgLang.slice(0,2));
   }
+} catch {}
 
-  let count = Math.floor(E13 / (E14 * (1 + (E15 - 25) * E16 / 100)));
-  document.getElementById('result').innerText = texts[lang].result + count;
-}
+// load saved language
+applyLang(localStorage.getItem("lang") || "ru");
 
-applyLang();
+document.getElementById("calcBtn").onclick = function () {
+    const lang = localStorage.getItem("lang") || "ru";
+    const t = translations[lang];
+
+    let E13 = parseFloat(E13.value);
+    let E14 = parseFloat(E14.value);
+    let E15 = parseFloat(E15.value);
+    let E16 = parseFloat(E16.value);
+
+    if (!E13 || !E14 || !E15 || !E16) {
+        result.innerText = t.error;
+        return;
+    }
+
+    let count = Math.floor(E13 / (E14 * (1 + (E15 - 25) * E16 / 100)));
+    result.innerText = t.result + count + " шт.";
+};
 </script>
 
 </body>
