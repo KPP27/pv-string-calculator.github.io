@@ -106,22 +106,36 @@
     }
 
     .result {
-        margin-top: 20px;
-        padding: 15px;
-        border-radius: 12px;
-        border: 1px solid var(--border);
-        font-weight: bold;
-        font-size: 16px;
-        text-align: center;
-        opacity: 0;
-        transform: translateY(10px);
-        transition: all 0.4s ease;
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
 }
 
 .result.show {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.share-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: var(--accent);
+    color: white;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    display: none;
+}
+
 </style>
 </head>
 <body>
@@ -153,6 +167,7 @@
     <button onclick="calculate()" id="calcBtn"></button>
 
     <div class="result" id="result"></div>
+    <button id="shareBtn" class="share-btn">📤 Поделиться в Telegram</button>
 
 </div>
 
@@ -255,6 +270,8 @@ try {
 applyLang(localStorage.getItem("lang") || "ru");
 
 // Расчёт
+let lastResult = ""; // сохраняем результат
+
 function calculate() {
     let lang = localStorage.getItem("lang") || "ru";
     let t = T[lang];
@@ -266,14 +283,36 @@ function calculate() {
 
     if (!E13v || !E14v || !E15v || !E16v) {
         result.textContent = t.empty;
+        result.classList.add("show");
+        document.getElementById("shareBtn").style.display = "none";
         return;
     }
 
     let VocCorr = E14v * (1 + (E15v - 25) * (E16v / 100));
     let count = Math.floor(E13v / VocCorr);
 
-    result.textContent = t.result + count;
+    lastResult = t.result + count;
+
+    result.textContent = lastResult;
+
+    // Анимация
+    result.classList.remove("show");
+    setTimeout(() => result.classList.add("show"), 20);
+
+    // Показать кнопку
+    document.getElementById("shareBtn").style.display = "block";
 }
+
+// Кнопка "Поделиться"
+document.getElementById("shareBtn").onclick = function () {
+    try {
+        Telegram.WebApp.sendData(lastResult);
+        Telegram.WebApp.close();
+    } catch (e) {
+        alert("Telegram WebApp недоступен");
+    }
+};
+
 </script>
 
 </body>
