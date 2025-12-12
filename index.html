@@ -301,16 +301,16 @@ function calculate() {
 
     // Показать кнопку
     document.getElementById("shareBtn").style.display = "block";
-}
+//}
 
 // Кнопка "Поделиться"
-document.getElementById("shareBtn").onclick = function () {
-    try {
-        Telegram.WebApp.sendData(lastResult);
-        Telegram.WebApp.close();
-    } catch (e) {
-        alert("Telegram WebApp недоступен");
-    }
+//document.getElementById("shareBtn").onclick = function () {
+    //try {
+        //Telegram.WebApp.sendData(lastResult);
+        //Telegram.WebApp.close();
+    //} catch (e) {
+       // alert("Telegram WebApp недоступен");
+ //   }
 };
 
 </script>
