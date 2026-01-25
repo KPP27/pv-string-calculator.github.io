@@ -106,7 +106,7 @@
             padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            font-size: 15px;
+            font-size: 16px; /* 16px предотвращает авто-зум на iPhone */
             box-sizing: border-box; 
             transition: 0.2s;
         }
@@ -178,13 +178,13 @@
         </div>
     </div>
 
-    <div class="input-group"><label id="l1"></label><input type="text" id="v_voc" inputmode="decimal"></div>
-    <div class="input-group"><label id="l2"></label><input type="text" id="v_vmp" inputmode="decimal"></div>
-    <div class="input-group"><label id="l3"></label><input type="text" id="kv" inputmode="decimal"></div>
-    <div class="input-group"><label id="l4"></label><input type="text" id="t_min" inputmode="decimal"></div>
-    <div class="input-group"><label id="l5"></label><input type="text" id="t_max" inputmode="decimal"></div>
-    <div class="input-group"><label id="l6"></label><input type="text" id="v_mppt_max" inputmode="decimal"></div>
-    <div class="input-group"><label id="l7"></label><input type="text" id="v_mppt_min" inputmode="decimal"></div>
+    <div class="input-group"><label id="l1"></label><input type="text" id="v_voc" inputmode="text"></div>
+    <div class="input-group"><label id="l2"></label><input type="text" id="v_vmp" inputmode="text"></div>
+    <div class="input-group"><label id="l3"></label><input type="text" id="kv" inputmode="text"></div>
+    <div class="input-group"><label id="l4"></label><input type="text" id="t_min" inputmode="text"></div>
+    <div class="input-group"><label id="l5"></label><input type="text" id="t_max" inputmode="text"></div>
+    <div class="input-group"><label id="l6"></label><input type="text" id="v_mppt_max" inputmode="text"></div>
+    <div class="input-group"><label id="l7"></label><input type="text" id="v_mppt_min" inputmode="text"></div>
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
@@ -243,7 +243,7 @@ const T = {
         m1: "🔌 Max string", m2: "📐 Min/Max moduły",
         title: "📐 Optymalna liczba modułów PV w stringu",
         l1: "Napięcie jałowe modułu (Voc)", 
-        l2: "Napięcie в пункте mocy maks. modułu (Vmp)",
+        l2: "Napięcie w punkcie mocy maks. modułu (Vmp)",
         l3: "Współczynnik temperaturowy Voc (%)", 
         l4: "Minimalna temperatura otoczenia (°C)",
         l5: "Maksymalna temperatura otoczenia (°C)", 
@@ -299,7 +299,7 @@ window.addEventListener('DOMContentLoaded', () => {
 });
 
 function getNum(id) {
-    const val = document.getElementById(id).value.replace(',', '.');
+    const val = document.getElementById(id).value.replace(',', '.').trim();
     return val === "" ? NaN : parseFloat(val);
 }
 
