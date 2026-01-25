@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0JQD4RVE06');
+    </script>
+      
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PV String Range Calculator</title>
+
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #222;
+            --accent: #2a8cff;
+            --border: #ddd;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --radius: 14px;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 420px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .menu {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .menu-btn {
+            flex: 1;
+            padding: 10px 5px;
+            font-size: 13px;
+            background: #f0f0f0;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .menu-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        h2 { margin: 0; font-size: 1.1rem; line-height: 1.2; }
+
+        .lang-switch { display: flex; gap: 4px; }
+
+        .lang-btn {
+            padding: 5px 6px;
+            font-size: 11px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            background: white;
+        }
+
+        .lang-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .input-group { margin-top: 10px; }
+
+        label { font-size: 13px; display: block; color: #555; margin-bottom: 3px; }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 15px;
+            box-sizing: border-box; 
+            transition: 0.2s;
+        }
+
+        input:focus { outline: none; border-color: var(--accent); }
+
+        .calc-btn {
+            width: 100%;
+            margin-top: 18px;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 18px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            background: #fafafa;
+            word-wrap: break-word;
+            font-size: 14px;
+            display: none;
+        }
+
+        .result.show { opacity: 1; transform: translateY(0); display: block; }
+
+        .copy-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .copy-btn.copied { background: #6c757d; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <nav class="menu">
+        <a href="index.html" id="m1" class="menu-btn"></a>
+        <a href="string-range.html" id="m2" class="menu-btn active"></a>
+    </nav>
+
+    <div class="top-bar">
+        <h2 id="title"></h2>
+        <div class="lang-switch">
+            <div class="lang-btn" data-lang="ru">RU</div>
+            <div class="lang-btn" data-lang="ua">UA</div>
+            <div class="lang-btn" data-lang="en">EN</div>
+            <div class="lang-btn" data-lang="pl">PL</div>
+        </div>
+    </div>
+
+    <div class="input-group"><label id="l1"></label><input type="number" id="v_voc" inputmode="decimal"></div>
+    <div class="input-group"><label id="l2"></label><input type="number" id="v_vmp" inputmode="decimal"></div>
+    <div class="input-group"><label id="l3"></label><input type="number" id="kv" inputmode="decimal"></div>
+    <div class="input-group"><label id="l4"></label><input type="number" id="t_min" inputmode="decimal"></div>
+    <div class="input-group"><label id="l5"></label><input type="number" id="t_max" inputmode="decimal"></div>
+    <div class="input-group"><label id="l6"></label><input type="number" id="v_mppt_max" inputmode="decimal"></div>
+    <div class="input-group"><label id="l7"></label><input type="number" id="v_mppt_min" inputmode="decimal"></div>
+
+    <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
+
+    <div class="result" id="result"></div>
+    <button id="copyBtn" class="copy-btn"></button>
+</div>
+
+<script>
+const T = {
+    ru: {
+        m1: "🔌 Макс. стринг", m2: "📐 Мин/Макс модули",
+        title: "📐 Оптимальное количество фотомодулей в стринге",
+        l1: "Напряжение холостого хода модуля (Voc)", 
+        l2: "Напряжение в точке макс. мощности модуля (Vmp)",
+        l3: "Температурный коэффициент Voc (%)", 
+        l4: "Минимальная температура на объекте (°C)",
+        l5: "Максимальная температура на объекте (°C)", 
+        l6: "Максимальный рабочий диапазон MPPT инвертора",
+        l7: "Минимальный рабочий диапазон MPPT инвертора", 
+        ph: "Например: ", calc: "Рассчитать диапазон",
+        empty: "⚠️ Заполните все поля", copyBtn: "📋 Скопировать результат",
+        copied: "✅ Скопировано!", res_min: "Минимальное количество фотомодулей в стринге",
+        res_max: "максимальное", pcs: "шт."
+    },
+    ua: {
+        m1: "🔌 Макс. стринг", m2: "📐 Мін/Макс модулі",
+        title: "📐 Оптимальна кількість фотомодулів у стрингу",
+        l1: "Напруга холостого ходу модуля (Voc)", 
+        l2: "Напруга в точці макс. потужності модуля (Vmp)",
+        l3: "Температурний коефіцієнт Voc (%)", 
+        l4: "Мінімальна температура на об'єкті (°C)",
+        l5: "Максимальна температура на об'єкті (°C)", 
+        l6: "Максимальний робочий діапазон MPPT інвертора",
+        l7: "Мінімальний робочий діапазон MPPT інвертора", 
+        ph: "Наприклад: ", calc: "Розрахувати діапазон",
+        empty: "⚠️ Заповніть всі поля", copyBtn: "📋 Копіювати результат",
+        copied: "✅ Скопійовано!", res_min: "Мінімальна кількість фотомодулів у стрингу",
+        res_max: "максимальна", pcs: "шт."
+    },
+    en: {
+        m1: "🔌 Max String", m2: "📐 Min/Max Modules",
+        title: "📐 Optimal number of PV modules in string",
+        l1: "Module Open Circuit Voltage (Voc)", 
+        l2: "Module Max Power Voltage (Vmp)",
+        l3: "Temperature coefficient Voc (%)", 
+        l4: "Minimum ambient temperature (°C)",
+        l5: "Maximum ambient temperature (°C)", 
+        l6: "Maximum MPPT inverter voltage range",
+        l7: "Minimum MPPT inverter voltage range", 
+        ph: "Example: ", calc: "Calculate Range",
+        empty: "⚠️ Please fill all fields", copyBtn: "📋 Copy result",
+        copied: "✅ Copied!", res_min: "Minimum number of modules in string",
+        res_max: "maximum", pcs: "pcs."
+    },
+    pl: {
+        m1: "🔌 Max string", m2: "📐 Min/Max moduły",
+        title: "📐 Optymalna liczba modułów PV w stringu",
+        l1: "Napięcie jałowe modułu (Voc)", 
+        l2: "Napięcie w punkcie mocy maks. modułu (Vmp)",
+        l3: "Współczynnik temperaturowy Voc (%)", 
+        l4: "Minimalna temperatura otoczenia (°C)",
+        l5: "Maksymalna temperatura otoczenia (°C)", 
+        l6: "Maksymalny zakres roboczy MPPT falownika",
+        l7: "Minimalny zakres roboczy MPPT falownika", 
+        ph: "Przykład: ", calc: "Oblicz zakres",
+        empty: "⚠️ Uzupełnij wszystkie pola", copyBtn: "📋 Skopiuj wynik",
+        copied: "✅ Skopiowano!", res_min: "Minimalna liczba modułów w stringu",
+        res_max: "maksymalna", pcs: "szt."
+    }
+};
+
+let lastCalcData = null;
+
+function applyLang(lang) {
+    if (!T[lang]) lang = 'ru';
+    localStorage.setItem("lang", lang);
+    const t = T[lang];
+    
+    document.getElementById('m1').textContent = t.m1;
+    document.getElementById('m2').textContent = t.m2;
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('l1').textContent = t.l1;
+    document.getElementById('l2').textContent = t.l2;
+    document.getElementById('l3').textContent = t.l3;
+    document.getElementById('l4').textContent = t.l4;
+    document.getElementById('l5').textContent = t.l5;
+    document.getElementById('l6').textContent = t.l6;
+    document.getElementById('l7').textContent = t.l7;
+    
+    document.getElementById('v_voc').placeholder = t.ph + "41.5";
+    document.getElementById('v_vmp').placeholder = t.ph + "42.7";
+    document.getElementById('kv').placeholder = t.ph + "-0.29";
+    document.getElementById('t_min').placeholder = t.ph + "-25";
+    document.getElementById('t_max').placeholder = t.ph + "30";
+    document.getElementById('v_mppt_max').placeholder = t.ph + "1100";
+    document.getElementById('v_mppt_min').placeholder = t.ph + "125";
+
+    document.getElementById('calcBtn').textContent = t.calc;
+    document.getElementById('copyBtn').textContent = t.copyBtn;
+    
+    document.querySelectorAll(".lang-btn").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.lang === lang);
+    });
+}
+
+document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+});
+
+// Запуск инициализации
+window.addEventListener('DOMContentLoaded', () => {
+    applyLang(localStorage.getItem("lang") || "ru");
+});
+
+function calculate() {
+    const lang = localStorage.getItem("lang") || "ru";
+    const t = T[lang];
+    
+    const v_voc = parseFloat(document.getElementById('v_voc').value);
+    const v_vmp = parseFloat(document.getElementById('v_vmp').value);
+    const kv = parseFloat(document.getElementById('kv').value);
+    const t_min = parseFloat(document.getElementById('t_min').value);
+    const t_max = parseFloat(document.getElementById('t_max').value);
+    const mppt_max = parseFloat(document.getElementById('v_mppt_max').value);
+    const mppt_min = parseFloat(document.getElementById('v_mppt_min').value);
+
+    const resDiv = document.getElementById('result');
+    const copyBtn = document.getElementById('copyBtn');
+
+    if (isNaN(v_voc) || isNaN(v_vmp) || isNaN(kv) || isNaN(mppt_max) || isNaN(mppt_min)) {
+        resDiv.textContent = t.empty;
+        resDiv.style.display = "block";
+        resDiv.classList.add("show");
+        return;
+    }
+
+    const min_pcs = Math.ceil(mppt_min / (v_vmp * (1 + (t_max - 25) * (kv / 100))));
+    const max_pcs = Math.floor(mppt_max / (v_voc * (1 + (t_min - 25) * (kv / 100))));
+
+    const resultString = `${t.res_min}: ${min_pcs} ${t.pcs} и ${t.res_max} ${max_pcs} ${t.pcs}.`;
+    
+    lastCalcData = {
+        title: t.title,
+        inputs: [
+            { label: t.l1, val: v_voc, unit: "V" },
+            { label: t.l2, val: v_vmp, unit: "V" },
+            { label: t.l3, val: kv, unit: "%" },
+            { label: t.l4, val: t_min, unit: "°C" },
+            { label: t.l5, val: t_max, unit: "°C" },
+            { label: t.l6, val: mppt_max, unit: "V" },
+            { label: t.l7, val: mppt_min, unit: "V" }
+        ],
+        result: resultString
+    };
+
+    resDiv.innerHTML = resultString;
+    resDiv.style.display = "block";
+    resDiv.classList.remove("show");
+    setTimeout(() => resDiv.classList.add("show"), 20);
+    copyBtn.style.display = "block";
+}
+
+document.getElementById('copyBtn').addEventListener('click', function() {
+    if (!lastCalcData) return;
+    const t = T[localStorage.getItem("lang") || "ru"];
+    
+    let text = `${lastCalcData.title}\n\n`;
+    lastCalcData.inputs.forEach(item => {
+        text += `✅ ${item.label}: ${item.val} ${item.unit}\n`;
+    });
+    text += `\n📊 ${lastCalcData.result}`;
+
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = t.copyBtn;
+        this.textContent = t.copied;
+        this.classList.add("copied");
+        setTimeout(() => {
+            this.textContent = originalText;
+            this.classList.remove("copied");
+        }, 2000);
+    });
+});
+</script>
+</body>
+</html>
