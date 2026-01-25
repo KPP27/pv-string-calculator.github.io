@@ -11,7 +11,7 @@
 
     body {
         font-family: system-ui, Arial;
-        background: var(--bg);
+        background: red !important;
         margin: 0;
         padding: 20px;
         display: flex;
