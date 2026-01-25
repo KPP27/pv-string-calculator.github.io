@@ -178,13 +178,13 @@
         </div>
     </div>
 
-    <div class="input-group"><label id="l1"></label><input type="number" id="v_voc" inputmode="decimal"></div>
-    <div class="input-group"><label id="l2"></label><input type="number" id="v_vmp" inputmode="decimal"></div>
-    <div class="input-group"><label id="l3"></label><input type="number" id="kv" inputmode="decimal"></div>
-    <div class="input-group"><label id="l4"></label><input type="number" id="t_min" inputmode="decimal"></div>
-    <div class="input-group"><label id="l5"></label><input type="number" id="t_max" inputmode="decimal"></div>
-    <div class="input-group"><label id="l6"></label><input type="number" id="v_mppt_max" inputmode="decimal"></div>
-    <div class="input-group"><label id="l7"></label><input type="number" id="v_mppt_min" inputmode="decimal"></div>
+    <div class="input-group"><label id="l1"></label><input type="text" id="v_voc" inputmode="decimal"></div>
+    <div class="input-group"><label id="l2"></label><input type="text" id="v_vmp" inputmode="decimal"></div>
+    <div class="input-group"><label id="l3"></label><input type="text" id="kv" inputmode="decimal"></div>
+    <div class="input-group"><label id="l4"></label><input type="text" id="t_min" inputmode="decimal"></div>
+    <div class="input-group"><label id="l5"></label><input type="text" id="t_max" inputmode="decimal"></div>
+    <div class="input-group"><label id="l6"></label><input type="text" id="v_mppt_max" inputmode="decimal"></div>
+    <div class="input-group"><label id="l7"></label><input type="text" id="v_mppt_min" inputmode="decimal"></div>
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
@@ -243,7 +243,7 @@ const T = {
         m1: "🔌 Max string", m2: "📐 Min/Max moduły",
         title: "📐 Optymalna liczba modułów PV w stringu",
         l1: "Napięcie jałowe modułu (Voc)", 
-        l2: "Napięcie w punkcie mocy maks. modułu (Vmp)",
+        l2: "Napięcie в пункте mocy maks. modułu (Vmp)",
         l3: "Współczynnik temperaturowy Voc (%)", 
         l4: "Minimalna temperatura otoczenia (°C)",
         l5: "Maksymalna temperatura otoczenia (°C)", 
@@ -294,30 +294,35 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.addEventListener('click', () => applyLang(btn.dataset.lang));
 });
 
-// Запуск инициализации
 window.addEventListener('DOMContentLoaded', () => {
     applyLang(localStorage.getItem("lang") || "ru");
 });
+
+function getNum(id) {
+    const val = document.getElementById(id).value.replace(',', '.');
+    return val === "" ? NaN : parseFloat(val);
+}
 
 function calculate() {
     const lang = localStorage.getItem("lang") || "ru";
     const t = T[lang];
     
-    const v_voc = parseFloat(document.getElementById('v_voc').value);
-    const v_vmp = parseFloat(document.getElementById('v_vmp').value);
-    const kv = parseFloat(document.getElementById('kv').value);
-    const t_min = parseFloat(document.getElementById('t_min').value);
-    const t_max = parseFloat(document.getElementById('t_max').value);
-    const mppt_max = parseFloat(document.getElementById('v_mppt_max').value);
-    const mppt_min = parseFloat(document.getElementById('v_mppt_min').value);
+    const v_voc = getNum('v_voc');
+    const v_vmp = getNum('v_vmp');
+    const kv = getNum('kv');
+    const t_min = getNum('t_min');
+    const t_max = getNum('t_max');
+    const mppt_max = getNum('v_mppt_max');
+    const mppt_min = getNum('v_mppt_min');
 
     const resDiv = document.getElementById('result');
     const copyBtn = document.getElementById('copyBtn');
 
-    if (isNaN(v_voc) || isNaN(v_vmp) || isNaN(kv) || isNaN(mppt_max) || isNaN(mppt_min)) {
+    if (isNaN(v_voc) || isNaN(v_vmp) || isNaN(kv) || isNaN(t_min) || isNaN(t_max) || isNaN(mppt_max) || isNaN(mppt_min)) {
         resDiv.textContent = t.empty;
         resDiv.style.display = "block";
         resDiv.classList.add("show");
+        copyBtn.style.display = "none";
         return;
     }
 
