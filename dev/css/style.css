@@ -9,14 +9,9 @@
         --radius: 14px;
     }
 
-    body {
-        font-family: system-ui, Arial;
-        background: red !important;
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-    }
+   body {
+  background: red !important;
+}
 
     .container {
         max-width: 420px;
