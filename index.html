@@ -60,6 +60,8 @@
             border-radius: 10px;
             cursor: pointer;
             transition: 0.2s;
+            text-decoration: none;
+            text-align: center;
         }
 
         .menu-btn.active {
@@ -132,9 +134,10 @@
             transition: all 0.4s ease;
             background: #fafafa;
             word-wrap: break-word;
+            display: none;
         }
 
-        .result.show { opacity: 1; transform: translateY(0); }
+        .result.show { opacity: 1; transform: translateY(0); display: block; }
 
         .copy-btn {
             width: 100%;
@@ -156,8 +159,8 @@
 
 <div class="container">
     <nav class="menu">
-        <button id="m1" class="menu-btn active" onclick="location.href='index.html'"></button>
-        <button id="m2" class="menu-btn" onclick="location.href='string-range.html'"></button>
+        <a id="m1" class="menu-btn active" href="index.html"></a>
+        <a id="m2" class="menu-btn" href="string-range.html"></a>
     </nav>
 
     <div class="top-bar">
@@ -171,16 +174,16 @@
     </div>
 
     <label id="l1"></label>
-    <input type="text" id="E13" inputmode="decimal">
+    <input type="text" id="E13" inputmode="text">
 
     <label id="l2"></label>
-    <input type="text" id="E14" inputmode="decimal">
+    <input type="text" id="E14" inputmode="text">
 
     <label id="l3"></label>
-    <input type="text" id="E15" inputmode="decimal">
+    <input type="text" id="E15" inputmode="text">
 
     <label id="l4"></label>
-    <input type="text" id="E16" inputmode="decimal">
+    <input type="text" id="E16" inputmode="text">
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
@@ -191,8 +194,7 @@
 <script>
 const T = {
     ru: {
-        m1: "🔌 Макс. стринг",
-        m2: "📐 Мин/Макс модули",
+        m1: "🔌 Макс. стринг", m2: "📐 Мин/Макс модули",
         title: "📟 Калькулятор фотомодулей",
         l1: "Максимально допустимое напряжение DC на входе инвертора",
         l2: "Напряжение холостого хода модуля (Voc)",
@@ -204,8 +206,7 @@ const T = {
         copied: "✅ Скопировано!", calculatedVoc: "📊 Расчетный Voc", explanation: "Напряжение при минимальной температуре"
     },
     ua: {
-        m1: "🔌 Макс. ланцюг",
-        m2: "📐 Мін/Макс модулі",
+        m1: "🔌 Макс. ланцюг", m2: "📐 Мін/Макс модулі",
         title: "📟 Калькулятор фотомодулів",
         l1: "Максимальна напруга DC інвертора",
         l2: "Voc модуля (STC)",
@@ -217,8 +218,7 @@ const T = {
         copied: "✅ Скопійовано!", calculatedVoc: "📊 Розрахунковий Voc", explanation: "Напруга при мінімальній температурі"
     },
     en: {
-        m1: "🔌 Max String",
-        m2: "📐 Min/Max Modules",
+        m1: "🔌 Max String", m2: "📐 Min/Max Modules",
         title: "📟 PV Module Calculator",
         l1: "Max DC input voltage of inverter",
         l2: "Module Voc (STC)",
@@ -230,8 +230,7 @@ const T = {
         copied: "✅ Copied!", calculatedVoc: "📊 Calculated Voc", explanation: "Voltage at minimum temperature"
     },
     pl: {
-        m1: "🔌 Max string",
-        m2: "📐 Min/Max moduły",
+        m1: "🔌 Max string", m2: "📐 Min/Max moduły",
         title: "📟 Kalkulator modułów PV",
         l1: "Maksymalne napięcie wejściowe DC falownika",
         l2: "Voc modułu (STC)",
@@ -247,6 +246,7 @@ const T = {
 let lastCalc = null;
 
 function applyLang(lang) {
+    if (!T[lang]) lang = 'ru';
     localStorage.setItem("lang", lang);
     const t = T[lang];
     document.getElementById('m1').textContent = t.m1;
@@ -275,7 +275,8 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
 applyLang(localStorage.getItem("lang") || "ru");
 
 function getNum(id) {
-    const val = document.getElementById(id).value.replace(',', '.');
+    // Заменяем запятую на точку и убираем пробелы
+    const val = document.getElementById(id).value.replace(',', '.').trim();
     return val === "" ? NaN : parseFloat(val);
 }
 
@@ -293,6 +294,7 @@ function calculate() {
 
     if (isNaN(v_inv) || isNaN(v_voc) || isNaN(t_min) || isNaN(t_coeff)) {
         resDiv.textContent = t.empty;
+        resDiv.style.display = "block";
         resDiv.classList.add("show");
         copyBtn.style.display = "none";
         return;
@@ -313,6 +315,7 @@ function calculate() {
     };
 
     resDiv.innerHTML = `${t.result} ${count}<br><small style="font-weight:normal; opacity:0.7">${t.calculatedVoc}: ${vocCorr.toFixed(2)} V</small>`;
+    resDiv.style.display = "block";
     resDiv.classList.remove("show");
     setTimeout(() => resDiv.classList.add("show"), 20);
     copyBtn.style.display = "block";
