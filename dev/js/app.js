@@ -210,6 +210,10 @@ function copyToClipboard() {
         document.body.removeChild(textArea);
     });
 }
+function go(page) {
+  location.href = page;
+}
+
 
 // Назначаем обработчик для кнопки копирования
 document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
