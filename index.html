@@ -171,16 +171,16 @@
     </div>
 
     <label id="l1"></label>
-    <input type="number" id="E13" inputmode="decimal">
+    <input type="text" id="E13" inputmode="decimal">
 
     <label id="l2"></label>
-    <input type="number" id="E14" inputmode="decimal">
+    <input type="text" id="E14" inputmode="decimal">
 
     <label id="l3"></label>
-    <input type="number" id="E15" inputmode="text">
+    <input type="text" id="E15" inputmode="decimal">
 
     <label id="l4"></label>
-    <input type="number" id="E16" inputmode="decimal">
+    <input type="text" id="E16" inputmode="decimal">
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
@@ -249,12 +249,8 @@ let lastCalc = null;
 function applyLang(lang) {
     localStorage.setItem("lang", lang);
     const t = T[lang];
-    
-    // Обновление навигации
     document.getElementById('m1').textContent = t.m1;
     document.getElementById('m2').textContent = t.m2;
-    
-    // Обновление контента
     document.getElementById('title').textContent = t.title;
     document.getElementById('l1').textContent = t.l1;
     document.getElementById('l2').textContent = t.l2;
@@ -278,17 +274,24 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
 
 applyLang(localStorage.getItem("lang") || "ru");
 
+function getNum(id) {
+    const val = document.getElementById(id).value.replace(',', '.');
+    return val === "" ? NaN : parseFloat(val);
+}
+
 function calculate() {
     const lang = localStorage.getItem("lang") || "ru";
     const t = T[lang];
-    const v_inv = +document.getElementById('E13').value;
-    const v_voc = +document.getElementById('E14').value;
-    const t_min = +document.getElementById('E15').value;
-    const t_coeff = +document.getElementById('E16').value;
+    
+    const v_inv = getNum('E13');
+    const v_voc = getNum('E14');
+    const t_min = getNum('E15');
+    const t_coeff = getNum('E16');
+    
     const resDiv = document.getElementById('result');
     const copyBtn = document.getElementById('copyBtn');
 
-    if (!v_inv || !v_voc || !t_coeff) {
+    if (isNaN(v_inv) || isNaN(v_voc) || isNaN(t_min) || isNaN(t_coeff)) {
         resDiv.textContent = t.empty;
         resDiv.classList.add("show");
         copyBtn.style.display = "none";
@@ -318,7 +321,6 @@ function calculate() {
 document.getElementById('copyBtn').onclick = function() {
     if(!lastCalc) return;
     const t = T[localStorage.getItem("lang") || "ru"];
-    
     let text = `${lastCalc.title}\n\n`;
     text += `✅ ${lastCalc.l1}: ${lastCalc.v1} V\n`;
     text += `✅ ${lastCalc.l2}: ${lastCalc.v2} V\n`;
