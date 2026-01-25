@@ -1,1 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
 
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-0JQD4RVE06');
+</script>
+  
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PV String Calculator</title>
+
+<style>
+    :root {
+        --bg: #f5f5f5;
+        --card-bg: #ffffff;
+        --text: #222;
+        --accent: #2a8cff;
+        --border: #ddd;
+        --shadow: 0 4px 20px rgba(0,0,0,0.1);
+        --radius: 14px;
+    }
+
+    body {
+        font-family: system-ui, Arial;
+        background: var(--bg);
+        margin: 0;
+        padding: 20px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .container {
+        max-width: 420px;
+        width: 100%;
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        border: 1px solid var(--border);
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    h2 {
+        margin: 0 0 10px 0;
+    }
+
+    .lang-switch {
+        display: flex;
+        gap: 6px;
+    }
+
+    .lang-btn {
+        padding: 5px 8px;
+        font-size: 12px;
+        border-radius: 6px;
+        border: 1px solid var(--border);
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .lang-btn.active {
+        background: var(--accent);
+        border-color: var(--accent);
+        color: white;
+    }
+
+    label {
+        font-size: 14px;
+        margin-top: 14px;
+        display: block;
+    }
+
+    input {
+            width: 100%;
+            padding: 12px;
+            margin-top: 6px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            font-size: 16px;
+            transition: 0.2s;
+            box-sizing: border-box; 
+    }
+
+    button {
+        width: 100%;
+        margin-top: 20px;
+        padding: 14px;
+        background: var(--accent);
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+
+    .result {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    font-weight: bold;
+    font-size: 16px;
+    text-align: center;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.4s ease;
+}
+
+.result.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.copy-btn {
+    width: 100%;
+    margin-top: 12px;
+    padding: 12px;
+    border-radius: 12px;
+    background: #28a745;
+    color: white;
+    border: none;
+    font-size: 15px;
+    cursor: pointer;
+    display: none;
+    transition: background 0.3s;
+}
+
+.copy-btn:hover {
+    background: #218838;
+}
+
+.copy-btn.copied {
+    background: #6c757d;
+}
+
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-bar">
+        <h2 id="title">📟 Калькулятор фотомодулей</h2>
+        <div class="lang-switch">
+            <div class="lang-btn" data-lang="ru">RU</div>
+            <div class="lang-btn" data-lang="ua">UA</div>
+            <div class="lang-btn" data-lang="en">EN</div>
+            <div class="lang-btn" data-lang="pl">PL</div>
+        </div>
+    </div>
+
+    <label id="l1"></label>
+    <input type="number" id="E13">
+
+    <label id="l2"></label>
+    <input type="number" id="E14">
+
+    <label id="l3"></label>
+    <input type="number" id="E15">
+
+    <label id="l4"></label>
+    <input type="number" id="E16">
+
+    <button onclick="calculate()" id="calcBtn"></button>
+
+    <div class="result" id="result"></div>
+    <button id="copyBtn" class="copy-btn">📋 Скопировать результат</button>
+
+</div>
+
+<script>
+// Мультиязычный пакет
+const T = {
+    ru: {
+        title: "📟 Калькулятор фотомодулей",
+        l1: "Максимально допустимое напряжение DC на входе инвертора",
+        l2: "Напряжение холостого хода модуля (STC)",
+        l3: "Минимальная температура на объекте (°C)",
+        l4: "Температурный коэффициент Voc (%)",
+        ph1: "Например: 1100",
+        ph2: "Например: 41.5",
+        ph3: "Например: -25",
+        ph4: "Например: -0.29",
+        calc: "Рассчитать",
+        empty: "⚠️ Заполните все поля",
+        result: "🔋 Максимальное количество модулей: ",
+        copyBtn: "📋 Скопировать результат",
+        copied: "✅ Скопировано!",
+        calculatedVoc: "📊 Расчетный Voc",
+        explanation: "Напряжение при минимальной температуре"
+    },
+    ua: {
+        title: "📟 Калькулятор фотомодулів",
+        l1: "Максимальна напруга DC інвертора",
+        l2: "Voc модуля (STC)",
+        l3: "Мінімальна температура на об'єкті (°C)",
+        l4: "Температурний коефіцієнт Voc (%)",
+        ph1: "Наприклад: 1100",
+        ph2: "Наприклад: 41.5",
+        ph3: "Наприклад: -25",
+        ph4: "Наприклад: -0.29",
+        calc: "Розрахувати",
+        empty: "⚠️ Заповніть всі поля",
+        result: "🔋 Максимальна кількість модулів: ",
+        copyBtn: "📋 Копіювати результат",
+        copied: "✅ Скопійовано!",
+        calculatedVoc: "📊 Розрахунковий Voc",
+        explanation: "Напруга при мінімальній температурі"
+    },
+    en: {
+        title: "📟 PV Module Calculator",
+        l1: "Max DC input voltage of inverter",
+        l2: "Module Voc (STC)",
+        l3: "Minimum ambient temperature (°C)",
+        l4: "Temperature coefficient Voc (%)",
+        ph1: "Example: 1100",
+        ph2: "Example: 41.5",
+        ph3: "Example: -25",
+        ph4: "Example: -0.29",
+        calc: "Calculate",
+        empty: "⚠️ Please fill all fields",
+        result: "🔋 Maximum number of modules: ",
+        copyBtn: "📋 Copy result",
+        copied: "✅ Copied!",
+        calculatedVoc: "📊 Calculated Voc",
+        explanation: "Voltage at minimum temperature"
+    },
+    pl: {
+        title: "📟 Kalkulator modułów PV",
+        l1: "Maksymalne napięcie wejściowe DC falownika",
+        l2: "Voc modułu (STC)",
+        l3: "Minimalna temperatura otoczenia (°C)",
+        l4: "Współczynnik temperaturowy Voc (%)",
+        ph1: "Przykład: 1100",
+        ph2: "Przykład: 41.5",
+        ph3: "Przykład: -25",
+        ph4: "Przykład: -0.29",
+        calc: "Oblicz",
+        empty: "⚠️ Uzupełnij wszystkie pola",
+        result: "🔋 Maksymalna liczba modułów: ",
+        copyBtn: "📋 Skopiuj wynik",
+        copied: "✅ Skopiowano!",
+        calculatedVoc: "📊 Obliczony Voc",
+        explanation: "Napięcie przy minimalnej temperaturze"
+    }
+};
+
+// Установка языка
+function applyLang(lang) {
+    localStorage.setItem("lang", lang);
+    const t = T[lang];
+
+    title.textContent = t.title;
+    l1.textContent = t.l1;
+    l2.textContent = t.l2;
+    l3.textContent = t.l3;
+    l4.textContent = t.l4;
+
+    E13.placeholder = t.ph1;
+    E14.placeholder = t.ph2;
+    E15.placeholder = t.ph3;
+    E16.placeholder = t.ph4;
+
+    calcBtn.textContent = t.calc;
+    copyBtn.textContent = t.copyBtn;
+
+    document.querySelectorAll(".lang-btn").forEach(btn =>
+        btn.classList.toggle("active", btn.dataset.lang === lang)
+    );
+}
+
+// Выбор вручную
+document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.onclick = () => applyLang(btn.dataset.lang);
+});
+
+// Автоопределение Telegram
+try {
+    const tgLang = Telegram?.WebApp?.initDataUnsafe?.user?.language_code?.slice(0,2);
+    if (tgLang && T[tgLang]) applyLang(tgLang);
+} catch {}
+
+// Если нет saved language — включим русский
+applyLang(localStorage.getItem("lang") || "ru");
+
+// Глобальные переменные для хранения данных
+let lastResult = "";
+let lastCalculationData = {};
+
+// Расчёт
+function calculate() {
+    let lang = localStorage.getItem("lang") || "ru";
+    let t = T[lang];
+
+    let E13v = +E13.value;
+    let E14v = +E14.value;
+    let E15v = +E15.value;
+    let E16v = +E16.value;
+
+    if (!E13v || !E14v || !E15v || !E16v) {
+        result.textContent = t.empty;
+        result.classList.add("show");
+        copyBtn.style.display = "none";
+        return;
+    }
+
+    let VocCorr = E14v * (1 + (E15v - 25) * (E16v / 100));
+    let count = Math.floor(E13v / VocCorr);
+
+    lastResult = t.result + count;
+    
+    // Сохраняем данные расчета
+    lastCalculationData = {
+        maxVoltage: E13v,
+        moduleVoc: E14v,
+        minTemp: E15v,
+        tempCoefficient: E16v,
+        calculatedVoc: VocCorr.toFixed(2),
+        maxModules: count,
+        lang: lang
+    };
+
+    result.textContent = lastResult;
+
+    // Анимация
+    result.classList.remove("show");
+    setTimeout(() => result.classList.add("show"), 20);
+
+    // Показать кнопку копирования
+    copyBtn.style.display = "block";
+    copyBtn.classList.remove("copied");
+    copyBtn.textContent = t.copyBtn;
+}
+
+// Функция копирования в буфер обмена
+function copyToClipboard() {
+    let lang = localStorage.getItem("lang") || "ru";
+    let t = T[lang];
+    
+    // Формируем текст для копирования
+    let textToCopy = ` ${t.title}\n\n`;
+    textToCopy += `✅ ${t.l1}: ${lastCalculationData.maxVoltage} V\n`;
+    textToCopy += `✅ ${t.l2}: ${lastCalculationData.moduleVoc} V\n`;
+    textToCopy += `✅ ${t.l3}: ${lastCalculationData.minTemp} °C\n`;
+    textToCopy += `✅ ${t.l4}: ${lastCalculationData.tempCoefficient}%\n`;
+    textToCopy += `${t.calculatedVoc}: ${lastCalculationData.calculatedVoc} V (${t.explanation})\n\n`;
+    textToCopy += `📊 ${lastResult}`;
+    
+    // Используем современный Clipboard API
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        // Успешное копирование
+        copyBtn.textContent = t.copied;
+        copyBtn.classList.add("copied");
+        
+        // Возвращаем оригинальный текст через 2 секунды
+        setTimeout(() => {
+            copyBtn.textContent = t.copyBtn;
+            copyBtn.classList.remove("copied");
+        }, 2000);
+    }).catch(err => {
+        // Fallback для старых браузеров
+        console.error('Не удалось скопировать: ', err);
+        // Пытаемся использовать старый метод
+        const textArea = document.createElement('textarea');
+        textArea.value = textToCopy;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+            document.execCommand('copy');
+            copyBtn.textContent = t.copied;
+            copyBtn.classList.add("copied");
+            
+            setTimeout(() => {
+                copyBtn.textContent = t.copyBtn;
+                copyBtn.classList.remove("copied");
+            }, 2000);
+        } catch (err) {
+            alert('Не удалось скопировать. Пожалуйста, скопируйте результат вручную.');
+        }
+        document.body.removeChild(textArea);
+    });
+}
+
+// Назначаем обработчик для кнопки копирования
+document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
+
+</script>
+
+</body>
+</html>
