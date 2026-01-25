@@ -1,158 +1,166 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0JQD4RVE06');
+    </script>
+      
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PV String Calculator</title>
 
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <style>
+        :root {
+            --bg: #f5f5f5;
+            --card-bg: #ffffff;
+            --text: #222;
+            --accent: #2a8cff;
+            --border: #ddd;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+            --radius: 14px;
+        }
 
-  gtag('config', 'G-0JQD4RVE06');
-</script>
-  
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PV String Calculator</title>
+        body {
+            font-family: system-ui, -apple-system, Arial, sans-serif;
+            background: var(--bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
 
-<style>
-    :root {
-        --bg: #f5f5f5;
-        --card-bg: #ffffff;
-        --text: #222;
-        --accent: #2a8cff;
-        --border: #ddd;
-        --shadow: 0 4px 20px rgba(0,0,0,0.1);
-        --radius: 14px;
-    }
+        .container {
+            max-width: 420px;
+            width: 100%;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
 
-    body {
-        font-family: system-ui, Arial;
-        background: var(--bg);
-        margin: 0;
-        padding: 20px;
-        display: flex;
-        justify-content: center;
-    }
+        .menu {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
 
-    .container {
-        max-width: 420px;
-        width: 100%;
-        background: var(--card-bg);
-        padding: 20px;
-        border-radius: var(--radius);
-        box-shadow: var(--shadow);
-        border: 1px solid var(--border);
-    }
+        .menu-btn {
+            flex: 1;
+            padding: 10px 5px;
+            font-size: 13px;
+            background: #f0f0f0;
+            color: var(--text);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
 
-    .top-bar {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        .menu-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
 
-    h2 {
-        margin: 0 0 10px 0;
-    }
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
 
-    .lang-switch {
-        display: flex;
-        gap: 6px;
-    }
+        h2 { margin: 0; font-size: 1.2rem; }
 
-    .lang-btn {
-        padding: 5px 8px;
-        font-size: 12px;
-        border-radius: 6px;
-        border: 1px solid var(--border);
-        cursor: pointer;
-        transition: 0.2s;
-    }
+        .lang-switch { display: flex; gap: 6px; }
 
-    .lang-btn.active {
-        background: var(--accent);
-        border-color: var(--accent);
-        color: white;
-    }
+        .lang-btn {
+            padding: 5px 8px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            cursor: pointer;
+            background: white;
+        }
 
-    label {
-        font-size: 14px;
-        margin-top: 14px;
-        display: block;
-    }
+        .lang-btn.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
 
-    input {
+        label { font-size: 14px; margin-top: 14px; display: block; color: #555; }
+
+        input {
             width: 100%;
             padding: 12px;
             margin-top: 6px;
             border-radius: 10px;
             border: 1px solid var(--border);
             font-size: 16px;
-            transition: 0.2s;
             box-sizing: border-box; 
-    }
+            transition: 0.2s;
+        }
 
-    button {
-        width: 100%;
-        margin-top: 20px;
-        padding: 14px;
-        background: var(--accent);
-        color: white;
-        border: none;
-        border-radius: 12px;
-        font-size: 16px;
-        cursor: pointer;
-    }
+        .calc-btn {
+            width: 100%;
+            margin-top: 20px;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-    .result {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 12px;
-    border: 1px solid var(--border);
-    font-weight: bold;
-    font-size: 16px;
-    text-align: center;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.4s ease;
-}
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid var(--border);
+            font-weight: bold;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: all 0.4s ease;
+            background: #fafafa;
+            word-wrap: break-word;
+        }
 
-.result.show {
-    opacity: 1;
-    transform: translateY(0);
-}
+        .result.show { opacity: 1; transform: translateY(0); }
 
-.copy-btn {
-    width: 100%;
-    margin-top: 12px;
-    padding: 12px;
-    border-radius: 12px;
-    background: #28a745;
-    color: white;
-    border: none;
-    font-size: 15px;
-    cursor: pointer;
-    display: none;
-    transition: background 0.3s;
-}
-
-.copy-btn:hover {
-    background: #218838;
-}
-
-.copy-btn.copied {
-    background: #6c757d;
-}
-
-</style>
+        .copy-btn {
+            width: 100%;
+            margin-top: 12px;
+            padding: 12px;
+            border-radius: 12px;
+            background: #28a745;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: none;
+            font-weight: 500;
+        }
+        
+        .copy-btn.copied { background: #6c757d; }
+    </style>
 </head>
 <body>
 
 <div class="container">
+    <nav class="menu">
+        <button id="m1" class="menu-btn active" onclick="location.href='index.html'"></button>
+        <button id="m2" class="menu-btn" onclick="location.href='string-range.html'"></button>
+    </nav>
 
     <div class="top-bar">
-        <h2 id="title">📟 Калькулятор фотомодулей</h2>
+        <h2 id="title"></h2>
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
@@ -162,241 +170,172 @@
     </div>
 
     <label id="l1"></label>
-    <input type="number" id="E13">
+    <input type="number" id="E13" inputmode="decimal">
 
     <label id="l2"></label>
-    <input type="number" id="E14">
+    <input type="number" id="E14" inputmode="decimal">
 
     <label id="l3"></label>
-    <input type="number" id="E15">
+    <input type="number" id="E15" inputmode="decimal">
 
     <label id="l4"></label>
-    <input type="number" id="E16">
+    <input type="number" id="E16" inputmode="decimal">
 
-    <button onclick="calculate()" id="calcBtn"></button>
+    <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
     <div class="result" id="result"></div>
-    <button id="copyBtn" class="copy-btn">📋 Скопировать результат</button>
-
+    <button id="copyBtn" class="copy-btn"></button>
 </div>
 
 <script>
-// Мультиязычный пакет
 const T = {
     ru: {
+        m1: "🔌 Макс. стринг",
+        m2: "📐 Мин/Макс модули",
         title: "📟 Калькулятор фотомодулей",
         l1: "Максимально допустимое напряжение DC на входе инвертора",
-        l2: "Напряжение холостого хода модуля (STC)",
+        l2: "Напряжение холостого хода модуля (Voc)",
         l3: "Минимальная температура на объекте (°C)",
         l4: "Температурный коэффициент Voc (%)",
-        ph1: "Например: 1100",
-        ph2: "Например: 41.5",
-        ph3: "Например: -25",
-        ph4: "Например: -0.29",
-        calc: "Рассчитать",
-        empty: "⚠️ Заполните все поля",
-        result: "🔋 Максимальное количество модулей: ",
-        copyBtn: "📋 Скопировать результат",
-        copied: "✅ Скопировано!",
-        calculatedVoc: "📊 Расчетный Voc",
-        explanation: "Напряжение при минимальной температуре"
+        ph1: "Например: 1100", ph2: "Например: 41.5", ph3: "Например: -25", ph4: "Например: -0.29",
+        calc: "Рассчитать", empty: "⚠️ Заполните все поля",
+        result: "🔋 Максимальное количество модулей: ", copyBtn: "📋 Скопировать результат",
+        copied: "✅ Скопировано!", calculatedVoc: "📊 Расчетный Voc", explanation: "Напряжение при минимальной температуре"
     },
     ua: {
+        m1: "🔌 Макс. ланцюг",
+        m2: "📐 Мін/Макс модулі",
         title: "📟 Калькулятор фотомодулів",
         l1: "Максимальна напруга DC інвертора",
         l2: "Voc модуля (STC)",
         l3: "Мінімальна температура на об'єкті (°C)",
         l4: "Температурний коефіцієнт Voc (%)",
-        ph1: "Наприклад: 1100",
-        ph2: "Наприклад: 41.5",
-        ph3: "Наприклад: -25",
-        ph4: "Наприклад: -0.29",
-        calc: "Розрахувати",
-        empty: "⚠️ Заповніть всі поля",
-        result: "🔋 Максимальна кількість модулів: ",
-        copyBtn: "📋 Копіювати результат",
-        copied: "✅ Скопійовано!",
-        calculatedVoc: "📊 Розрахунковий Voc",
-        explanation: "Напруга при мінімальній температурі"
+        ph1: "Наприклад: 1100", ph2: "Наприклад: 41.5", ph3: "Наприклад: -25", ph4: "Наприклад: -0.29",
+        calc: "Розрахувати", empty: "⚠️ Заповніть всі поля",
+        result: "🔋 Максимальна кількість модулів: ", copyBtn: "📋 Копіювати результат",
+        copied: "✅ Скопійовано!", calculatedVoc: "📊 Розрахунковий Voc", explanation: "Напруга при мінімальній температурі"
     },
     en: {
+        m1: "🔌 Max String",
+        m2: "📐 Min/Max Modules",
         title: "📟 PV Module Calculator",
         l1: "Max DC input voltage of inverter",
         l2: "Module Voc (STC)",
         l3: "Minimum ambient temperature (°C)",
         l4: "Temperature coefficient Voc (%)",
-        ph1: "Example: 1100",
-        ph2: "Example: 41.5",
-        ph3: "Example: -25",
-        ph4: "Example: -0.29",
-        calc: "Calculate",
-        empty: "⚠️ Please fill all fields",
-        result: "🔋 Maximum number of modules: ",
-        copyBtn: "📋 Copy result",
-        copied: "✅ Copied!",
-        calculatedVoc: "📊 Calculated Voc",
-        explanation: "Voltage at minimum temperature"
+        ph1: "Example: 1100", ph2: "Example: 41.5", ph3: "Example: -25", ph4: "Example: -0.29",
+        calc: "Calculate", empty: "⚠️ Please fill all fields",
+        result: "🔋 Maximum number of modules: ", copyBtn: "📋 Copy result",
+        copied: "✅ Copied!", calculatedVoc: "📊 Calculated Voc", explanation: "Voltage at minimum temperature"
     },
     pl: {
+        m1: "🔌 Max string",
+        m2: "📐 Min/Max moduły",
         title: "📟 Kalkulator modułów PV",
         l1: "Maksymalne napięcie wejściowe DC falownika",
         l2: "Voc modułu (STC)",
         l3: "Minimalna temperatura otoczenia (°C)",
         l4: "Współczynnik temperaturowy Voc (%)",
-        ph1: "Przykład: 1100",
-        ph2: "Przykład: 41.5",
-        ph3: "Przykład: -25",
-        ph4: "Przykład: -0.29",
-        calc: "Oblicz",
-        empty: "⚠️ Uzupełnij wszystkie pola",
-        result: "🔋 Maksymalna liczba modułów: ",
-        copyBtn: "📋 Skopiuj wynik",
-        copied: "✅ Skopiowano!",
-        calculatedVoc: "📊 Obliczony Voc",
-        explanation: "Napięcie przy minimalnej temperaturze"
+        ph1: "Przykład: 1100", ph2: "Przykład: 41.5", ph3: "Przykład: -25", ph4: "Przykład: -0.29",
+        calc: "Oblicz", empty: "⚠️ Uzupełnij wszystkie pola",
+        result: "🔋 Maksymalna liczba modułów: ", copyBtn: "📋 Skopiuj wynik",
+        copied: "✅ Skopiowano!", calculatedVoc: "📊 Obliczony Voc", explanation: "Napięcie przy minimalnej temperaturze"
     }
 };
 
-// Установка языка
+let lastCalc = null;
+
 function applyLang(lang) {
     localStorage.setItem("lang", lang);
     const t = T[lang];
-
-    title.textContent = t.title;
-    l1.textContent = t.l1;
-    l2.textContent = t.l2;
-    l3.textContent = t.l3;
-    l4.textContent = t.l4;
-
-    E13.placeholder = t.ph1;
-    E14.placeholder = t.ph2;
-    E15.placeholder = t.ph3;
-    E16.placeholder = t.ph4;
-
-    calcBtn.textContent = t.calc;
-    copyBtn.textContent = t.copyBtn;
+    
+    // Обновление навигации
+    document.getElementById('m1').textContent = t.m1;
+    document.getElementById('m2').textContent = t.m2;
+    
+    // Обновление контента
+    document.getElementById('title').textContent = t.title;
+    document.getElementById('l1').textContent = t.l1;
+    document.getElementById('l2').textContent = t.l2;
+    document.getElementById('l3').textContent = t.l3;
+    document.getElementById('l4').textContent = t.l4;
+    document.getElementById('E13').placeholder = t.ph1;
+    document.getElementById('E14').placeholder = t.ph2;
+    document.getElementById('E15').placeholder = t.ph3;
+    document.getElementById('E16').placeholder = t.ph4;
+    document.getElementById('calcBtn').textContent = t.calc;
+    document.getElementById('copyBtn').textContent = t.copyBtn;
 
     document.querySelectorAll(".lang-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.lang === lang)
     );
 }
 
-// Выбор вручную
 document.querySelectorAll(".lang-btn").forEach(btn => {
     btn.onclick = () => applyLang(btn.dataset.lang);
 });
 
-// Автоопределение Telegram
-try {
-    const tgLang = Telegram?.WebApp?.initDataUnsafe?.user?.language_code?.slice(0,2);
-    if (tgLang && T[tgLang]) applyLang(tgLang);
-} catch {}
-
-// Если нет saved language — включим русский
 applyLang(localStorage.getItem("lang") || "ru");
 
-// Глобальные переменные для хранения данных
-let lastResult = "";
-let lastCalculationData = {};
-
-// Расчёт
 function calculate() {
-    let lang = localStorage.getItem("lang") || "ru";
-    let t = T[lang];
+    const lang = localStorage.getItem("lang") || "ru";
+    const t = T[lang];
+    const v_inv = +document.getElementById('E13').value;
+    const v_voc = +document.getElementById('E14').value;
+    const t_min = +document.getElementById('E15').value;
+    const t_coeff = +document.getElementById('E16').value;
+    const resDiv = document.getElementById('result');
+    const copyBtn = document.getElementById('copyBtn');
 
-    let E13v = +E13.value;
-    let E14v = +E14.value;
-    let E15v = +E15.value;
-    let E16v = +E16.value;
-
-    if (!E13v || !E14v || !E15v || !E16v) {
-        result.textContent = t.empty;
-        result.classList.add("show");
+    if (!v_inv || !v_voc || !t_coeff) {
+        resDiv.textContent = t.empty;
+        resDiv.classList.add("show");
         copyBtn.style.display = "none";
         return;
     }
 
-    let VocCorr = E14v * (1 + (E15v - 25) * (E16v / 100));
-    let count = Math.floor(E13v / VocCorr);
+    const vocCorr = v_voc * (1 + (t_min - 25) * (t_coeff / 100));
+    const count = Math.floor(v_inv / vocCorr);
 
-    lastResult = t.result + count;
-    
-    // Сохраняем данные расчета
-    lastCalculationData = {
-        maxVoltage: E13v,
-        moduleVoc: E14v,
-        minTemp: E15v,
-        tempCoefficient: E16v,
-        calculatedVoc: VocCorr.toFixed(2),
-        maxModules: count,
-        lang: lang
+    lastCalc = {
+        title: t.title,
+        l1: t.l1, v1: v_inv,
+        l2: t.l2, v2: v_voc,
+        l3: t.l3, v3: t_min,
+        l4: t.l4, v4: t_coeff,
+        calcVocLabel: t.calculatedVoc, calcVocVal: vocCorr.toFixed(2),
+        expl: t.explanation,
+        resLabel: t.result, resVal: count
     };
 
-    result.textContent = lastResult;
-
-    // Анимация
-    result.classList.remove("show");
-    setTimeout(() => result.classList.add("show"), 20);
-
-    // Показать кнопку копирования
+    resDiv.innerHTML = `${t.result} ${count}<br><small style="font-weight:normal; opacity:0.7">${t.calculatedVoc}: ${vocCorr.toFixed(2)} V</small>`;
+    resDiv.classList.remove("show");
+    setTimeout(() => resDiv.classList.add("show"), 20);
     copyBtn.style.display = "block";
-    copyBtn.classList.remove("copied");
-    copyBtn.textContent = t.copyBtn;
 }
 
-// Функция копирования в буфер обмена
-function copyToClipboard() {
-    let lang = localStorage.getItem("lang") || "ru";
-    let t = T[lang];
+document.getElementById('copyBtn').onclick = function() {
+    if(!lastCalc) return;
+    const t = T[localStorage.getItem("lang") || "ru"];
     
-    // Формируем текст для копирования
-    let textToCopy = ` ${t.title}\n\n`;
-    textToCopy += `✅ ${t.l1}: ${lastCalculationData.maxVoltage} V\n`;
-    textToCopy += `✅ ${t.l2}: ${lastCalculationData.moduleVoc} V\n`;
-    textToCopy += `✅ ${t.l3}: ${lastCalculationData.minTemp} °C\n`;
-    textToCopy += `✅ ${t.l4}: ${lastCalculationData.tempCoefficient}%\n`;
-    textToCopy += `${t.calculatedVoc}: ${lastCalculationData.calculatedVoc} V (${t.explanation})\n\n`;
-    textToCopy += `📊 ${lastResult}`;
+    let text = `${lastCalc.title}\n\n`;
+    text += `✅ ${lastCalc.l1}: ${lastCalc.v1} V\n`;
+    text += `✅ ${lastCalc.l2}: ${lastCalc.v2} V\n`;
+    text += `✅ ${lastCalc.l3}: ${lastCalc.v3} °C\n`;
+    text += `✅ ${lastCalc.l4}: ${lastCalc.v4}%\n`;
+    text += `${lastCalc.calcVocLabel}: ${lastCalc.calcVocVal} V (${lastCalc.expl})\n\n`;
+    text += `📊 ${lastCalc.resLabel} ${lastCalc.resVal}`;
     
-    // Используем современный Clipboard API
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        // Успешное копирование
-        copyBtn.textContent = t.copied;
-        copyBtn.classList.add("copied");
-        
-        // Возвращаем оригинальный текст через 2 секунды
+    navigator.clipboard.writeText(text).then(() => {
+        const originalText = t.copyBtn;
+        this.textContent = t.copied;
+        this.classList.add("copied");
         setTimeout(() => {
-            copyBtn.textContent = t.copyBtn;
-            copyBtn.classList.remove("copied");
+            this.textContent = originalText;
+            this.classList.remove("copied");
         }, 2000);
-    }).catch(err => {
-        // Fallback для старых браузеров
-        console.error('Не удалось скопировать: ', err);
-        // Пытаемся использовать старый метод
-        const textArea = document.createElement('textarea');
-        textArea.value = textToCopy;
-        document.body.appendChild(textArea);
-        textArea.select();
-        try {
-            document.execCommand('copy');
-            copyBtn.textContent = t.copied;
-            copyBtn.classList.add("copied");
-            
-            setTimeout(() => {
-                copyBtn.textContent = t.copyBtn;
-                copyBtn.classList.remove("copied");
-            }, 2000);
-        } catch (err) {
-            alert('Не удалось скопировать. Пожалуйста, скопируйте результат вручную.');
-        }
-        document.body.removeChild(textArea);
     });
-}
-
-// Назначаем обработчик для кнопки копирования
-document.getElementById('copyBtn').addEventListener('click', copyToClipboard);
-
+};
 </script>
-
 </body>
 </html>
