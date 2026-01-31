@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="icon" type="image/jpg" href="favicon.jpg">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,181 +11,126 @@
       
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PV String Calculator</title>
+    <title>Solar Toolbox - String Calculator</title>
 
     <style>
-        :root {
-            --bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text: #222;
-            --accent: #2a8cff;
-            --border: #ddd;
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
-            --radius: 14px;
+        :root { 
+            --bg: #f8f9fa; 
+            --card-bg: #ffffff; 
+            --accent: #2a8cff; 
+            --border: #eef0f2; 
+            --radius: 16px; 
+            --text-main: #1a1a1b;
+            --text-muted: #70757a;
         }
 
-        body {
-            font-family: system-ui, -apple-system, Arial, sans-serif;
-            background: var(--bg);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 15px; 
+            display: flex; justify-content: center; min-height: 100vh;
         }
 
-        .container {
-            max-width: 420px;
-            width: 100%;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+        .container { 
+            width: 100%; max-width: 480px; 
+            background: var(--card-bg); padding: 24px; 
+            border-radius: var(--radius); border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            height: fit-content;
         }
 
-        /* Верхняя панель управления */
-        .header-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 10px;
+        /* Кнопка назад и Языки */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .back-btn { 
+            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
+            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: 0.2s;
         }
+        .back-btn:active { transform: scale(0.95); }
 
-        .home-btn {
-            background: #eee;
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 18px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .home-btn:active { background: #e0e0e0; transform: scale(0.95); }
-
-        .tool-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            flex-grow: 1;
-            line-height: 1.2;
-        }
-
-        .lang-switch { display: flex; gap: 4px; }
-
+        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
-            padding: 6px 5px;
-            font-size: 10px;
-            font-weight: bold;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            background: white;
-            min-width: 30px;
-            text-align: center;
+            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
         }
+        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        .lang-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
+        h2 { font-size: 22px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; }
 
-        /* Форма */
-        label { font-size: 13px; margin-top: 14px; display: block; color: #555; font-weight: 500; }
+        .input-group { margin-bottom: 16px; }
+        label { font-size: 13px; font-weight: 600; display: block; color: var(--text-muted); margin-bottom: 6px; }
 
         input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            font-size: 16px;
-            box-sizing: border-box; 
-            transition: 0.2s;
+            width: 100%; padding: 14px; border-radius: 12px;
+            border: 1px solid var(--border); font-size: 16px; background: #fafafa;
+            transition: 0.2s; outline: none;
         }
-        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1); }
+        input:focus { border-color: var(--accent); background: #fff; }
 
         .calc-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+            width: 100%; margin-top: 10px; padding: 16px; 
+            background: var(--accent); color: white; border: none;
+            border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s;
         }
         .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
 
         .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-weight: bold;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s ease;
-            background: #fafafa;
-            word-wrap: break-word;
-            display: none;
+            margin-top: 20px; padding: 18px; border-radius: 14px;
+            background: #f0f7ff; border: 1px solid #cce3ff;
+            text-align: center; display: none;
+            animation: slideUp 0.3s ease;
         }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .result.show { opacity: 1; transform: translateY(0); display: block; }
+        .res-main { display: block; font-size: 18px; color: var(--accent); font-weight: 800; margin-bottom: 4px; }
+        .res-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
 
         .copy-btn {
-            width: 100%;
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            background: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: none;
-            font-weight: 600;
+            width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px;
+            background: #28a745; color: white; border: none;
+            font-weight: 600; cursor: pointer; display: none; transition: 0.2s;
         }
-        
         .copy-btn.copied { background: #6c757d; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="header-nav">
-        <a href="index.html" class="home-btn">🏠</a>
-        <div class="tool-title" id="title">PV Calculator</div>
+    <div class="top-nav">
+        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="en">EN</div>
             <div class="lang-btn" data-lang="pl">PL</div>
+            <div class="lang-btn" data-lang="en">EN</div>
         </div>
     </div>
 
-    <label id="l1"></label>
-    <input type="number" id="E13" step="any">
+    <h2 id="title">Калькулятор фотомодулей</h2>
 
-    <label id="l2"></label>
-    <input type="number" id="E14" step="any">
+    <div class="input-group">
+        <label id="l1"></label>
+        <input type="number" id="E13" step="any" placeholder="1000">
+    </div>
 
-    <label id="l3"></label>
-    <input type="number" id="E15" step="any">
+    <div class="input-group">
+        <label id="l2"></label>
+        <input type="number" id="E14" step="any" placeholder="41.5">
+    </div>
 
-    <label id="l4"></label>
-    <input type="number" id="E16" step="any">
+    <div class="input-group">
+        <label id="l3"></label>
+        <input type="number" id="E15" step="any" placeholder="-20">
+    </div>
 
-    <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
+    <div class="input-group">
+        <label id="l4"></label>
+        <input type="number" id="E16" step="any" placeholder="-0.29">
+    </div>
+
+    <button onclick="calculate()" id="calcBtn" class="calc-btn">Рассчитать</button>
 
     <div class="result" id="result"></div>
     <button id="copyBtn" class="copy-btn"></button>
@@ -195,48 +139,44 @@
 <script>
 const T = {
     ru: {
-        title: "МАКСИМАЛЬНЫЙ СТРИНГ",
-        l1: "Макс. DC напряжение инвертора (V)",
-        l2: "Voc модуля (STC) (V)",
-        l3: "Мин. температура объекта (°C)",
-        l4: "Темп. коэффициент Voc (%)",
-        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
+        back: "← Меню", title: "Длина стринга",
+        l1: "Макс. напряжение DC инвертора (В)",
+        l2: "Напряжение Voc модуля (В)",
+        l3: "Мин. температура воздуха (°C)",
+        l4: "Темп. коэффициент Voc (%/°C)",
         calc: "Рассчитать", empty: "⚠️ Заполните все поля",
-        result: "🔋 Макс. модулей в стринге: ", copyBtn: "📋 Скопировать отчет",
-        copied: "✅ Скопировано!", calculatedVoc: "📊 Расчетный Voc", explanation: "при мин. температуре"
+        result: "Макс. модулей в стринге:", copyBtn: "📋 Скопировать отчет",
+        copied: "✅ Отчет скопирован!", calculatedVoc: "Расчетный Voc при мин. темп.", explanation: "вольт"
     },
     ua: {
-        title: "МАКСИМАЛЬНИЙ ЛАНЦЮГ",
-        l1: "Макс. DC напруга інвертора (V)",
-        l2: "Voc модуля (STC) (V)",
-        l3: "Мін. температура об'єкта (°C)",
-        l4: "Темп. коефіцієнт Voc (%)",
-        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
+        back: "← Меню", title: "Довжина стринга",
+        l1: "Макс. напруга DC інвертора (В)",
+        l2: "Напруга Voc модуля (В)",
+        l3: "Мін. температура повітря (°C)",
+        l4: "Темп. коефіцієнт Voc (%/°C)",
         calc: "Розрахувати", empty: "⚠️ Заповніть всі поля",
-        result: "🔋 Макс. модулів у ланцюзі: ", copyBtn: "📋 Копіювати звіт",
-        copied: "✅ Скопійовано!", calculatedVoc: "📊 Розрахунковий Voc", explanation: "при мін. температурі"
-    },
-    en: {
-        title: "MAX STRING LENGTH",
-        l1: "Max DC input voltage (V)",
-        l2: "Module Voc (STC) (V)",
-        l3: "Min ambient temperature (°C)",
-        l4: "Temp. coefficient Voc (%)",
-        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
-        calc: "Calculate", empty: "⚠️ Fill all fields",
-        result: "🔋 Max modules in string: ", copyBtn: "📋 Copy report",
-        copied: "✅ Copied!", calculatedVoc: "📊 Calculated Voc", explanation: "at min. temperature"
+        result: "Макс. модулів у ланцюгу:", copyBtn: "📋 Скопіювати звіт",
+        copied: "✅ Звіт скопійовано!", calculatedVoc: "Розрахунковий Voc при мін. темп.", explanation: "вольт"
     },
     pl: {
-        title: "MAX DŁUGOŚĆ STRINGU",
+        back: "← Menu", title: "Długość stringu",
         l1: "Max napięcie DC falownika (V)",
-        l2: "Voc modułu (STC) (V)",
+        l2: "Napięcie Voc modułu (V)",
         l3: "Min. temperatura otoczenia (°C)",
-        l4: "Współczynnik temp. Voc (%)",
-        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
-        calc: "Oblicz", empty: "⚠️ Uzupełnij pola",
-        result: "🔋 Max modułów w stringu: ", copyBtn: "📋 Skopiuj raport",
-        copied: "✅ Skopiowano!", calculatedVoc: "📊 Obliczony Voc", explanation: "przy min. temp."
+        l4: "Współczynnik temp. Voc (%/°C)",
+        calc: "Oblicz", empty: "⚠️ Wypełnij wszystkie pola",
+        result: "Maks. liczba modułów:", copyBtn: "📋 Skopiuj raport",
+        copied: "✅ Skopiowano!", calculatedVoc: "Obliczone Voc w min. temp.", explanation: "V"
+    },
+    en: {
+        back: "← Menu", title: "String Length",
+        l1: "Max DC Inverter Voltage (V)",
+        l2: "Module Voc (V)",
+        l3: "Min. Ambient Temperature (°C)",
+        l4: "Temp. Coefficient Voc (%/°C)",
+        calc: "Calculate", empty: "⚠️ Fill all fields",
+        result: "Max modules per string:", copyBtn: "📋 Copy Report",
+        copied: "✅ Copied!", calculatedVoc: "Calculated Voc at min temp", explanation: "V"
     }
 };
 
@@ -246,15 +186,13 @@ function applyLang(lang) {
     if (!T[lang]) lang = 'ru';
     localStorage.setItem("lang", lang);
     const t = T[lang];
+    
+    document.getElementById('backTxt').textContent = t.back;
     document.getElementById('title').textContent = t.title;
     document.getElementById('l1').textContent = t.l1;
     document.getElementById('l2').textContent = t.l2;
     document.getElementById('l3').textContent = t.l3;
     document.getElementById('l4').textContent = t.l4;
-    document.getElementById('E13').placeholder = t.ph1;
-    document.getElementById('E14').placeholder = t.ph2;
-    document.getElementById('E15').placeholder = t.ph3;
-    document.getElementById('E16').placeholder = t.ph4;
     document.getElementById('calcBtn').textContent = t.calc;
     document.getElementById('copyBtn').textContent = t.copyBtn;
 
@@ -269,62 +207,50 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
 
 applyLang(localStorage.getItem("lang") || "ru");
 
-function getNum(id) {
-    const val = document.getElementById(id).value.replace(',', '.').trim();
-    return val === "" ? NaN : parseFloat(val);
-}
-
 function calculate() {
     const lang = localStorage.getItem("lang") || "ru";
     const t = T[lang];
     
-    const v_inv = getNum('E13');
-    const v_voc = getNum('E14');
-    const t_min = getNum('E15');
-    const t_coeff = getNum('E16');
+    const v_inv = parseFloat(document.getElementById('E13').value);
+    const v_voc = parseFloat(document.getElementById('E14').value);
+    const t_min = parseFloat(document.getElementById('E15').value);
+    const t_coeff = parseFloat(document.getElementById('E16').value);
     
     const resDiv = document.getElementById('result');
     const copyBtn = document.getElementById('copyBtn');
 
     if (isNaN(v_inv) || isNaN(v_voc) || isNaN(t_min) || isNaN(t_coeff)) {
-        resDiv.textContent = t.empty;
+        resDiv.innerHTML = `<span style="color:red">${t.empty}</span>`;
         resDiv.style.display = "block";
-        resDiv.classList.add("show");
-        copyBtn.style.display = "none";
         return;
     }
 
+    // Формула: Voc_corr = Voc * (1 + (Tmin - 25) * (coeff / 100))
     const vocCorr = v_voc * (1 + (t_min - 25) * (t_coeff / 100));
     const count = Math.floor(v_inv / vocCorr);
 
-    lastCalc = {
-        title: t.title,
-        l1: t.l1, v1: v_inv,
-        l2: t.l2, v2: v_voc,
-        l3: t.l3, v3: t_min,
-        l4: t.l4, v4: t_coeff,
-        calcVocLabel: t.calculatedVoc, calcVocVal: vocCorr.toFixed(2),
-        expl: t.explanation,
-        resLabel: t.result, resVal: count
-    };
+    lastCalc = { count, vocCorr, v_inv, v_voc, t_min, t_coeff, t };
 
-    resDiv.innerHTML = `${t.result} ${count}<br><small style="font-weight:normal; opacity:0.7">${t.calculatedVoc}: ${vocCorr.toFixed(2)} V</small>`;
+    resDiv.innerHTML = `
+        <span class="res-main">${t.result} ${count}</span>
+        <span class="res-sub">${t.calculatedVoc}: <b>${vocCorr.toFixed(2)} ${t.explanation}</b></span>
+    `;
     resDiv.style.display = "block";
-    resDiv.classList.remove("show");
-    setTimeout(() => resDiv.classList.add("show"), 20);
     copyBtn.style.display = "block";
 }
 
 document.getElementById('copyBtn').onclick = function() {
     if(!lastCalc) return;
-    const t = T[localStorage.getItem("lang") || "ru"];
-    let text = `⚡ ${lastCalc.title}\n\n`;
-    text += `🔹 ${lastCalc.l1}: ${lastCalc.v1} V\n`;
-    text += `🔹 ${lastCalc.l2}: ${lastCalc.v2} V\n`;
-    text += `🔹 ${lastCalc.l3}: ${lastCalc.v3} °C\n`;
-    text += `🔹 ${lastCalc.l4}: ${lastCalc.v4}%\n`;
-    text += `📊 ${lastCalc.calcVocLabel}: ${lastCalc.calcVocVal} V (${lastCalc.expl})\n\n`;
-    text += `✅ ${lastCalc.resLabel} ${lastCalc.resVal}`;
+    const { count, vocCorr, v_inv, v_voc, t_min, t_coeff, t } = lastCalc;
+    
+    let text = `--- ${t.title} ---\n`;
+    text += `${t.l1}: ${v_inv} V\n`;
+    text += `${t.l2}: ${v_voc} V\n`;
+    text += `${t.l3}: ${t_min} °C\n`;
+    text += `${t.l4}: ${t_coeff} %/°C\n`;
+    text += `--------------------------\n`;
+    text += `${t.calculatedVoc}: ${vocCorr.toFixed(2)} V\n`;
+    text += `${t.result} ${count}`;
     
     navigator.clipboard.writeText(text).then(() => {
         const originalText = t.copyBtn;
