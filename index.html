@@ -1,347 +1,318 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="icon" type="image/jpg" href="favicon.jpg">
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0JQD4RVE06');
-    </script>
-      
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PV String Calculator</title>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solar Toolbox</title>
     <style>
-        :root {
-            --bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text: #222;
-            --accent: #2a8cff;
-            --border: #ddd;
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
-            --radius: 14px;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, Arial, sans-serif;
-            background: var(--bg);
-            margin: 0;
-            padding: 20px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .container {
-            max-width: 420px;
-            width: 100%;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
-        }
-
-        .menu {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .menu-btn {
-            flex: 1;
-            padding: 10px 5px;
-            font-size: 13px;
-            background: #f0f0f0;
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .menu-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .top-bar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        h2 { margin: 0; font-size: 1.2rem; }
-
-        .lang-switch { display: flex; gap: 6px; }
-
-        .lang-btn {
-            padding: 5px 8px;
-            font-size: 12px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            background: white;
-        }
-
-        .lang-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        label { font-size: 14px; margin-top: 14px; display: block; color: #555; }
-
-        input {
-            width: 100%;
-            padding: 12px;
-            margin-top: 6px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            font-size: 16px;
-            box-sizing: border-box; 
-            transition: 0.2s;
-        }
-
-        .calc-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-weight: bold;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s ease;
-            background: #fafafa;
-            word-wrap: break-word;
-            display: none;
-        }
-
-        .result.show { opacity: 1; transform: translateY(0); display: block; }
-
-        .copy-btn {
-            width: 100%;
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            background: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: none;
-            font-weight: 500;
+        :root { 
+            --bg: #f5f5f5; 
+            --card-bg: #ffffff; 
+            --accent: #2a8cff; 
+            --border: #ddd; 
+            --radius: 14px; 
+            --text-main: #222;
+            --text-muted: #666;
         }
         
-        .copy-btn.copied { background: #6c757d; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 15px; 
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+
+        .container { 
+            width: 100%; 
+            max-width: 480px; 
+            background: var(--card-bg); 
+            padding: 20px; 
+            border-radius: var(--radius); 
+            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            height: fit-content;
+            display: none; /* Скрыты по умолчанию, управляются JS */
+        }
+
+        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: var(--text-main); }
+
+        /* --- ГЛАВНОЕ МЕНЮ --- */
+        .main-grid { display: flex; flex-direction: column; gap: 12px; }
+        
+        .tool-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tool-card:active { transform: scale(0.97); background: #f9f9f9; }
+        .active-tool { border-left: 5px solid var(--accent); }
+        .tool-icon { font-size: 30px; width: 45px; text-align: center; }
+        .tool-info { display: flex; flex-direction: column; }
+        .tool-title { font-weight: 700; color: var(--text-main); font-size: 16px; }
+        .tool-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; }
+
+        /* --- ОБЩИЕ ЭЛЕМЕНТЫ --- */
+        .back-btn {
+            background: #eee;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 15px;
+            color: #444;
+            display: inline-block;
+        }
+
+        /* --- РАСПИНОВКИ (АККОРДЕОН) --- */
+        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
+        .acc-header { 
+            padding: 14px 16px; cursor: pointer; background: #fafafa; 
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
+            transition: 0.2s; user-select: none;
+        }
+        .acc-item.open { border-color: var(--accent); }
+        .acc-item.open .acc-header { background: #fff; color: var(--accent); }
+        .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
+        .acc-item.open .acc-content { display: block; }
+        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; }
+        
+        .copy-btn { 
+            width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
+            background: #28a745; color: white; border: none; cursor: pointer; 
+            font-weight: 600; font-size: 14px;
+        }
+
+        /* --- МОДАЛКА И УВЕДОМЛЕНИЯ --- */
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
+            font-size: 14px; transition: transform 0.4s; z-index: 9999;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+        .modal {
+            display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); justify-content: center; align-items: center;
+        }
+        #modalImg { max-width: 100%; max-height: 100%; cursor: zoom-out; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <nav class="menu">
-        <a id="m1" class="menu-btn active" href="index.html"></a>
-        <a id="m2" class="menu-btn" href="string-range.html"></a>
-    </nav>
-
-    <div class="top-bar">
-        <h2 id="title"></h2>
-        <div class="lang-switch">
-            <div class="lang-btn" data-lang="ru">RU</div>
-            <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="en">EN</div>
-            <div class="lang-btn" data-lang="pl">PL</div>
-        </div>
-    </div>
-
-    <label id="l1"></label>
-    <input type="text" id="E13" inputmode="text">
-
-    <label id="l2"></label>
-    <input type="text" id="E14" inputmode="text">
-
-    <label id="l3"></label>
-    <input type="text" id="E15" inputmode="text">
-
-    <label id="l4"></label>
-    <input type="text" id="E16" inputmode="text">
-
-    <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
-
-    <div class="result" id="result"></div>
-    <button id="copyBtn" class="copy-btn"></button>
+<div id="zoomModal" class="modal" onclick="closeModal()">
+    <div style="position:absolute; top:20px; right:20px; color:white; font-size:30px;">×</div>
+    <img id="modalImg" src="">
 </div>
 
+<div id="screen-main" class="container" style="display: block;">
+    <h2 style="margin-bottom: 25px;">Solar Toolbox</h2>
+    <div class="main-grid">
+        <div class="tool-card" onclick="showScreen('screen-string')">
+            <div class="tool-icon">📏</div>
+            <div class="tool-info">
+                <span class="tool-title">Длина стринга</span>
+                <span class="tool-desc">Максимальное Voc и вольтаж</span>
+            </div>
+        </div>
+        
+        <div class="tool-card" onclick="showScreen('screen-modules')">
+            <div class="tool-icon">☀️</div>
+            <div class="tool-info">
+                <span class="tool-title">Фотомодули</span>
+                <span class="tool-desc">Оптимальное количество для инвертора</span>
+            </div>
+        </div>
+        
+        <div class="tool-card active-tool" onclick="showScreen('screen-pinout')">
+            <div class="tool-icon">🔌</div>
+            <div class="tool-info">
+                <span class="tool-title">Распиновки</span>
+                <span class="tool-desc">BMS / CAN / RS485 Connectors</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="screen-pinout" class="container">
+    <button class="back-btn" onclick="showScreen('screen-main')">← В меню</button>
+    <h2>BMS Pinout Master</h2>
+    <div id="accordion"></div>
+</div>
+
+<div id="screen-string" class="container">
+    <button class="back-btn" onclick="showScreen('screen-main')">← Назад</button>
+    <h2>Расчет длины стринга</h2>
+    <p style="text-align:center; color:#888; margin: 40px 0;">Модуль находится в разработке...</p>
+</div>
+
+<div id="screen-modules" class="container">
+    <button class="back-btn" onclick="showScreen('screen-main')">← Назад</button>
+    <h2>Оптимальное количество</h2>
+    <p style="text-align:center; color:#888; margin: 40px 0;">Модуль находится в разработке...</p>
+</div>
+
+<div id="toast">✅ Схема скопирована</div>
+
 <script>
-const T = {
-    ru: {
-        m1: "🔌 Макс. стринг", m2: "📐 Мин/Макс модули",
-        title: "📟 Калькулятор фотомодулей",
-        l1: "Максимально допустимое напряжение DC на входе инвертора",
-        l2: "Напряжение холостого хода модуля (Voc)",
-        l3: "Минимальная температура на объекте (°C)",
-        l4: "Температурный коэффициент Voc (%)",
-        ph1: "Например: 1100", ph2: "Например: 41.5", ph3: "Например: -25", ph4: "Например: -0.29",
-        calc: "Рассчитать", empty: "⚠️ Заполните все поля",
-        result: "🔋 Максимальное количество модулей: ", copyBtn: "📋 Скопировать результат",
-        copied: "✅ Скопировано!", calculatedVoc: "📊 Расчетный Voc", explanation: "Напряжение при минимальной температуре"
-    },
-    ua: {
-        m1: "🔌 Макс. ланцюг", m2: "📐 Мін/Макс модулі",
-        title: "📟 Калькулятор фотомодулів",
-        l1: "Максимальна напруга DC інвертора",
-        l2: "Voc модуля (STC)",
-        l3: "Мінімальна температура на об'єкті (°C)",
-        l4: "Температурний коефіцієнт Voc (%)",
-        ph1: "Наприклад: 1100", ph2: "Наприклад: 41.5", ph3: "Наприклад: -25", ph4: "Наприклад: -0.29",
-        calc: "Розрахувати", empty: "⚠️ Заповніть всі поля",
-        result: "🔋 Максимальна кількість модулів: ", copyBtn: "📋 Копіювати результат",
-        copied: "✅ Скопійовано!", calculatedVoc: "📊 Розрахунковий Voc", explanation: "Напруга при мінімальній температурі"
-    },
-    en: {
-        m1: "🔌 Max String", m2: "📐 Min/Max Modules",
-        title: "📟 PV Module Calculator",
-        l1: "Max DC input voltage of inverter",
-        l2: "Module Voc (STC)",
-        l3: "Minimum ambient temperature (°C)",
-        l4: "Temperature coefficient Voc (%)",
-        ph1: "Example: 1100", ph2: "Example: 41.5", ph3: "Example: -25", ph4: "Example: -0.29",
-        calc: "Calculate", empty: "⚠️ Please fill all fields",
-        result: "🔋 Maximum number of modules: ", copyBtn: "📋 Copy result",
-        copied: "✅ Copied!", calculatedVoc: "📊 Calculated Voc", explanation: "Voltage at minimum temperature"
-    },
-    pl: {
-        m1: "🔌 Max string", m2: "📐 Min/Max moduły",
-        title: "📟 Kalkulator modułów PV",
-        l1: "Maksymalne napięcie wejściowe DC falownika",
-        l2: "Voc modułu (STC)",
-        l3: "Minimalna temperatura otoczenia (°C)",
-        l4: "Współczynnik temperaturowy Voc (%)",
-        ph1: "Przykład: 1100", ph2: "Przykład: 41.5", ph3: "Przykład: -25", ph4: "Przykład: -0.29",
-        calc: "Oblicz", empty: "⚠️ Uzupełnij wszystkie pola",
-        result: "🔋 Maksymalna liczba modułów: ", copyBtn: "📋 Skopiuj wynik",
-        copied: "✅ Skopiowano!", calculatedVoc: "📊 Obliczony Voc", explanation: "Napięcie przy minimalnej temperaturze"
-    }
-};
+// --- КОНФИГУРАЦИЯ ДАННЫХ ---
+const pinouts = [
+    { id: 1, title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
+    { id: 2, title: "LuxPower/Deye/Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+    { id: 3, title: "LuxPower/Deye/Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+    { id: 4, title: "LuxPower/Deye/Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
+    { id: 5, title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
+    { id: 11, title: "Sungrow ↔ Sungrow (RJ45)", m: "Sungrow Inv", s: "Sungrow Bat", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 12, title: "Sungrow ↔ Sungrow (COM Terminal)", m: "Sungrow (10-pin)", s: "Sungrow (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} },
+    { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
+    { id: 14, title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
+];
 
-let lastCalc = null;
+const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
+const stdStriped = [false, true, false, true, false, true, false, true, false];
+const isPC = !/iPhone|iPad|iPod|Android/.test(navigator.userAgent);
 
-function applyLang(lang) {
-    if (!T[lang]) lang = 'ru';
-    localStorage.setItem("lang", lang);
-    const t = T[lang];
-    document.getElementById('m1').textContent = t.m1;
-    document.getElementById('m2').textContent = t.m2;
-    document.getElementById('title').textContent = t.title;
-    document.getElementById('l1').textContent = t.l1;
-    document.getElementById('l2').textContent = t.l2;
-    document.getElementById('l3').textContent = t.l3;
-    document.getElementById('l4').textContent = t.l4;
-    document.getElementById('E13').placeholder = t.ph1;
-    document.getElementById('E14').placeholder = t.ph2;
-    document.getElementById('E15').placeholder = t.ph3;
-    document.getElementById('E16').placeholder = t.ph4;
-    document.getElementById('calcBtn').textContent = t.calc;
-    document.getElementById('copyBtn').textContent = t.copyBtn;
-
-    document.querySelectorAll(".lang-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.dataset.lang === lang)
-    );
+// --- НАВИГАЦИЯ ---
+function showScreen(screenId) {
+    document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
+    document.getElementById(screenId).style.display = 'block';
+    if(screenId === 'screen-pinout' && document.getElementById('accordion').innerHTML === "") initPinouts();
 }
 
-document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.onclick = () => applyLang(btn.dataset.lang);
-});
-
-applyLang(localStorage.getItem("lang") || "ru");
-
-function getNum(id) {
-    // Заменяем запятую на точку и убираем пробелы
-    const val = document.getElementById(id).value.replace(',', '.').trim();
-    return val === "" ? NaN : parseFloat(val);
-}
-
-function calculate() {
-    const lang = localStorage.getItem("lang") || "ru";
-    const t = T[lang];
-    
-    const v_inv = getNum('E13');
-    const v_voc = getNum('E14');
-    const t_min = getNum('E15');
-    const t_coeff = getNum('E16');
-    
-    const resDiv = document.getElementById('result');
-    const copyBtn = document.getElementById('copyBtn');
-
-    if (isNaN(v_inv) || isNaN(v_voc) || isNaN(t_min) || isNaN(t_coeff)) {
-        resDiv.textContent = t.empty;
-        resDiv.style.display = "block";
-        resDiv.classList.add("show");
-        copyBtn.style.display = "none";
-        return;
-    }
-
-    const vocCorr = v_voc * (1 + (t_min - 25) * (t_coeff / 100));
-    const count = Math.floor(v_inv / vocCorr);
-
-    lastCalc = {
-        title: t.title,
-        l1: t.l1, v1: v_inv,
-        l2: t.l2, v2: v_voc,
-        l3: t.l3, v3: t_min,
-        l4: t.l4, v4: t_coeff,
-        calcVocLabel: t.calculatedVoc, calcVocVal: vocCorr.toFixed(2),
-        expl: t.explanation,
-        resLabel: t.result, resVal: count
-    };
-
-    resDiv.innerHTML = `${t.result} ${count}<br><small style="font-weight:normal; opacity:0.7">${t.calculatedVoc}: ${vocCorr.toFixed(2)} V</small>`;
-    resDiv.style.display = "block";
-    resDiv.classList.remove("show");
-    setTimeout(() => resDiv.classList.add("show"), 20);
-    copyBtn.style.display = "block";
-}
-
-document.getElementById('copyBtn').onclick = function() {
-    if(!lastCalc) return;
-    const t = T[localStorage.getItem("lang") || "ru"];
-    let text = `${lastCalc.title}\n\n`;
-    text += `✅ ${lastCalc.l1}: ${lastCalc.v1} V\n`;
-    text += `✅ ${lastCalc.l2}: ${lastCalc.v2} V\n`;
-    text += `✅ ${lastCalc.l3}: ${lastCalc.v3} °C\n`;
-    text += `✅ ${lastCalc.l4}: ${lastCalc.v4}%\n`;
-    text += `${lastCalc.calcVocLabel}: ${lastCalc.calcVocVal} V (${lastCalc.expl})\n\n`;
-    text += `📊 ${lastCalc.resLabel} ${lastCalc.resVal}`;
-    
-    navigator.clipboard.writeText(text).then(() => {
-        const originalText = t.copyBtn;
-        this.textContent = t.copied;
-        this.classList.add("copied");
-        setTimeout(() => {
-            this.textContent = originalText;
-            this.classList.remove("copied");
-        }, 2000);
+// --- ЛОГИКА РАСПИНОВОК ---
+function initPinouts() {
+    const acc = document.getElementById('accordion');
+    pinouts.sort((a,b) => a.id - b.id).forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'acc-item';
+        item.innerHTML = `
+            <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
+            <div class="acc-content" id="c-${p.id}">
+                <div class="svg-wrap">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in">
+                    <div id="svg-${p.id}" style="display:none"></div>
+                </div>
+                ${isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">📋 Скопировать схему</button>` : ''}
+            </div>`;
+        acc.appendChild(item);
     });
-};
+}
+
+function toggle(id) {
+    const item = document.getElementById(`c-${id}`).parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+    if(!isOpen) { item.classList.add('open'); drawSVG(id); }
+}
+
+function drawSVG(id) {
+    const data = pinouts.find(x => x.id === id);
+    const target = document.getElementById(`svg-${id}`);
+    if(target.innerHTML !== "") return;
+    
+    const mP = data.m_pins || 8;
+    const sP = data.s_pins || 8;
+    const vH = 150 + (Math.max(mP, sP) * 36);
+
+    target.innerHTML = `<svg id="raw-${id}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
+        <rect width="800" height="${vH}" fill="white"/>
+        <rect width="800" height="50" fill="#2a8cff"/>
+        <text x="400" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${data.title}</text>
+        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
+        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
+        <g id="lines-${id}"></g>
+        <g transform="translate(130, 105)">${drawConn(id, 'm', data)}</g>
+        <g transform="translate(550, 105)">${drawConn(id, 's', data)}</g>
+    </svg>`;
+
+    data.links.forEach(l => {
+        const y1 = 126 + (l[0]-1)*36, y2 = 126 + (l[1]-1)*36;
+        const color = (data.m_colors && data.m_colors[l[0]]) || stdCols[l[0]] || '#0056b3';
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        p.setAttribute("d", `M 240 ${y1} C 390 ${y1}, 410 ${y2}, 550 ${y2}`);
+        p.setAttribute("stroke", color); p.setAttribute("stroke-width", "6"); p.setAttribute("fill", "none");
+        if(l[2]?.includes('CAN-L') || (l[2] === undefined && stdStriped[l[0]])) p.setAttribute("stroke-dasharray", "12,6");
+        document.getElementById(`lines-${id}`).appendChild(p);
+        if(l[2]) { addLabel(id, l[0], l[2], 'm'); addLabel(id, l[1], l[2], 's'); }
+    });
+    renderToImage(id);
+}
+
+function drawConn(id, side, data) {
+    const pins = (side === 'm' ? data.m_pins : data.s_pins) || 8;
+    let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
+    const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
+    const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
+    
+    for(let i=1; i<=pins; i++) {
+        const y = 8 + (i-1)*36;
+        const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
+        h += `<g transform="translate(10, ${y})">`;
+        if(nulls.includes(i)) {
+            h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
+        } else {
+            h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
+            if(isL || (customs[i] === undefined && stdStriped[i])) {
+                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
+            }
+        }
+        h += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
+    }
+    return h;
+}
+
+function addLabel(id, idx, txt, side) {
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", side === 'm' ? 85 : 715); t.setAttribute("y", 126 + (idx-1)*36);
+    t.setAttribute("font-family", "Arial"); t.setAttribute("font-size", "11"); t.setAttribute("font-weight", "bold");
+    t.setAttribute("text-anchor", side === 'm' ? "end" : "start"); t.setAttribute("fill", "#d9534f");
+    t.setAttribute("dominant-baseline", "middle"); t.textContent = txt;
+    document.getElementById(`raw-${id}`).appendChild(t);
+}
+
+function renderToImage(id) {
+    const svg = document.getElementById(`raw-${id}`);
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const xml = new XMLSerializer().serializeToString(svg);
+    const img = new Image();
+    const url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
+    img.onload = function() {
+        canvas.width = svg.viewBox.baseVal.width; canvas.height = svg.viewBox.baseVal.height;
+        ctx.fillStyle = "white"; ctx.fillRect(0,0,canvas.width,canvas.height);
+        ctx.drawImage(img, 0, 0);
+        document.getElementById(`img-${id}`).src = canvas.toDataURL("image/png");
+        window[`blob_${id}`] = canvas;
+        URL.revokeObjectURL(url);
+    };
+    img.src = url;
+}
+
+// --- ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ ---
+function zoomIn(src) { document.getElementById('modalImg').src = src; document.getElementById('zoomModal').style.display = 'flex'; }
+function closeModal() { document.getElementById('zoomModal').style.display = 'none'; }
+function copyImg(id) {
+    window[`blob_${id}`].toBlob(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast("✅ Скопировано"); }
+        catch(e) { showToast("❌ Ошибка"); }
+    });
+}
+function showToast(t) { 
+    const s = document.getElementById('toast'); s.textContent = t; s.classList.add('show'); 
+    setTimeout(() => s.classList.remove('show'), 2000); 
+}
+
 </script>
 </body>
 </html>
