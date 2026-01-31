@@ -11,7 +11,7 @@
     </script>
       
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PV String Range Calculator</title>
 
     <style>
@@ -29,7 +29,7 @@
             font-family: system-ui, -apple-system, Arial, sans-serif;
             background: var(--bg);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
@@ -44,51 +44,52 @@
             border: 1px solid var(--border);
         }
 
-        .menu {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .menu-btn {
-            flex: 1;
-            padding: 10px 5px;
-            font-size: 13px;
-            background: #f0f0f0;
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-decoration: none;
-            text-align: center;
-            display: block;
-        }
-
-        .menu-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .top-bar {
+        /* Верхняя панель управления */
+        .header-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            gap: 10px;
         }
 
-        h2 { margin: 0; font-size: 1.1rem; line-height: 1.2; }
+        .home-btn {
+            background: #eee;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .home-btn:active { background: #e0e0e0; transform: scale(0.95); }
+
+        .tool-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            flex-grow: 1;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
 
         .lang-switch { display: flex; gap: 4px; }
 
         .lang-btn {
-            padding: 5px 6px;
-            font-size: 11px;
+            padding: 6px 5px;
+            font-size: 10px;
+            font-weight: bold;
             border-radius: 6px;
             border: 1px solid var(--border);
             cursor: pointer;
             background: white;
+            min-width: 30px;
+            text-align: center;
         }
 
         .lang-btn.active {
@@ -97,25 +98,24 @@
             border-color: var(--accent);
         }
 
-        .input-group { margin-top: 10px; }
-
-        label { font-size: 13px; display: block; color: #555; margin-bottom: 3px; }
+        /* Форма */
+        .input-group { margin-top: 12px; }
+        label { font-size: 12px; display: block; color: #555; margin-bottom: 4px; font-weight: 500; }
 
         input {
             width: 100%;
             padding: 10px;
             border-radius: 10px;
             border: 1px solid var(--border);
-            font-size: 16px; /* 16px предотвращает авто-зум на iPhone */
+            font-size: 16px;
             box-sizing: border-box; 
             transition: 0.2s;
         }
-
-        input:focus { outline: none; border-color: var(--accent); }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1); }
 
         .calc-btn {
             width: 100%;
-            margin-top: 18px;
+            margin-top: 20px;
             padding: 14px;
             background: var(--accent);
             color: white;
@@ -124,10 +124,12 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
 
         .result {
-            margin-top: 18px;
+            margin-top: 20px;
             padding: 15px;
             border-radius: 12px;
             border: 1px solid var(--border);
@@ -138,8 +140,9 @@
             transition: all 0.4s ease;
             background: #fafafa;
             word-wrap: break-word;
-            font-size: 14px;
             display: none;
+            font-size: 14px;
+            line-height: 1.5;
         }
 
         .result.show { opacity: 1; transform: translateY(0); display: block; }
@@ -154,22 +157,17 @@
             border: none;
             cursor: pointer;
             display: none;
-            font-weight: 500;
+            font-weight: 600;
         }
-        
         .copy-btn.copied { background: #6c757d; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <nav class="menu">
-        <a href="index.html" id="m1" class="menu-btn"></a>
-        <a href="string-range.html" id="m2" class="menu-btn active"></a>
-    </nav>
-
-    <div class="top-bar">
-        <h2 id="title"></h2>
+    <div class="header-nav">
+        <a href="index.html" class="home-btn">🏠</a>
+        <div class="tool-title" id="title">String Range</div>
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
@@ -178,13 +176,13 @@
         </div>
     </div>
 
-    <div class="input-group"><label id="l1"></label><input type="text" id="v_voc" inputmode="text"></div>
-    <div class="input-group"><label id="l2"></label><input type="text" id="v_vmp" inputmode="text"></div>
-    <div class="input-group"><label id="l3"></label><input type="text" id="kv" inputmode="text"></div>
-    <div class="input-group"><label id="l4"></label><input type="text" id="t_min" inputmode="text"></div>
-    <div class="input-group"><label id="l5"></label><input type="text" id="t_max" inputmode="text"></div>
-    <div class="input-group"><label id="l6"></label><input type="text" id="v_mppt_max" inputmode="text"></div>
-    <div class="input-group"><label id="l7"></label><input type="text" id="v_mppt_min" inputmode="text"></div>
+    <div class="input-group"><label id="l1"></label><input type="number" id="v_voc" step="any"></div>
+    <div class="input-group"><label id="l2"></label><input type="number" id="v_vmp" step="any"></div>
+    <div class="input-group"><label id="l3"></label><input type="number" id="kv" step="any"></div>
+    <div class="input-group"><label id="l4"></label><input type="number" id="t_min" step="any"></div>
+    <div class="input-group"><label id="l5"></label><input type="number" id="t_max" step="any"></div>
+    <div class="input-group"><label id="l6"></label><input type="number" id="v_mppt_max" step="any"></div>
+    <div class="input-group"><label id="l7"></label><input type="number" id="v_mppt_min" step="any"></div>
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
@@ -195,64 +193,60 @@
 <script>
 const T = {
     ru: {
-        m1: "🔌 Макс. стринг", m2: "📐 Мин/Макс модули",
-        title: "📐 Оптимальное количество фотомодулей в стринге",
-        l1: "Напряжение холостого хода модуля (Voc)", 
-        l2: "Напряжение в точке макс. мощности модуля (Vmp)",
+        title: "Оптимальное кол-во модулей",
+        l1: "Voc модуля (STC) (V)", 
+        l2: "Vmp модуля (STC) (V)",
         l3: "Температурный коэффициент Voc (%)", 
-        l4: "Минимальная температура на объекте (°C)",
-        l5: "Максимальная температура на объекте (°C)", 
-        l6: "Максимальный рабочий диапазон MPPT инвертора",
-        l7: "Минимальный рабочий диапазон MPPT инвертора", 
-        ph: "Например: ", calc: "Рассчитать диапазон",
-        empty: "⚠️ Заполните все поля", copyBtn: "📋 Скопировать результат",
-        copied: "✅ Скопировано!", res_min: "Минимальное количество фотомодулей в стринге",
-        res_max: "максимальное", pcs: "шт."
+        l4: "Мин. температура объекта (°C)",
+        l5: "Макс. температура объекта (°C)", 
+        l6: "Макс. предел MPPT инвертора (V)",
+        l7: "Мин. предел MPPT инвертора (V)", 
+        ph: "Напр: ", calc: "Рассчитать диапазон",
+        empty: "⚠️ Заполните все поля", copyBtn: "📋 Скопировать отчет",
+        copied: "✅ Скопировано!", res_min: "Минимум в стринге",
+        res_max: "максимум", pcs: "шт."
     },
     ua: {
-        m1: "🔌 Макс. стринг", m2: "📐 Мін/Макс модулі",
-        title: "📐 Оптимальна кількість фотомодулів у стрингу",
-        l1: "Напруга холостого ходу модуля (Voc)", 
-        l2: "Напруга в точці макс. потужності модуля (Vmp)",
+        title: "Оптимальна кількість модулів",
+        l1: "Voc модуля (STC) (V)", 
+        l2: "Vmp модуля (STC) (V)",
         l3: "Температурний коефіцієнт Voc (%)", 
-        l4: "Мінімальна температура на об'єкті (°C)",
-        l5: "Максимальна температура на об'єкті (°C)", 
-        l6: "Максимальний робочий діапазон MPPT інвертора",
-        l7: "Мінімальний робочий діапазон MPPT інвертора", 
-        ph: "Наприклад: ", calc: "Розрахувати діапазон",
-        empty: "⚠️ Заповніть всі поля", copyBtn: "📋 Копіювати результат",
-        copied: "✅ Скопійовано!", res_min: "Мінімальна кількість фотомодулів у стрингу",
-        res_max: "максимальна", pcs: "шт."
+        l4: "Мін. температура об'єкта (°C)",
+        l5: "Макс. температура об'єкта (°C)", 
+        l6: "Макс. межа MPPT інвертора (V)",
+        l7: "Мін. межа MPPT інвертора (V)", 
+        ph: "Напр: ", calc: "Розрахувати діапазон",
+        empty: "⚠️ Заповніть всі поля", copyBtn: "📋 Копіювати звіт",
+        copied: "✅ Скопійовано!", res_min: "Мінімум у стрингу",
+        res_max: "максимум", pcs: "шт."
     },
     en: {
-        m1: "🔌 Max String", m2: "📐 Min/Max Modules",
-        title: "📐 Optimal number of PV modules in string",
-        l1: "Module Open Circuit Voltage (Voc)", 
-        l2: "Module Max Power Voltage (Vmp)",
-        l3: "Temperature coefficient Voc (%)", 
-        l4: "Minimum ambient temperature (°C)",
-        l5: "Maximum ambient temperature (°C)", 
-        l6: "Maximum MPPT inverter voltage range",
-        l7: "Minimum MPPT inverter voltage range", 
-        ph: "Example: ", calc: "Calculate Range",
-        empty: "⚠️ Please fill all fields", copyBtn: "📋 Copy result",
-        copied: "✅ Copied!", res_min: "Minimum number of modules in string",
+        title: "Optimal Module Range",
+        l1: "Module Voc (STC) (V)", 
+        l2: "Module Vmp (STC) (V)",
+        l3: "Temp. coefficient Voc (%)", 
+        l4: "Min ambient temperature (°C)",
+        l5: "Max ambient temperature (°C)", 
+        l6: "Max MPPT voltage (V)",
+        l7: "Min MPPT voltage (V)", 
+        ph: "Ex: ", calc: "Calculate Range",
+        empty: "⚠️ Fill all fields", copyBtn: "📋 Copy report",
+        copied: "✅ Copied!", res_min: "Min modules in string",
         res_max: "maximum", pcs: "pcs."
     },
     pl: {
-        m1: "🔌 Max string", m2: "📐 Min/Max moduły",
-        title: "📐 Optymalna liczba modułów PV w stringu",
-        l1: "Napięcie jałowe modułu (Voc)", 
-        l2: "Napięcie w punkcie mocy maks. modułu (Vmp)",
-        l3: "Współczynnik temperaturowy Voc (%)", 
-        l4: "Minimalna temperatura otoczenia (°C)",
-        l5: "Maksymalna temperatura otoczenia (°C)", 
-        l6: "Maksymalny zakres roboczy MPPT falownika",
-        l7: "Minimalny zakres roboczy MPPT falownika", 
+        title: "Optymalna liczba modułów",
+        l1: "Voc modułu (STC) (V)", 
+        l2: "Vmp modułu (STC) (V)",
+        l3: "Współczynnik temp. Voc (%)", 
+        l4: "Min. temperatura otoczenia (°C)",
+        l5: "Max. temperatura otoczenia (°C)", 
+        l6: "Max zakres MPPT falownika (V)",
+        l7: "Min zakres MPPT falownika (V)", 
         ph: "Przykład: ", calc: "Oblicz zakres",
-        empty: "⚠️ Uzupełnij wszystkie pola", copyBtn: "📋 Skopiuj wynik",
-        copied: "✅ Skopiowano!", res_min: "Minimalna liczba modułów w stringu",
-        res_max: "maksymalna", pcs: "szt."
+        empty: "⚠️ Uzupełnij pola", copyBtn: "📋 Skopiuj raport",
+        copied: "✅ Skopiowano!", res_min: "Minimum w stringu",
+        res_max: "maksimum", pcs: "szt."
     }
 };
 
@@ -263,8 +257,6 @@ function applyLang(lang) {
     localStorage.setItem("lang", lang);
     const t = T[lang];
     
-    document.getElementById('m1').textContent = t.m1;
-    document.getElementById('m2').textContent = t.m2;
     document.getElementById('title').textContent = t.title;
     document.getElementById('l1').textContent = t.l1;
     document.getElementById('l2').textContent = t.l2;
@@ -329,7 +321,7 @@ function calculate() {
     const min_pcs = Math.ceil(mppt_min / (v_vmp * (1 + (t_max - 25) * (kv / 100))));
     const max_pcs = Math.floor(mppt_max / (v_voc * (1 + (t_min - 25) * (kv / 100))));
 
-    const resultString = `${t.res_min}: ${min_pcs} ${t.pcs} и ${t.res_max} ${max_pcs} ${t.pcs}.`;
+    const resultString = `✅ ${t.res_min}: ${min_pcs} ${t.pcs}<br>✅ ${t.res_max}: ${max_pcs} ${t.pcs}`;
     
     lastCalcData = {
         title: t.title,
@@ -342,7 +334,7 @@ function calculate() {
             { label: t.l6, val: mppt_max, unit: "V" },
             { label: t.l7, val: mppt_min, unit: "V" }
         ],
-        result: resultString
+        result: `${t.res_min}: ${min_pcs} ${t.pcs} / ${t.res_max}: ${max_pcs} ${t.pcs}`
     };
 
     resDiv.innerHTML = resultString;
@@ -356,11 +348,11 @@ document.getElementById('copyBtn').addEventListener('click', function() {
     if (!lastCalcData) return;
     const t = T[localStorage.getItem("lang") || "ru"];
     
-    let text = `${lastCalcData.title}\n\n`;
+    let text = `⚡ ${lastCalcData.title}\n\n`;
     lastCalcData.inputs.forEach(item => {
-        text += `✅ ${item.label}: ${item.val} ${item.unit}\n`;
+        text += `🔹 ${item.label}: ${item.val} ${item.unit}\n`;
     });
-    text += `\n📊 ${lastCalcData.result}`;
+    text += `\n📊 РЕЗУЛЬТАТ:\n${lastCalcData.result}`;
 
     navigator.clipboard.writeText(text).then(() => {
         const originalText = t.copyBtn;
