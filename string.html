@@ -11,7 +11,7 @@
     </script>
       
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PV String Calculator</title>
 
     <style>
@@ -29,7 +29,7 @@
             font-family: system-ui, -apple-system, Arial, sans-serif;
             background: var(--bg);
             margin: 0;
-            padding: 20px;
+            padding: 15px;
             display: flex;
             justify-content: center;
         }
@@ -44,50 +44,51 @@
             border: 1px solid var(--border);
         }
 
-        .menu {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-
-        .menu-btn {
-            flex: 1;
-            padding: 10px 5px;
-            font-size: 13px;
-            background: #f0f0f0;
-            color: var(--text);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            cursor: pointer;
-            transition: 0.2s;
-            text-decoration: none;
-            text-align: center;
-        }
-
-        .menu-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
-
-        .top-bar {
+        /* Верхняя панель управления */
+        .header-nav {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 20px;
+            gap: 10px;
         }
 
-        h2 { margin: 0; font-size: 1.2rem; }
+        .home-btn {
+            background: #eee;
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-size: 18px;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+        }
+        .home-btn:active { background: #e0e0e0; transform: scale(0.95); }
 
-        .lang-switch { display: flex; gap: 6px; }
+        .tool-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--accent);
+            text-align: center;
+            flex-grow: 1;
+            line-height: 1.2;
+        }
+
+        .lang-switch { display: flex; gap: 4px; }
 
         .lang-btn {
-            padding: 5px 8px;
-            font-size: 12px;
+            padding: 6px 5px;
+            font-size: 10px;
+            font-weight: bold;
             border-radius: 6px;
             border: 1px solid var(--border);
             cursor: pointer;
             background: white;
+            min-width: 30px;
+            text-align: center;
         }
 
         .lang-btn.active {
@@ -96,7 +97,8 @@
             border-color: var(--accent);
         }
 
-        label { font-size: 14px; margin-top: 14px; display: block; color: #555; }
+        /* Форма */
+        label { font-size: 13px; margin-top: 14px; display: block; color: #555; font-weight: 500; }
 
         input {
             width: 100%;
@@ -108,6 +110,7 @@
             box-sizing: border-box; 
             transition: 0.2s;
         }
+        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1); }
 
         .calc-btn {
             width: 100%;
@@ -120,7 +123,9 @@
             font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            transition: 0.2s;
         }
+        .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
 
         .result {
             margin-top: 20px;
@@ -149,7 +154,7 @@
             border: none;
             cursor: pointer;
             display: none;
-            font-weight: 500;
+            font-weight: 600;
         }
         
         .copy-btn.copied { background: #6c757d; }
@@ -158,13 +163,9 @@
 <body>
 
 <div class="container">
-    <nav class="menu">
-        <a id="m1" class="menu-btn active" href="index.html"></a>
-        <a id="m2" class="menu-btn" href="string-range.html"></a>
-    </nav>
-
-    <div class="top-bar">
-        <h2 id="title"></h2>
+    <div class="header-nav">
+        <a href="index.html" class="home-btn">🏠</a>
+        <div class="tool-title" id="title">PV Calculator</div>
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
@@ -174,16 +175,16 @@
     </div>
 
     <label id="l1"></label>
-    <input type="text" id="E13" inputmode="text">
+    <input type="number" id="E13" step="any">
 
     <label id="l2"></label>
-    <input type="text" id="E14" inputmode="text">
+    <input type="number" id="E14" step="any">
 
     <label id="l3"></label>
-    <input type="text" id="E15" inputmode="text">
+    <input type="number" id="E15" step="any">
 
     <label id="l4"></label>
-    <input type="text" id="E16" inputmode="text">
+    <input type="number" id="E16" step="any">
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
 
@@ -194,52 +195,48 @@
 <script>
 const T = {
     ru: {
-        m1: "🔌 Макс. стринг", m2: "📐 Мин/Макс модули",
-        title: "📟 Калькулятор фотомодулей",
-        l1: "Максимально допустимое напряжение DC на входе инвертора",
-        l2: "Напряжение холостого хода модуля (Voc)",
-        l3: "Минимальная температура на объекте (°C)",
-        l4: "Температурный коэффициент Voc (%)",
-        ph1: "Например: 1100", ph2: "Например: 41.5", ph3: "Например: -25", ph4: "Например: -0.29",
+        title: "МАКСИМАЛЬНЫЙ СТРИНГ",
+        l1: "Макс. DC напряжение инвертора (V)",
+        l2: "Voc модуля (STC) (V)",
+        l3: "Мин. температура объекта (°C)",
+        l4: "Темп. коэффициент Voc (%)",
+        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
         calc: "Рассчитать", empty: "⚠️ Заполните все поля",
-        result: "🔋 Максимальное количество модулей: ", copyBtn: "📋 Скопировать результат",
-        copied: "✅ Скопировано!", calculatedVoc: "📊 Расчетный Voc", explanation: "Напряжение при минимальной температуре"
+        result: "🔋 Макс. модулей в стринге: ", copyBtn: "📋 Скопировать отчет",
+        copied: "✅ Скопировано!", calculatedVoc: "📊 Расчетный Voc", explanation: "при мин. температуре"
     },
     ua: {
-        m1: "🔌 Макс. ланцюг", m2: "📐 Мін/Макс модулі",
-        title: "📟 Калькулятор фотомодулів",
-        l1: "Максимальна напруга DC інвертора",
-        l2: "Voc модуля (STC)",
-        l3: "Мінімальна температура на об'єкті (°C)",
-        l4: "Температурний коефіцієнт Voc (%)",
-        ph1: "Наприклад: 1100", ph2: "Наприклад: 41.5", ph3: "Наприклад: -25", ph4: "Наприклад: -0.29",
+        title: "МАКСИМАЛЬНИЙ ЛАНЦЮГ",
+        l1: "Макс. DC напруга інвертора (V)",
+        l2: "Voc модуля (STC) (V)",
+        l3: "Мін. температура об'єкта (°C)",
+        l4: "Темп. коефіцієнт Voc (%)",
+        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
         calc: "Розрахувати", empty: "⚠️ Заповніть всі поля",
-        result: "🔋 Максимальна кількість модулів: ", copyBtn: "📋 Копіювати результат",
-        copied: "✅ Скопійовано!", calculatedVoc: "📊 Розрахунковий Voc", explanation: "Напруга при мінімальній температурі"
+        result: "🔋 Макс. модулів у ланцюзі: ", copyBtn: "📋 Копіювати звіт",
+        copied: "✅ Скопійовано!", calculatedVoc: "📊 Розрахунковий Voc", explanation: "при мін. температурі"
     },
     en: {
-        m1: "🔌 Max String", m2: "📐 Min/Max Modules",
-        title: "📟 PV Module Calculator",
-        l1: "Max DC input voltage of inverter",
-        l2: "Module Voc (STC)",
-        l3: "Minimum ambient temperature (°C)",
-        l4: "Temperature coefficient Voc (%)",
-        ph1: "Example: 1100", ph2: "Example: 41.5", ph3: "Example: -25", ph4: "Example: -0.29",
-        calc: "Calculate", empty: "⚠️ Please fill all fields",
-        result: "🔋 Maximum number of modules: ", copyBtn: "📋 Copy result",
-        copied: "✅ Copied!", calculatedVoc: "📊 Calculated Voc", explanation: "Voltage at minimum temperature"
+        title: "MAX STRING LENGTH",
+        l1: "Max DC input voltage (V)",
+        l2: "Module Voc (STC) (V)",
+        l3: "Min ambient temperature (°C)",
+        l4: "Temp. coefficient Voc (%)",
+        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
+        calc: "Calculate", empty: "⚠️ Fill all fields",
+        result: "🔋 Max modules in string: ", copyBtn: "📋 Copy report",
+        copied: "✅ Copied!", calculatedVoc: "📊 Calculated Voc", explanation: "at min. temperature"
     },
     pl: {
-        m1: "🔌 Max string", m2: "📐 Min/Max moduły",
-        title: "📟 Kalkulator modułów PV",
-        l1: "Maksymalne napięcie wejściowe DC falownika",
-        l2: "Voc modułu (STC)",
-        l3: "Minimalna temperatura otoczenia (°C)",
-        l4: "Współczynnik temperaturowy Voc (%)",
-        ph1: "Przykład: 1100", ph2: "Przykład: 41.5", ph3: "Przykład: -25", ph4: "Przykład: -0.29",
-        calc: "Oblicz", empty: "⚠️ Uzupełnij wszystkie pola",
-        result: "🔋 Maksymalna liczba modułów: ", copyBtn: "📋 Skopiuj wynik",
-        copied: "✅ Skopiowano!", calculatedVoc: "📊 Obliczony Voc", explanation: "Napięcie przy minimalnej temperaturze"
+        title: "MAX DŁUGOŚĆ STRINGU",
+        l1: "Max napięcie DC falownika (V)",
+        l2: "Voc modułu (STC) (V)",
+        l3: "Min. temperatura otoczenia (°C)",
+        l4: "Współczynnik temp. Voc (%)",
+        ph1: "1100", ph2: "41.5", ph3: "-25", ph4: "-0.29",
+        calc: "Oblicz", empty: "⚠️ Uzupełnij pola",
+        result: "🔋 Max modułów w stringu: ", copyBtn: "📋 Skopiuj raport",
+        copied: "✅ Skopiowano!", calculatedVoc: "📊 Obliczony Voc", explanation: "przy min. temp."
     }
 };
 
@@ -249,8 +246,6 @@ function applyLang(lang) {
     if (!T[lang]) lang = 'ru';
     localStorage.setItem("lang", lang);
     const t = T[lang];
-    document.getElementById('m1').textContent = t.m1;
-    document.getElementById('m2').textContent = t.m2;
     document.getElementById('title').textContent = t.title;
     document.getElementById('l1').textContent = t.l1;
     document.getElementById('l2').textContent = t.l2;
@@ -275,7 +270,6 @@ document.querySelectorAll(".lang-btn").forEach(btn => {
 applyLang(localStorage.getItem("lang") || "ru");
 
 function getNum(id) {
-    // Заменяем запятую на точку и убираем пробелы
     const val = document.getElementById(id).value.replace(',', '.').trim();
     return val === "" ? NaN : parseFloat(val);
 }
@@ -324,13 +318,13 @@ function calculate() {
 document.getElementById('copyBtn').onclick = function() {
     if(!lastCalc) return;
     const t = T[localStorage.getItem("lang") || "ru"];
-    let text = `${lastCalc.title}\n\n`;
-    text += `✅ ${lastCalc.l1}: ${lastCalc.v1} V\n`;
-    text += `✅ ${lastCalc.l2}: ${lastCalc.v2} V\n`;
-    text += `✅ ${lastCalc.l3}: ${lastCalc.v3} °C\n`;
-    text += `✅ ${lastCalc.l4}: ${lastCalc.v4}%\n`;
-    text += `${lastCalc.calcVocLabel}: ${lastCalc.calcVocVal} V (${lastCalc.expl})\n\n`;
-    text += `📊 ${lastCalc.resLabel} ${lastCalc.resVal}`;
+    let text = `⚡ ${lastCalc.title}\n\n`;
+    text += `🔹 ${lastCalc.l1}: ${lastCalc.v1} V\n`;
+    text += `🔹 ${lastCalc.l2}: ${lastCalc.v2} V\n`;
+    text += `🔹 ${lastCalc.l3}: ${lastCalc.v3} °C\n`;
+    text += `🔹 ${lastCalc.l4}: ${lastCalc.v4}%\n`;
+    text += `📊 ${lastCalc.calcVocLabel}: ${lastCalc.calcVocVal} V (${lastCalc.expl})\n\n`;
+    text += `✅ ${lastCalc.resLabel} ${lastCalc.resVal}`;
     
     navigator.clipboard.writeText(text).then(() => {
         const originalText = t.copyBtn;
