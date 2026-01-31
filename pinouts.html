@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>BMS Pinout Master</title>
+    <style>
+        :root { --bg: #f5f5f5; --card-bg: #ffffff; --accent: #2a8cff; --border: #ddd; --radius: 14px; }
+        * { box-sizing: border-box; }
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 15px; 
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+        .container { 
+            width: 100%; max-width: 480px; 
+            background: var(--card-bg); padding: 20px; 
+            border-radius: var(--radius); border: 1px solid var(--border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); height: fit-content;
+        }
+        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: #222; }
+        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
+        .acc-header { 
+            padding: 14px 16px; cursor: pointer; background: #fafafa; 
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
+            transition: 0.2s; user-select: none;
+        }
+        .acc-item.open { border-color: var(--accent); }
+        .acc-item.open .acc-header { background: #fff; color: var(--accent); }
+        .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
+        .acc-item.open .acc-content { display: block; }
+        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; }
+        .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
+        .copy-btn { 
+            width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
+            background: #28a745; color: white; border: none; cursor: pointer; 
+            font-weight: 600; font-size: 14px; -webkit-tap-highlight-color: transparent; 
+        }
+        #toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
+            font-size: 14px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
+        }
+        #toast.show { transform: translateX(-50%) translateY(0); }
+        .modal {
+            display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden; justify-content: center; align-items: center;
+        }
+        #modalImg { max-width: 100%; max-height: 100%; transition: transform 0.05s linear; will-change: transform; cursor: move; }
+    </style>
+</head>
+<body>
+
+<div id="zoomModal" class="modal">
+    <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:30px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
+    <img id="modalImg" src="">
+</div>
+    
+<div class="container">
+    <h2>BMS Connector Guide</h2>
+    <div id="accordion"></div>
+</div>
+
+<div id="toast">✅ Схема скопирована</div>
+
+<script>
+const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
+const isAndroid = /Android/.test(navigator.userAgent);
+const isPC = !isIOS && !isAndroid;
+
+const pinouts = [
+    { id: 1, title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
+    { id: 2, title: "LuxPower/Deye/Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+    { id: 3, title: "LuxPower/Deye/Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+    { id: 4, title: "LuxPower/Deye/Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
+    { id: 5, title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
+    { id: 6, title: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
+    { id: 7, title: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
+    { id: 8, title: "LuxPower (Червоні діпи) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 9, title: "LuxPower (Червоні діпи) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 10, title: "LuxPower (Червоні діпи) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 11, title: "Sungrow (RJ45) ↔ Sungrow", m: "Sungrow Inv", s: "Sungrow Bat", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 12, title: "Sungrow (COM Terminal) ↔ Sungrow", m: "Sungrow (10-pin)", s: "Sungrow (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} },
+    { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
+    { id: 14, title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
+];
+const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
+const stdStriped = [false, true, false, true, false, true, false, true, false];
+
+function init() {
+    const acc = document.getElementById('accordion');
+    pinouts.forEach(p => {
+        let actionHtml = isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">📋 Скопировать схему</button>` : 
+                        (isIOS ? `<div class="hint-text">☝️ Зажмите картинку, чтобы скопировать</div>` : '');
+        const item = document.createElement('div');
+        item.className = 'acc-item';
+        item.innerHTML = `
+            <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
+            <div class="acc-content" id="c-${p.id}">
+                <div class="svg-wrap">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in">
+                    <div id="svg-${p.id}" style="display:none"></div>
+                </div>
+                ${actionHtml}
+            </div>`;
+        acc.appendChild(item);
+    });
+}
+
+function toggle(id) {
+    const item = document.getElementById(`c-${id}`).parentElement;
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
+    if(!isOpen) { item.classList.add('open'); draw(id); }
+}
+
+function draw(id) {
+    const data = pinouts.find(x => x.id === id);
+    const target = document.getElementById(`svg-${id}`);
+    if(target.innerHTML !== "") return;
+    
+    const mP = data.m_pins || 8;
+    const sP = data.s_pins || 8;
+    const maxP = Math.max(mP, sP);
+    const vH = 150 + (maxP * 36);
+
+    target.innerHTML = `<svg id="raw-${id}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
+        <rect width="800" height="${vH}" fill="white"/>
+        <rect width="800" height="50" fill="#2a8cff"/>
+        <text x="400" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${data.title}</text>
+        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
+        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
+        <g id="lines-${id}"></g>
+        <g transform="translate(130, 105)">${drawConn(id, 'm', data)}</g>
+        <g transform="translate(550, 105)">${drawConn(id, 's', data)}</g>
+    </svg>`;
+
+    data.links.forEach(l => {
+        const y1 = 126 + (l[0]-1)*36, y2 = 126 + (l[1]-1)*36;
+        const color = (data.m_colors && data.m_colors[l[0]]) || stdCols[l[0]] || '#0056b3';
+        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        p.setAttribute("d", `M 240 ${y1} C 390 ${y1}, 410 ${y2}, 550 ${y2}`);
+        p.setAttribute("stroke", color); p.setAttribute("stroke-width", "6"); p.setAttribute("fill", "none");
+        if(l[2]?.includes('CAN-L') || (l[2] === undefined && stdStriped[l[0]])) p.setAttribute("stroke-dasharray", "12,6");
+        document.getElementById(`lines-${id}`).appendChild(p);
+        if(l[2]) { addLbl(id, l[0], l[2], 'm'); addLbl(id, l[1], l[2], 's'); }
+    });
+    render(id);
+}
+
+function drawConn(id, side, data) {
+    const pins = (side === 'm' ? data.m_pins : data.s_pins) || 8;
+    let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
+    const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
+    const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
+    
+    for(let i=1; i<=pins; i++) {
+        const y = 8 + (i-1)*36;
+        const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
+        
+        h += `<g transform="translate(10, ${y})">`;
+        if(nulls.includes(i)) {
+            h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
+        } else {
+            h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
+            if(isL || (customs[i] === undefined && stdStriped[i])) {
+                // ИСПРАВЛЕННЫЙ ПУТЬ: Добавлено больше сегментов, чтобы покрыть 110px ширины полностью
+                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
+            }
+        }
+        h += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
+    }
+    return h;
+}
+
+function addLbl(id, idx, txt, side) {
+    const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
+    t.setAttribute("x", side === 'm' ? 85 : 715); t.setAttribute("y", 126 + (idx-1)*36);
+    t.setAttribute("font-family", "Arial"); t.setAttribute("font-size", "12"); t.setAttribute("font-weight", "bold");
+    t.setAttribute("text-anchor", side === 'm' ? "end" : "start"); t.setAttribute("fill", "#d9534f");
+    t.setAttribute("dominant-baseline", "middle"); t.textContent = txt;
+    document.getElementById(`raw-${id}`).appendChild(t);
+}
+
+function render(id) {
+    const svg = document.getElementById(`raw-${id}`);
+    const vBox = svg.viewBox.baseVal;
+    const canvas = document.createElement('canvas');
+    const ctx = canvas.getContext('2d');
+    const img = new Image();
+    const xml = new XMLSerializer().serializeToString(svg);
+    const url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
+    img.onload = function() {
+        canvas.width = vBox.width; canvas.height = vBox.height;
+        ctx.fillStyle = "white"; ctx.fillRect(0,0,vBox.width,vBox.height);
+        ctx.drawImage(img, 0, 0);
+        document.getElementById(`img-${id}`).src = canvas.toDataURL("image/png");
+        window[`blob_${id}`] = canvas;
+        URL.revokeObjectURL(url);
+    };
+    img.src = url;
+}
+
+let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
+const modalImg = document.getElementById('modalImg');
+
+function zoomIn(src) {
+    modalImg.src = src; scale = 1; moveX = 0; moveY = 0; updateTransform();
+    document.getElementById('zoomModal').style.display = 'flex';
+    document.body.style.overflow = 'hidden';
+}
+function closeModal() { document.getElementById('zoomModal').style.display = 'none'; document.body.style.overflow = ''; }
+
+modalImg.addEventListener('touchstart', e => {
+    if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX - moveX; lastY = e.touches[0].clientY - moveY; }
+    else if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+}, {passive: false});
+
+modalImg.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (e.touches.length === 1 && isDragging) { moveX = e.touches[0].clientX - lastX; moveY = e.touches[0].clientY - lastY; }
+    else if (e.touches.length === 2) {
+        const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+        scale = Math.min(Math.max(1, scale * (dist/lastDist)), 5); lastDist = dist;
+    }
+    updateTransform();
+}, {passive: false});
+
+modalImg.addEventListener('touchend', () => { isDragging = false; });
+function updateTransform() { 
+    if (scale === 1) { moveX = 0; moveY = 0; }
+    modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
+}
+
+async function copyImg(id) {
+    window[`blob_${id}`].toBlob(async b => {
+        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast("✅ Скопировано"); }
+        catch(e) { showToast("❌ Ошибка"); }
+    });
+}
+function showToast(t) { 
+    const s = document.getElementById('toast'); s.textContent = t; s.classList.add('show'); 
+    setTimeout(() => s.classList.remove('show'), 2000); 
+}
+
+init();
+</script>
+</body>
+</html>
