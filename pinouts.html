@@ -19,14 +19,6 @@
             border-radius: var(--radius); border: 1px solid var(--border);
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); height: fit-content;
         }
-
-        /* Навигация и Языки */
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
-        .back-btn { background: #eee; border: none; padding: 8px 12px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; }
-        .lang-switch { display: flex; gap: 4px; }
-        .lang-btn { padding: 6px 6px; font-size: 10px; font-weight: bold; border-radius: 6px; cursor: pointer; border: 1px solid #ddd; background: #fff; min-width: 32px; }
-        .lang-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
         h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: #222; }
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
         .acc-header { 
@@ -67,29 +59,13 @@
 </div>
     
 <div class="container">
-    <div class="top-nav">
-        <button class="back-btn" onclick="location.href='index.html'" id="btn-back">←</button>
-        <div class="lang-switch">
-            <button class="lang-btn active" onclick="setLang('ru')">RU</button>
-            <button class="lang-btn" onclick="setLang('ua')">UA</button>
-            <button class="lang-btn" onclick="setLang('pl')">PL</button>
-            <button class="lang-btn" onclick="setLang('en')">EN</button>
-        </div>
-    </div>
-    <h2 id="main-title">BMS Connector Guide</h2>
+    <h2>BMS Connector Guide</h2>
     <div id="accordion"></div>
 </div>
 
 <div id="toast">✅ Схема скопирована</div>
 
 <script>
-const texts = {
-    ru: { back: "← Меню", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку, чтобы скопировать", toast: "✅ Скопировано" },
-    ua: { back: "← Меню", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку, щоб скопіювати", toast: "✅ Скопійовано" },
-    pl: { back: "← Menu", copy: "📋 Kopiuj schemat", hint: "☝️ Przytrzymaj obraz, aby skopiować", toast: "✅ Skopiowano" },
-    en: { back: "← Menu", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", toast: "✅ Copied" }
-};
-
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
 const isAndroid = /Android/.test(navigator.userAgent);
 const isPC = !isIOS && !isAndroid;
@@ -113,13 +89,11 @@ const pinouts = [
 const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
 const stdStriped = [false, true, false, true, false, true, false, true, false];
 
-let currentLang = 'ru';
-
 function init() {
     const acc = document.getElementById('accordion');
     pinouts.forEach(p => {
-        let actionHtml = isPC ? `<button class="copy-btn btn-copy-text" onclick="copyImg(${p.id})">${texts.ru.copy}</button>` : 
-                        (isIOS ? `<div class="hint-text hint-copy-text">${texts.ru.hint}</div>` : '');
+        let actionHtml = isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">📋 Скопировать схему</button>` : 
+                        (isIOS ? `<div class="hint-text">☝️ Зажмите картинку, чтобы скопировать</div>` : '');
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
@@ -132,17 +106,6 @@ function init() {
                 ${actionHtml}
             </div>`;
         acc.appendChild(item);
-    });
-}
-
-function setLang(lang) {
-    currentLang = lang;
-    const t = texts[lang];
-    document.getElementById('btn-back').innerText = t.back;
-    document.querySelectorAll('.btn-copy-text').forEach(el => el.innerText = t.copy);
-    document.querySelectorAll('.hint-copy-text').forEach(el => el.innerText = t.hint);
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.innerText.toLowerCase() === lang);
     });
 }
 
@@ -193,15 +156,18 @@ function drawConn(id, side, data) {
     let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
     const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
     const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
+    
     for(let i=1; i<=pins; i++) {
         const y = 8 + (i-1)*36;
         const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
+        
         h += `<g transform="translate(10, ${y})">`;
         if(nulls.includes(i)) {
             h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
         } else {
             h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
             if(isL || (customs[i] === undefined && stdStriped[i])) {
+                // ИСПРАВЛЕННЫЙ ПУТЬ: Добавлено больше сегментов, чтобы покрыть 110px ширины полностью
                 h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
             }
         }
@@ -271,8 +237,8 @@ function updateTransform() {
 
 async function copyImg(id) {
     window[`blob_${id}`].toBlob(async b => {
-        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast(texts[currentLang].toast); }
-        catch(e) { showToast("❌ Error"); }
+        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast("✅ Скопировано"); }
+        catch(e) { showToast("❌ Ошибка"); }
     });
 }
 function showToast(t) { 
