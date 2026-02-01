@@ -42,19 +42,12 @@
         h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: left; color: #222; padding-left: 5px; }
 
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
-        .acc-header { padding: 14px 16px; 
-                    cursor: pointer; 
-                    background: #fafafa; 
-                    font-size: 14px; 
-                    font-weight: 600; 
-                    display: flex; 
-                    align-items: center; 
-                    justify-content: center; /* Добавлено: выравнивание по горизонтали */
-                    gap: 10px; 
-                    transition: 0.2s; 
-                    user-select: none; 
-                    text-align: center; /* Изменено с left на center */
-                    }
+        /* Выравнивание названия аккордеона по левой стороне */
+        .acc-header { 
+            padding: 14px 16px; cursor: pointer; background: #fafafa; 
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
+            transition: 0.2s; user-select: none; text-align: left; justify-content: flex-start;
+        }
         .acc-item.open { border-color: var(--accent); }
         .acc-item.open .acc-header { background: #fff; color: var(--accent); }
         .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
@@ -177,7 +170,7 @@ function draw(id) {
         <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
         <rect width="800" height="${vH}" fill="white"/>
         <rect width="800" height="50" fill="#2a8cff"/>
-        <text x="20" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="start">${data.title}</text>
+        <text x="400" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${data.title}</text>
         <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
         <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
         <g id="lines-${id}"></g>
@@ -212,7 +205,7 @@ function drawConn(id, side, data) {
         } else {
             h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
             if(isL || (customs[i] === undefined && stdStriped[i])) {
-                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
+                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
             }
         }
         h += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
