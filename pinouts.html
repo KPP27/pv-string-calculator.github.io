@@ -66,7 +66,7 @@
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .svg-wrap { width: 100%; background: white; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
+        .svg-wrap { width: 100%; background: white; border-radius: 8px; border: 1px solid #eee; overflow: hidden; min-height: 100px; }
         .img-overlay { width: 100%; height: auto; display: block; cursor: zoom-in; }
         
         .copy-btn { 
@@ -84,14 +84,14 @@
         
         .modal {
             display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); justify-content: center; align-items: center;
+            background: rgba(0,0,0,0.95); justify-content: center; align-items: center; cursor: pointer;
         }
     </style>
 </head>
 <body>
 
 <div id="zoomModal" class="modal" onclick="this.style.display='none'">
-    <img id="modalImg" style="max-width:95%; max-height:95%">
+    <img id="modalImg" style="max-width:95%; max-height:95%; border-radius: 8px;">
 </div>
 
 <div class="container">
@@ -113,22 +113,10 @@
 
 <script>
 const T = {
-    ru: { 
-        back: "← Меню", title: "Распиновки BMS", copy: "📋 Скопировать схему", ok: "✅ Скопировано",
-        straight: "Прямая витая пара (T568B)", inv: "Инвертор"
-    },
-    ua: { 
-        back: "← Меню", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", ok: "✅ Скопійовано",
-        straight: "Пряма вита пара (T568B)", inv: "Інвертор"
-    },
-    pl: { 
-        back: "← Menu", title: "Pinouty BMS", copy: "📋 Skopiuj raport", ok: "✅ Skopiowano",
-        straight: "Prosty kabel sieciowy (T568B)", inv: "Falownik"
-    },
-    en: { 
-        back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", ok: "✅ Copied",
-        straight: "Straight-thru Cable (T568B)", inv: "Inverter"
-    }
+    ru: { back: "← Меню", title: "Распиновки BMS", copy: "📋 Скопировать схему", ok: "✅ Скопировано", straight: "Прямая витая пара (T568B)", inv: "Инвертор" },
+    ua: { back: "← Меню", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", ok: "✅ Скопійовано", straight: "Пряма вита пара (T568B)", inv: "Інвертор" },
+    pl: { back: "← Menu", title: "Pinouty BMS", copy: "📋 Skopiuj raport", ok: "✅ Skopiowano", straight: "Prosty kabel sieciowy (T568B)", inv: "Falownik" },
+    en: { back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", ok: "✅ Copied", straight: "Straight-thru Cable (T568B)", inv: "Inverter" }
 };
 
 const pinouts = [
@@ -156,13 +144,9 @@ function applyLang(lang) {
     if (!T[lang]) lang = 'ru';
     localStorage.setItem("lang", lang);
     const t = T[lang];
-    
     document.getElementById('backTxt').textContent = t.back;
     document.getElementById('title').textContent = t.title;
-
-    document.querySelectorAll(".lang-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.dataset.lang === lang)
-    );
+    document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === lang));
     initPinouts(); 
 }
 
@@ -177,9 +161,7 @@ function initPinouts() {
     const t = T[lang];
 
     pinouts.forEach(p => {
-        // Определяем заголовок: либо по ключу из перевода, либо напрямую
         const displayTitle = p.titleKey ? t[p.titleKey] : p.title;
-        
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
@@ -199,7 +181,10 @@ function toggle(id) {
     const item = document.getElementById(`c-${id}`).parentElement;
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
-    if(!isOpen) { item.classList.add('open'); drawSVG(id); }
+    if(!isOpen) { 
+        item.classList.add('open'); 
+        drawSVG(id); 
+    }
 }
 
 function drawSVG(id) {
@@ -284,20 +269,33 @@ function render(id) {
         canvas.width = svg.viewBox.baseVal.width; canvas.height = svg.viewBox.baseVal.height;
         ctx.fillStyle = "white"; ctx.fillRect(0,0,canvas.width,canvas.height);
         ctx.drawImage(img, 0, 0);
-        document.getElementById(`img-${id}`).src = canvas.toDataURL("image/png");
+        const dataURL = canvas.toDataURL("image/png");
+        document.getElementById(`img-${id}`).src = dataURL;
         window[`blob_${id}`] = canvas;
         URL.revokeObjectURL(url);
     };
     img.src = url;
 }
 
-function zoomIn(src) { document.getElementById('modalImg').src = src; document.getElementById('zoomModal').style.display = 'flex'; }
+function zoomIn(src) { 
+    if(!src || src.includes('undefined')) return;
+    document.getElementById('modalImg').src = src; 
+    document.getElementById('zoomModal').style.display = 'flex'; 
+}
+
 function copyImg(id) {
-    window[`blob_${id}`].toBlob(async b => {
-        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast(T[localStorage.getItem('lang')||'ru'].ok); }
-        catch(e) { showToast("❌ Error"); }
+    const canvas = window[`blob_${id}`];
+    if(!canvas) return;
+    canvas.toBlob(async b => {
+        try { 
+            await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); 
+            showToast(T[localStorage.getItem('lang')||'ru'].ok); 
+        } catch(e) { 
+            showToast("❌ Error"); 
+        }
     });
 }
+
 function showToast(text) {
     const t = document.getElementById('toast'); t.textContent = text; t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 2000);
