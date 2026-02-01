@@ -1,12 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0JQD4RVE06');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BMS Pinout Master</title>
     <style>
         :root { --bg: #f5f5f5; --card-bg: #ffffff; --accent: #2a8cff; --border: #ddd; --radius: 14px; }
-        * { box-sizing: border-box; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { 
             font-family: system-ui, -apple-system, sans-serif; 
             background: var(--bg); 
@@ -19,6 +27,17 @@
             border-radius: var(--radius); border: 1px solid var(--border);
             box-shadow: 0 4px 20px rgba(0,0,0,0.08); height: fit-content;
         }
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .back-btn { 
+            background: #eee; border: none; padding: 8px 14px; border-radius: 10px; 
+            font-size: 14px; font-weight: 600; cursor: pointer; color: #333; text-decoration: none;
+        }
+        .lang-switch { display: flex; gap: 4px; background: #eee; padding: 3px; border-radius: 10px; }
+        .lang-btn {
+            padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 7px;
+            cursor: pointer; border: none; background: transparent; color: #666;
+        }
+        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: #222; }
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
         .acc-header { 
@@ -31,12 +50,12 @@
         .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
         .acc-item.open .acc-content { display: block; }
         .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; }
+        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; cursor: zoom-in; }
         .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
         .copy-btn { 
             width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
             background: #28a745; color: white; border: none; cursor: pointer; 
-            font-weight: 600; font-size: 14px; -webkit-tap-highlight-color: transparent; 
+            font-weight: 600; font-size: 14px;
         }
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
@@ -48,27 +67,39 @@
             display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden; justify-content: center; align-items: center;
         }
-        #modalImg { max-width: 100%; max-height: 100%; transition: transform 0.05s linear; will-change: transform; cursor: move; }
+        #modalImg { max-width: 100%; max-height: 100%; will-change: transform; cursor: move; }
     </style>
 </head>
 <body>
 
 <div id="zoomModal" class="modal">
-    <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:30px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
+    <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:35px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
     <img id="modalImg" src="">
 </div>
     
 <div class="container">
-    <h2>BMS Connector Guide</h2>
+    <div class="top-nav">
+        <a href="index.html" class="back-btn" id="backBtn">← Назад</a>
+        <div class="lang-switch">
+            <button class="lang-btn" data-l="ru">RU</button>
+            <button class="lang-btn" data-l="ua">UA</button>
+            <button class="lang-btn" data-l="en">EN</button>
+        </div>
+    </div>
+    <h2 id="mainTitle">BMS Connector Guide</h2>
     <div id="accordion"></div>
 </div>
 
-<div id="toast">✅ Схема скопирована</div>
+<div id="toast">✅</div>
 
 <script>
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-const isAndroid = /Android/.test(navigator.userAgent);
-const isPC = !isIOS && !isAndroid;
+
+const T = {
+    ru: { back: "← Назад", title: "Распиновки BMS", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку для копирования", ok: "✅ Скопировано" },
+    ua: { back: "← Назад", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку для копіювання", ok: "✅ Скопійовано" },
+    en: { back: "← Back", title: "BMS Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", ok: "✅ Copied" }
+};
 
 const pinouts = [
     { id: 1, title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
@@ -86,21 +117,39 @@ const pinouts = [
     { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
     { id: 14, title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
 ];
+
 const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
 const stdStriped = [false, true, false, true, false, true, false, true, false];
 
-function init() {
+function setLang(lang) {
+    localStorage.setItem('pinout_lang', lang);
+    const t = T[lang];
+    document.getElementById('backBtn').innerText = t.back;
+    document.getElementById('mainTitle').innerText = t.title;
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.l === lang);
+    });
+    initAccordion();
+}
+
+function initAccordion() {
+    const lang = localStorage.getItem('pinout_lang') || 'ru';
+    const t = T[lang];
     const acc = document.getElementById('accordion');
+    acc.innerHTML = "";
+    
     pinouts.forEach(p => {
-        let actionHtml = isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">📋 Скопировать схему</button>` : 
-                        (isIOS ? `<div class="hint-text">☝️ Зажмите картинку, чтобы скопировать</div>` : '');
+        // На iOS показываем только текст, на остальных (включая TG Android) - кнопку
+        let actionHtml = isIOS ? `<div class="hint-text">${t.hint}</div>` : 
+                                 `<button class="copy-btn" onclick="copyImg(${p.id})">${t.copy}</button>`;
+        
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
             <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
             <div class="acc-content" id="c-${p.id}">
                 <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
                 ${actionHtml}
@@ -123,8 +172,7 @@ function draw(id) {
     
     const mP = data.m_pins || 8;
     const sP = data.s_pins || 8;
-    const maxP = Math.max(mP, sP);
-    const vH = 150 + (maxP * 36);
+    const vH = 150 + (Math.max(mP, sP) * 36);
 
     target.innerHTML = `<svg id="raw-${id}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
         <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
@@ -156,18 +204,15 @@ function drawConn(id, side, data) {
     let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
     const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
     const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
-    
     for(let i=1; i<=pins; i++) {
         const y = 8 + (i-1)*36;
         const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
-        
         h += `<g transform="translate(10, ${y})">`;
         if(nulls.includes(i)) {
             h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
         } else {
             h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
             if(isL || (customs[i] === undefined && stdStriped[i])) {
-                // ИСПРАВЛЕННЫЙ ПУТЬ: Добавлено больше сегментов, чтобы покрыть 110px ширины полностью
                 h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
             }
         }
@@ -190,9 +235,9 @@ function render(id) {
     const vBox = svg.viewBox.baseVal;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-    const img = new Image();
     const xml = new XMLSerializer().serializeToString(svg);
     const url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
+    const img = new Image();
     img.onload = function() {
         canvas.width = vBox.width; canvas.height = vBox.height;
         ctx.fillStyle = "white"; ctx.fillRect(0,0,vBox.width,vBox.height);
@@ -204,15 +249,23 @@ function render(id) {
     img.src = url;
 }
 
+// ЗУМ (ПК + ТАЧ)
 let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
 const modalImg = document.getElementById('modalImg');
+const zoomModal = document.getElementById('zoomModal');
 
 function zoomIn(src) {
-    modalImg.src = src; scale = 1; moveX = 0; moveY = 0; updateTransform();
-    document.getElementById('zoomModal').style.display = 'flex';
+    modalImg.src = src; scale = 1; moveX = 0; moveY = 0;
+    updateTransform();
+    zoomModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-function closeModal() { document.getElementById('zoomModal').style.display = 'none'; document.body.style.overflow = ''; }
+function closeModal() { zoomModal.style.display = 'none'; document.body.style.overflow = ''; }
+
+function updateTransform() { 
+    if (scale === 1) { moveX = 0; moveY = 0; }
+    modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
+}
 
 modalImg.addEventListener('touchstart', e => {
     if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX - moveX; lastY = e.touches[0].clientY - moveY; }
@@ -230,23 +283,41 @@ modalImg.addEventListener('touchmove', e => {
 }, {passive: false});
 
 modalImg.addEventListener('touchend', () => { isDragging = false; });
-function updateTransform() { 
-    if (scale === 1) { moveX = 0; moveY = 0; }
-    modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
+
+// КОПИРОВАНИЕ ДЛЯ TELEGRAM / WEB
+async function copyImg(id) {
+    const lang = localStorage.getItem('pinout_lang') || 'ru';
+    const canvas = window[`blob_${id}`];
+    if(!canvas) return;
+
+    try {
+        canvas.toBlob(async (blob) => {
+            try {
+                // Прямая попытка записи через современный API
+                const item = new ClipboardItem({ "image/png": blob });
+                await navigator.clipboard.write([item]);
+                showToast(T[lang].ok);
+            } catch (err) {
+                // Фолбэк для Telegram WebView: открываем зум и просим зажать
+                console.warn("Clipboard access denied/failed");
+                showToast(T[lang].hint);
+                zoomIn(canvas.toDataURL("image/png"));
+            }
+        });
+    } catch (e) {
+        showToast(T[lang].hint);
+    }
 }
 
-async function copyImg(id) {
-    window[`blob_${id}`].toBlob(async b => {
-        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast("✅ Скопировано"); }
-        catch(e) { showToast("❌ Ошибка"); }
-    });
-}
 function showToast(t) { 
     const s = document.getElementById('toast'); s.textContent = t; s.classList.add('show'); 
-    setTimeout(() => s.classList.remove('show'), 2000); 
+    setTimeout(() => s.classList.remove('show'), 2500); 
 }
 
-init();
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.onclick = () => setLang(btn.dataset.l);
+});
+setLang(localStorage.getItem('pinout_lang') || 'ru');
 </script>
 </body>
 </html>
