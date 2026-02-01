@@ -40,7 +40,6 @@
             height: fit-content;
         }
 
-        /* Навигация как в калькуляторе */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
         .back-btn { 
@@ -59,7 +58,6 @@
 
         h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; }
 
-        /* Стили аккордеона */
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
         .acc-header { padding: 14px 16px; cursor: pointer; background: #fafafa; font-size: 14px; font-weight: 600; color: var(--text-main); transition: 0.2s; }
         .acc-item.open .acc-header { color: var(--accent); background: #fff; border-bottom: 1px solid var(--border); }
@@ -115,23 +113,35 @@
 
 <script>
 const T = {
-    ru: { back: "← Меню", title: "Распиновки BMS", copy: "📋 Скопировать схему", ok: "✅ Скопировано" },
-    ua: { back: "← Меню", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", ok: "✅ Скопійовано" },
-    pl: { back: "← Menu", title: "Pinouty BMS", copy: "📋 Skopiuj raport", ok: "✅ Skopiowano" },
-    en: { back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", ok: "✅ Copied" }
+    ru: { 
+        back: "← Меню", title: "Распиновки BMS", copy: "📋 Скопировать схему", ok: "✅ Скопировано",
+        straight: "Прямая витая пара (T568B)", inv: "Инвертор"
+    },
+    ua: { 
+        back: "← Меню", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", ok: "✅ Скопійовано",
+        straight: "Пряма вита пара (T568B)", inv: "Інвертор"
+    },
+    pl: { 
+        back: "← Menu", title: "Pinouty BMS", copy: "📋 Skopiuj raport", ok: "✅ Skopiowano",
+        straight: "Prosty kabel sieciowy (T568B)", inv: "Falownik"
+    },
+    en: { 
+        back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", ok: "✅ Copied",
+        straight: "Straight-thru Cable (T568B)", inv: "Inverter"
+    }
 };
 
 const pinouts = [
-    { id: 1, title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
-    { id: 2, title: "LuxPower/Deye/Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
-    { id: 3, title: "LuxPower/Deye/Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
-    { id: 4, title: "LuxPower/Deye/Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
+    { id: 1, titleKey: "straight", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
+    { id: 2, title: "LuxPower/Deye/Solis ↔ Dyness", mKey: "inv", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+    { id: 3, title: "LuxPower/Deye/Solis ↔ Pylontech NEW", mKey: "inv", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+    { id: 4, title: "LuxPower/Deye/Solis ↔ Pylontech US2000/3000", mKey: "inv", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
     { id: 5, title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
     { id: 6, title: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
     { id: 7, title: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
-    { id: 8, title: "LuxPower (Красные DIP) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-    { id: 9, title: "LuxPower (Красные DIP) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-    { id: 10, title: "LuxPower (Красные DIP) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 8, title: "LuxPower (Red DIP) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 9, title: "LuxPower (Red DIP) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 10, title: "LuxPower (Red DIP) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
     { id: 11, title: "Sungrow (RJ45) ↔ Sungrow", m: "Sungrow Inv", s: "Sungrow Bat", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
     { id: 12, title: "Sungrow (COM Terminal) ↔ Sungrow", m: "Sungrow (10-p)", s: "Sungrow (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} },
     { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-p)", s: "Sofar BTS", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
@@ -153,7 +163,7 @@ function applyLang(lang) {
     document.querySelectorAll(".lang-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.lang === lang)
     );
-    initPinouts(); // Перерисовываем список с новыми переводами
+    initPinouts(); 
 }
 
 document.querySelectorAll(".lang-btn").forEach(btn => {
@@ -164,18 +174,22 @@ function initPinouts() {
     const acc = document.getElementById('accordion');
     acc.innerHTML = "";
     const lang = localStorage.getItem('lang') || 'ru';
+    const t = T[lang];
 
     pinouts.forEach(p => {
+        // Определяем заголовок: либо по ключу из перевода, либо напрямую
+        const displayTitle = p.titleKey ? t[p.titleKey] : p.title;
+        
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
-            <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
+            <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${displayTitle}</div>
             <div class="acc-content" id="c-${p.id}">
                 <div class="svg-wrap">
                     <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
-                ${isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">${T[lang].copy}</button>` : ''}
+                ${isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">${t.copy}</button>` : ''}
             </div>`;
         acc.appendChild(item);
     });
@@ -193,6 +207,12 @@ function drawSVG(id) {
     const target = document.getElementById(`svg-${id}`);
     if(target.innerHTML !== "") return;
     
+    const lang = localStorage.getItem('lang') || 'ru';
+    const t = T[lang];
+    const displayTitle = data.titleKey ? t[data.titleKey] : data.title;
+    const labelM = data.mKey ? t[data.mKey] : data.m;
+    const labelS = data.sKey ? t[data.sKey] : data.s;
+
     const mP = data.m_pins || 8;
     const sP = data.s_pins || 8;
     const vH = 150 + (Math.max(mP, sP) * 36);
@@ -201,9 +221,9 @@ function drawSVG(id) {
         <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
         <rect width="800" height="${vH}" fill="white"/>
         <rect width="800" height="50" fill="#2a8cff"/>
-        <text x="400" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${data.title}</text>
-        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
-        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
+        <text x="400" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${displayTitle}</text>
+        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${labelM}</text>
+        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${labelS}</text>
         <g id="lines-${id}"></g>
         <g transform="translate(130, 105)">${drawConn(id, 'm', data)}</g>
         <g transform="translate(550, 105)">${drawConn(id, 's', data)}</g>
@@ -283,7 +303,6 @@ function showToast(text) {
     setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// Запуск
 applyLang(localStorage.getItem("lang") || "ru");
 </script>
 </body>
