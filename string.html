@@ -41,7 +41,6 @@
             height: fit-content;
         }
 
-        /* Кнопка назад и Языки */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
         .back-btn { 
@@ -57,7 +56,7 @@
         }
         .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        h2 { font-size: 22px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; }
+        h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.2; }
 
         .input-group { margin-bottom: 16px; }
         label { font-size: 13px; font-weight: 600; display: block; color: var(--text-muted); margin-bottom: 6px; }
@@ -108,26 +107,26 @@
         </div>
     </div>
 
-    <h2 id="title">Калькулятор фотомодулей</h2>
+    <h2 id="title">Максимальная длина стринга</h2>
 
     <div class="input-group">
         <label id="l1"></label>
-        <input type="number" id="E13" step="any" placeholder="1000">
+        <input type="number" id="E13" step="any">
     </div>
 
     <div class="input-group">
         <label id="l2"></label>
-        <input type="number" id="E14" step="any" placeholder="41.5">
+        <input type="number" id="E14" step="any">
     </div>
 
     <div class="input-group">
         <label id="l3"></label>
-        <input type="number" id="E15" step="any" placeholder="-20">
+        <input type="number" id="E15" step="any">
     </div>
 
     <div class="input-group">
         <label id="l4"></label>
-        <input type="number" id="E16" step="any" placeholder="-0.29">
+        <input type="number" id="E16" step="any">
     </div>
 
     <button onclick="calculate()" id="calcBtn" class="calc-btn">Рассчитать</button>
@@ -139,41 +138,45 @@
 <script>
 const T = {
     ru: {
-        back: "← Меню", title: "Длина стринга",
+        back: "← Меню", title: "Максимальная длина стринга",
         l1: "Макс. напряжение DC инвертора (В)",
         l2: "Напряжение Voc модуля (В)",
         l3: "Мин. температура воздуха (°C)",
         l4: "Темп. коэффициент Voc (%/°C)",
+        ph: "например: ",
         calc: "Рассчитать", empty: "⚠️ Заполните все поля",
         result: "Макс. модулей в стринге:", copyBtn: "📋 Скопировать отчет",
         copied: "✅ Отчет скопирован!", calculatedVoc: "Расчетный Voc при мин. темп.", explanation: "вольт"
     },
     ua: {
-        back: "← Меню", title: "Довжина стринга",
+        back: "← Меню", title: "Максимальна довжина стринга",
         l1: "Макс. напруга DC інвертора (В)",
         l2: "Напруга Voc модуля (В)",
         l3: "Мін. температура повітря (°C)",
         l4: "Темп. коефіцієнт Voc (%/°C)",
+        ph: "наприклад: ",
         calc: "Розрахувати", empty: "⚠️ Заповніть всі поля",
         result: "Макс. модулів у ланцюгу:", copyBtn: "📋 Скопіювати звіт",
         copied: "✅ Звіт скопійовано!", calculatedVoc: "Розрахунковий Voc при мін. темп.", explanation: "вольт"
     },
     pl: {
-        back: "← Menu", title: "Długość stringu",
+        back: "← Menu", title: "Maksymalna długość stringu",
         l1: "Max napięcie DC falownika (V)",
         l2: "Napięcie Voc modułu (V)",
         l3: "Min. temperatura otoczenia (°C)",
         l4: "Współczynnik temp. Voc (%/°C)",
+        ph: "na przykład: ",
         calc: "Oblicz", empty: "⚠️ Wypełnij wszystkie pola",
         result: "Maks. liczba modułów:", copyBtn: "📋 Skopiuj raport",
         copied: "✅ Skopiowano!", calculatedVoc: "Obliczone Voc w min. temp.", explanation: "V"
     },
     en: {
-        back: "← Menu", title: "String Length",
+        back: "← Menu", title: "Maximum String Length",
         l1: "Max DC Inverter Voltage (V)",
         l2: "Module Voc (V)",
         l3: "Min. Ambient Temperature (°C)",
         l4: "Temp. Coefficient Voc (%/°C)",
+        ph: "example: ",
         calc: "Calculate", empty: "⚠️ Fill all fields",
         result: "Max modules per string:", copyBtn: "📋 Copy Report",
         copied: "✅ Copied!", calculatedVoc: "Calculated Voc at min temp", explanation: "V"
@@ -195,6 +198,12 @@ function applyLang(lang) {
     document.getElementById('l4').textContent = t.l4;
     document.getElementById('calcBtn').textContent = t.calc;
     document.getElementById('copyBtn').textContent = t.copyBtn;
+
+    // Обновление плейсхолдеров
+    document.getElementById('E13').placeholder = t.ph + "1000";
+    document.getElementById('E14').placeholder = t.ph + "41.5";
+    document.getElementById('E15').placeholder = t.ph + "-20";
+    document.getElementById('E16').placeholder = t.ph + "-0.29";
 
     document.querySelectorAll(".lang-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.lang === lang)
@@ -225,7 +234,6 @@ function calculate() {
         return;
     }
 
-    // Формула: Voc_corr = Voc * (1 + (Tmin - 25) * (coeff / 100))
     const vocCorr = v_voc * (1 + (t_min - 25) * (t_coeff / 100));
     const count = Math.floor(v_inv / vocCorr);
 
