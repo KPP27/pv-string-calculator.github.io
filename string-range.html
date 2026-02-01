@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="icon" type="image/jpg" href="favicon.jpg">
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -12,152 +11,85 @@
       
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PV String Range Calculator</title>
+    <title>Solar Toolbox - String Range</title>
 
     <style>
-        :root {
-            --bg: #f5f5f5;
-            --card-bg: #ffffff;
-            --text: #222;
-            --accent: #2a8cff;
-            --border: #ddd;
-            --shadow: 0 4px 20px rgba(0,0,0,0.1);
-            --radius: 14px;
+        :root { 
+            --bg: #f8f9fa; 
+            --card-bg: #ffffff; 
+            --accent: #2a8cff; 
+            --border: #eef0f2; 
+            --radius: 16px; 
+            --text-main: #1a1a1b;
+            --text-muted: #70757a;
         }
 
-        body {
-            font-family: system-ui, -apple-system, Arial, sans-serif;
-            background: var(--bg);
-            margin: 0;
-            padding: 15px;
-            display: flex;
-            justify-content: center;
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 15px; 
+            display: flex; justify-content: center; min-height: 100vh;
         }
 
-        .container {
-            max-width: 420px;
-            width: 100%;
-            background: var(--card-bg);
-            padding: 20px;
-            border-radius: var(--radius);
-            box-shadow: var(--shadow);
-            border: 1px solid var(--border);
+        .container { 
+            width: 100%; max-width: 480px; 
+            background: var(--card-bg); padding: 24px; 
+            border-radius: var(--radius); border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            height: fit-content;
         }
 
-        /* Верхняя панель управления */
-        .header-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            gap: 10px;
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        
+        .back-btn { 
+            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
+            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: 0.2s;
         }
+        .back-btn:active { transform: scale(0.95); }
 
-        .home-btn {
-            background: #eee;
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 10px;
-            text-decoration: none;
-            font-size: 18px;
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: 0.2s;
-        }
-        .home-btn:active { background: #e0e0e0; transform: scale(0.95); }
-
-        .tool-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--accent);
-            text-align: center;
-            flex-grow: 1;
-            line-height: 1.2;
-            text-transform: uppercase;
-        }
-
-        .lang-switch { display: flex; gap: 4px; }
-
+        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
-            padding: 6px 5px;
-            font-size: 10px;
-            font-weight: bold;
-            border-radius: 6px;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            background: white;
-            min-width: 30px;
-            text-align: center;
+            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
         }
+        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        .lang-btn.active {
-            background: var(--accent);
-            color: white;
-            border-color: var(--accent);
-        }
+        h2 { font-size: 19px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.2; }
 
-        /* Форма */
-        .input-group { margin-top: 12px; }
-        label { font-size: 12px; display: block; color: #555; margin-bottom: 4px; font-weight: 500; }
+        .input-group { margin-bottom: 12px; }
+        label { font-size: 12px; font-weight: 600; display: block; color: var(--text-muted); margin-bottom: 4px; }
 
         input {
-            width: 100%;
-            padding: 10px;
-            border-radius: 10px;
-            border: 1px solid var(--border);
-            font-size: 16px;
-            box-sizing: border-box; 
-            transition: 0.2s;
+            width: 100%; padding: 12px; border-radius: 10px;
+            border: 1px solid var(--border); font-size: 16px; background: #fafafa;
+            transition: 0.2s; outline: none;
         }
-        input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1); }
+        input:focus { border-color: var(--accent); background: #fff; }
 
         .calc-btn {
-            width: 100%;
-            margin-top: 20px;
-            padding: 14px;
-            background: var(--accent);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: 0.2s;
+            width: 100%; margin-top: 10px; padding: 16px; 
+            background: var(--accent); color: white; border: none;
+            border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s;
         }
         .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
 
         .result {
-            margin-top: 20px;
-            padding: 15px;
-            border-radius: 12px;
-            border: 1px solid var(--border);
-            font-weight: bold;
-            text-align: center;
-            opacity: 0;
-            transform: translateY(10px);
-            transition: all 0.4s ease;
-            background: #fafafa;
-            word-wrap: break-word;
-            display: none;
-            font-size: 14px;
-            line-height: 1.5;
+            margin-top: 20px; padding: 18px; border-radius: 14px;
+            background: #f0f7ff; border: 1px solid #cce3ff;
+            text-align: center; display: none;
+            animation: slideUp 0.3s ease;
         }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .result.show { opacity: 1; transform: translateY(0); display: block; }
+        .res-line { display: block; font-size: 16px; color: var(--text-main); font-weight: 700; margin: 4px 0; }
+        .res-val { color: var(--accent); font-size: 18px; }
 
         .copy-btn {
-            width: 100%;
-            margin-top: 12px;
-            padding: 12px;
-            border-radius: 12px;
-            background: #28a745;
-            color: white;
-            border: none;
-            cursor: pointer;
-            display: none;
-            font-weight: 600;
+            width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px;
+            background: #28a745; color: white; border: none;
+            font-weight: 600; cursor: pointer; display: none; transition: 0.2s;
         }
         .copy-btn.copied { background: #6c757d; }
     </style>
@@ -165,16 +97,17 @@
 <body>
 
 <div class="container">
-    <div class="header-nav">
-        <a href="index.html" class="home-btn">🏠</a>
-        <div class="tool-title" id="title">String Range</div>
+    <div class="top-nav">
+        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="en">EN</div>
             <div class="lang-btn" data-lang="pl">PL</div>
+            <div class="lang-btn" data-lang="en">EN</div>
         </div>
     </div>
+
+    <h2 id="title">Оптимальное кол-во модулей</h2>
 
     <div class="input-group"><label id="l1"></label><input type="number" id="v_voc" step="any"></div>
     <div class="input-group"><label id="l2"></label><input type="number" id="v_vmp" step="any"></div>
@@ -184,7 +117,7 @@
     <div class="input-group"><label id="l6"></label><input type="number" id="v_mppt_max" step="any"></div>
     <div class="input-group"><label id="l7"></label><input type="number" id="v_mppt_min" step="any"></div>
 
-    <button onclick="calculate()" id="calcBtn" class="calc-btn"></button>
+    <button onclick="calculate()" id="calcBtn" class="calc-btn">Рассчитать</button>
 
     <div class="result" id="result"></div>
     <button id="copyBtn" class="copy-btn"></button>
@@ -193,60 +126,48 @@
 <script>
 const T = {
     ru: {
-        title: "Оптимальное кол-во модулей",
-        l1: "Voc модуля (STC) (V)", 
-        l2: "Vmp модуля (STC) (V)",
-        l3: "Температурный коэффициент Voc (%)", 
-        l4: "Мин. температура объекта (°C)",
-        l5: "Макс. температура объекта (°C)", 
-        l6: "Макс. предел MPPT инвертора (V)",
-        l7: "Мин. предел MPPT инвертора (V)", 
-        ph: "Напр: ", calc: "Рассчитать диапазон",
+        back: "← Меню", title: "Диапазон модулей (Min/Max)",
+        l1: "Voc модуля (STC) (В)", l2: "Vmp модуля (STC) (В)",
+        l3: "Температурный коэффициент Voc (%)", l4: "Мин. температура объекта (°C)",
+        l5: "Макс. температура объекта (°C)", l6: "Макс. предел MPPT инвертора (В)",
+        l7: "Мин. предел MPPT инвертора (В)",
+        ph: "например: ", calc: "Рассчитать диапазон",
         empty: "⚠️ Заполните все поля", copyBtn: "📋 Скопировать отчет",
         copied: "✅ Скопировано!", res_min: "Минимум в стринге",
-        res_max: "максимум", pcs: "шт."
+        res_max: "Максимум в стринге", pcs: "шт."
     },
     ua: {
-        title: "Оптимальна кількість модулів",
-        l1: "Voc модуля (STC) (V)", 
-        l2: "Vmp модуля (STC) (V)",
-        l3: "Температурний коефіцієнт Voc (%)", 
-        l4: "Мін. температура об'єкта (°C)",
-        l5: "Макс. температура об'єкта (°C)", 
-        l6: "Макс. межа MPPT інвертора (V)",
-        l7: "Мін. межа MPPT інвертора (V)", 
-        ph: "Напр: ", calc: "Розрахувати діапазон",
+        back: "← Меню", title: "Діапазон модулів (Min/Max)",
+        l1: "Voc модуля (STC) (В)", l2: "Vmp модуля (STC) (В)",
+        l3: "Температурний коефіцієнт Voc (%)", l4: "Мін. температура об'єкта (°C)",
+        l5: "Макс. температура об'єкта (°C)", l6: "Макс. межа MPPT інвертора (В)",
+        l7: "Мін. межа MPPT інвертора (В)",
+        ph: "наприклад: ", calc: "Розрахувати діапазон",
         empty: "⚠️ Заповніть всі поля", copyBtn: "📋 Копіювати звіт",
         copied: "✅ Скопійовано!", res_min: "Мінімум у стрингу",
-        res_max: "максимум", pcs: "шт."
-    },
-    en: {
-        title: "Optimal Module Range",
-        l1: "Module Voc (STC) (V)", 
-        l2: "Module Vmp (STC) (V)",
-        l3: "Temp. coefficient Voc (%)", 
-        l4: "Min ambient temperature (°C)",
-        l5: "Max ambient temperature (°C)", 
-        l6: "Max MPPT voltage (V)",
-        l7: "Min MPPT voltage (V)", 
-        ph: "Ex: ", calc: "Calculate Range",
-        empty: "⚠️ Fill all fields", copyBtn: "📋 Copy report",
-        copied: "✅ Copied!", res_min: "Min modules in string",
-        res_max: "maximum", pcs: "pcs."
+        res_max: "Максимум у стрингу", pcs: "шт."
     },
     pl: {
-        title: "Optymalna liczba modułów",
-        l1: "Voc modułu (STC) (V)", 
-        l2: "Vmp modułu (STC) (V)",
-        l3: "Współczynnik temp. Voc (%)", 
-        l4: "Min. temperatura otoczenia (°C)",
-        l5: "Max. temperatura otoczenia (°C)", 
-        l6: "Max zakres MPPT falownika (V)",
-        l7: "Min zakres MPPT falownika (V)", 
-        ph: "Przykład: ", calc: "Oblicz zakres",
+        back: "← Menu", title: "Zakres modułów (Min/Max)",
+        l1: "Voc modułu (STC) (V)", l2: "Vmp modułu (STC) (V)",
+        l3: "Współczynnik temp. Voc (%)", l4: "Min. temperatura otoczenia (°C)",
+        l5: "Max. temperatura otoczenia (°C)", l6: "Max zakres MPPT falownika (V)",
+        l7: "Min zakres MPPT falownika (V)",
+        ph: "na przykład: ", calc: "Oblicz zakres",
         empty: "⚠️ Uzupełnij pola", copyBtn: "📋 Skopiuj raport",
         copied: "✅ Skopiowano!", res_min: "Minimum w stringu",
-        res_max: "maksimum", pcs: "szt."
+        res_max: "Maksimum w stringu", pcs: "szt."
+    },
+    en: {
+        back: "← Menu", title: "Module Range (Min/Max)",
+        l1: "Module Voc (STC) (V)", l2: "Module Vmp (STC) (V)",
+        l3: "Temp. coefficient Voc (%)", l4: "Min ambient temperature (°C)",
+        l5: "Max ambient temperature (°C)", l6: "Max MPPT voltage (V)",
+        l7: "Min MPPT voltage (V)",
+        ph: "example: ", calc: "Calculate Range",
+        empty: "⚠️ Fill all fields", copyBtn: "📋 Copy report",
+        copied: "✅ Copied!", res_min: "Min modules in string",
+        res_max: "Max modules in string", pcs: "pcs."
     }
 };
 
@@ -257,6 +178,7 @@ function applyLang(lang) {
     localStorage.setItem("lang", lang);
     const t = T[lang];
     
+    document.getElementById('backTxt').textContent = t.back;
     document.getElementById('title').textContent = t.title;
     document.getElementById('l1').textContent = t.l1;
     document.getElementById('l2').textContent = t.l2;
@@ -267,12 +189,12 @@ function applyLang(lang) {
     document.getElementById('l7').textContent = t.l7;
     
     document.getElementById('v_voc').placeholder = t.ph + "41.5";
-    document.getElementById('v_vmp').placeholder = t.ph + "42.7";
+    document.getElementById('v_vmp').placeholder = t.ph + "34.2";
     document.getElementById('kv').placeholder = t.ph + "-0.29";
     document.getElementById('t_min').placeholder = t.ph + "-25";
-    document.getElementById('t_max').placeholder = t.ph + "30";
-    document.getElementById('v_mppt_max').placeholder = t.ph + "1100";
-    document.getElementById('v_mppt_min').placeholder = t.ph + "125";
+    document.getElementById('t_max').placeholder = t.ph + "60";
+    document.getElementById('v_mppt_max').placeholder = t.ph + "1000";
+    document.getElementById('v_mppt_min').placeholder = t.ph + "160";
 
     document.getElementById('calcBtn').textContent = t.calc;
     document.getElementById('copyBtn').textContent = t.copyBtn;
@@ -283,12 +205,10 @@ function applyLang(lang) {
 }
 
 document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.addEventListener('click', () => applyLang(btn.dataset.lang));
+    btn.onclick = () => applyLang(btn.dataset.lang);
 });
 
-window.addEventListener('DOMContentLoaded', () => {
-    applyLang(localStorage.getItem("lang") || "ru");
-});
+applyLang(localStorage.getItem("lang") || "ru");
 
 function getNum(id) {
     const val = document.getElementById(id).value.replace(',', '.').trim();
@@ -311,18 +231,19 @@ function calculate() {
     const copyBtn = document.getElementById('copyBtn');
 
     if (isNaN(v_voc) || isNaN(v_vmp) || isNaN(kv) || isNaN(t_min) || isNaN(t_max) || isNaN(mppt_max) || isNaN(mppt_min)) {
-        resDiv.textContent = t.empty;
+        resDiv.innerHTML = `<span style="color:red">${t.empty}</span>`;
         resDiv.style.display = "block";
-        resDiv.classList.add("show");
         copyBtn.style.display = "none";
         return;
     }
 
-    const min_pcs = Math.ceil(mppt_min / (v_vmp * (1 + (t_max - 25) * (kv / 100))));
-    const max_pcs = Math.floor(mppt_max / (v_voc * (1 + (t_min - 25) * (kv / 100))));
+    // Расчет коррекции напряжений по температуре
+    const voc_min_t = v_voc * (1 + (t_min - 25) * (kv / 100));
+    const vmp_max_t = v_vmp * (1 + (t_max - 25) * (kv / 100));
 
-    const resultString = `✅ ${t.res_min}: ${min_pcs} ${t.pcs}<br>✅ ${t.res_max}: ${max_pcs} ${t.pcs}`;
-    
+    const min_pcs = Math.ceil(mppt_min / vmp_max_t);
+    const max_pcs = Math.floor(mppt_max / voc_min_t);
+
     lastCalcData = {
         title: t.title,
         inputs: [
@@ -337,14 +258,16 @@ function calculate() {
         result: `${t.res_min}: ${min_pcs} ${t.pcs} / ${t.res_max}: ${max_pcs} ${t.pcs}`
     };
 
-    resDiv.innerHTML = resultString;
+    resDiv.innerHTML = `
+        <span class="res-line">${t.res_min}: <span class="res-val">${min_pcs} ${t.pcs}</span></span>
+        <span class="res-line">${t.res_max}: <span class="res-val">${max_pcs} ${t.pcs}</span></span>
+    `;
     resDiv.style.display = "block";
-    resDiv.classList.remove("show");
-    setTimeout(() => resDiv.classList.add("show"), 20);
+    resDiv.classList.add("show");
     copyBtn.style.display = "block";
 }
 
-document.getElementById('copyBtn').addEventListener('click', function() {
+document.getElementById('copyBtn').onclick = function() {
     if (!lastCalcData) return;
     const t = T[localStorage.getItem("lang") || "ru"];
     
@@ -363,7 +286,7 @@ document.getElementById('copyBtn').addEventListener('click', function() {
             this.classList.remove("copied");
         }, 2000);
     });
-});
+};
 </script>
 </body>
 </html>
