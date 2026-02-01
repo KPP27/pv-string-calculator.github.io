@@ -42,11 +42,19 @@
         h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: left; color: #222; padding-left: 5px; }
 
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
-        .acc-header { 
-            padding: 14px 16px; cursor: pointer; background: #fafafa; 
-            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
-            transition: 0.2s; user-select: none; text-align: left;
-        }
+        .acc-header { padding: 14px 16px; 
+                    cursor: pointer; 
+                    background: #fafafa; 
+                    font-size: 14px; 
+                    font-weight: 600; 
+                    display: flex; 
+                    align-items: center; 
+                    justify-content: center; /* Добавлено: выравнивание по горизонтали */
+                    gap: 10px; 
+                    transition: 0.2s; 
+                    user-select: none; 
+                    text-align: center; /* Изменено с left на center */
+                    }
         .acc-item.open { border-color: var(--accent); }
         .acc-item.open .acc-header { background: #fff; color: var(--accent); }
         .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
