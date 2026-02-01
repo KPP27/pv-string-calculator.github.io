@@ -11,22 +11,22 @@
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BMS Pinouts - Solar Toolbox</title>
+    <title>Solar Toolbox - Pinouts</title>
     <style>
         :root { 
-            --bg: #f5f5f5; 
+            --bg: #f8f9fa; 
             --card-bg: #ffffff; 
             --accent: #2a8cff; 
-            --border: #ddd; 
-            --radius: 14px; 
-            --text-main: #222;
-            --text-muted: #666;
+            --border: #eef0f2; 
+            --radius: 16px; 
+            --text-main: #1a1a1b;
+            --text-muted: #70757a;
         }
         
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         
         body { 
-            font-family: system-ui, -apple-system, sans-serif; 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background: var(--bg); 
             margin: 0; padding: 15px; 
             display: flex; justify-content: center; min-height: 100vh;
@@ -34,45 +34,53 @@
 
         .container { 
             width: 100%; max-width: 480px; 
-            background: var(--card-bg); padding: 20px; 
+            background: var(--card-bg); padding: 24px; 
             border-radius: var(--radius); border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             height: fit-content;
         }
 
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .logo-text { font-weight: 800; font-size: 20px; color: var(--text-main); }
-        .lang-switch { display: flex; gap: 5px; }
-        .lang-btn {
-            padding: 5px 10px; font-size: 12px; font-weight: bold; border-radius: 6px;
-            border: 1px solid var(--border); cursor: pointer; background: white;
-        }
-        .lang-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
-
-        .back-btn {
-            background: #eee; border: none; padding: 10px 18px; border-radius: 10px;
-            font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 20px;
-            display: inline-block; text-decoration: none; color: #333;
-        }
-
-        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
-        .acc-header { padding: 14px 16px; cursor: pointer; background: #fafafa; font-size: 14px; font-weight: 600; transition: 0.2s; }
-        .acc-item.open .acc-header { color: var(--accent); background: #fff; border-bottom: 1px solid #eee; }
-        .acc-content { display: none; padding: 10px; text-align: center; }
-        .acc-item.open .acc-content { display: block; }
+        /* Навигация как в калькуляторе */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
-        .svg-wrap { width: 100%; background: white; border-radius: 8px; border: 1px solid #eee; overflow: hidden; position: relative; }
-        .img-overlay { width: 100%; height: auto; display: block; min-height: 200px; background: #fdfdfd; }
+        .back-btn { 
+            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
+            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: 0.2s;
+            text-decoration: none; display: inline-block;
+        }
+        .back-btn:active { transform: scale(0.95); }
+
+        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
+        .lang-btn {
+            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
+        }
+        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; }
+
+        /* Стили аккордеона */
+        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
+        .acc-header { padding: 14px 16px; cursor: pointer; background: #fafafa; font-size: 14px; font-weight: 600; color: var(--text-main); transition: 0.2s; }
+        .acc-item.open .acc-header { color: var(--accent); background: #fff; border-bottom: 1px solid var(--border); }
+        .acc-content { display: none; padding: 12px; text-align: center; }
+        .acc-item.open .acc-content { display: block; animation: fadeIn 0.3s ease; }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .svg-wrap { width: 100%; background: white; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
+        .img-overlay { width: 100%; height: auto; display: block; cursor: zoom-in; }
         
         .copy-btn { 
             width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
-            background: #28a745; color: white; border: none; font-weight: 600; cursor: pointer;
+            background: #28a745; color: white; border: none; font-weight: 600; cursor: pointer; transition: 0.2s;
         }
+        .copy-btn:active { transform: scale(0.98); }
 
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
             background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 50px;
-            transition: 0.4s; z-index: 9999;
+            transition: 0.4s; z-index: 9999; font-size: 14px;
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
         
@@ -84,31 +92,33 @@
 </head>
 <body>
 
-<div id="zoomModal" class="modal" onclick="closeModal()">
-    <img id="modalImg" style="max-width:100%; max-height:100%">
+<div id="zoomModal" class="modal" onclick="this.style.display='none'">
+    <img id="modalImg" style="max-width:95%; max-height:95%">
 </div>
 
 <div class="container">
-    <div class="header-top">
-        <a href="index.html" class="back-btn" data-t="back">← Меню</a>
+    <div class="top-nav">
+        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
         <div class="lang-switch">
-            <div class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</div>
-            <div class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</div>
-            <div class="lang-btn" onclick="setLang('en')" data-l="en">EN</div>
+            <div class="lang-btn" data-lang="ru">RU</div>
+            <div class="lang-btn" data-lang="ua">UA</div>
+            <div class="lang-btn" data-lang="pl">PL</div>
+            <div class="lang-btn" data-lang="en">EN</div>
         </div>
     </div>
     
-    <h2 data-t="m2_t">Распиновки BMS</h2>
+    <h2 id="title">Распиновки BMS</h2>
     <div id="accordion"></div>
 </div>
 
 <div id="toast">✅</div>
 
 <script>
-const translations = {
-    ru: { m2_t: "Распиновки BMS", back: "← В меню", copy: "Скопировать схему", ok: "✅ Скопировано" },
-    ua: { m2_t: "Розпіновки BMS", back: "← У меню", copy: "Копіювати схему", ok: "✅ Скопійовано" },
-    en: { m2_t: "BMS Pinouts", back: "← Menu", copy: "Copy Diagram", ok: "✅ Copied" }
+const T = {
+    ru: { back: "← Меню", title: "Распиновки BMS", copy: "📋 Скопировать схему", ok: "✅ Скопировано" },
+    ua: { back: "← Меню", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", ok: "✅ Скопійовано" },
+    pl: { back: "← Menu", title: "Pinouty BMS", copy: "📋 Skopiuj raport", ok: "✅ Skopiowano" },
+    en: { back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", ok: "✅ Copied" }
 };
 
 const pinouts = [
@@ -132,20 +142,23 @@ const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32
 const stdStriped = [false, true, false, true, false, true, false, true, false];
 const isPC = !/iPhone|iPad|iPod|Android/.test(navigator.userAgent);
 
-function setLang(lang) {
-    localStorage.setItem('lang', lang);
-    updateTexts();
+function applyLang(lang) {
+    if (!T[lang]) lang = 'ru';
+    localStorage.setItem("lang", lang);
+    const t = T[lang];
+    
+    document.getElementById('backTxt').textContent = t.back;
+    document.getElementById('title').textContent = t.title;
+
+    document.querySelectorAll(".lang-btn").forEach(btn =>
+        btn.classList.toggle("active", btn.dataset.lang === lang)
+    );
+    initPinouts(); // Перерисовываем список с новыми переводами
 }
 
-function updateTexts() {
-    const lang = localStorage.getItem('lang') || 'ru';
-    document.querySelectorAll('[data-t]').forEach(el => {
-        el.textContent = translations[lang][el.dataset.t];
-    });
-    document.querySelectorAll('.lang-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.l === lang);
-    });
-}
+document.querySelectorAll(".lang-btn").forEach(btn => {
+    btn.onclick = () => applyLang(btn.dataset.lang);
+});
 
 function initPinouts() {
     const acc = document.getElementById('accordion');
@@ -159,26 +172,20 @@ function initPinouts() {
             <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
             <div class="acc-content" id="c-${p.id}">
                 <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in" alt="Pinout diagram">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
-                ${isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">${translations[lang].copy}</button>` : ''}
+                ${isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">${T[lang].copy}</button>` : ''}
             </div>`;
         acc.appendChild(item);
     });
 }
 
 function toggle(id) {
-    const content = document.getElementById(`c-${id}`);
-    const item = content.parentElement;
+    const item = document.getElementById(`c-${id}`).parentElement;
     const isOpen = item.classList.contains('open');
-    
     document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
-    
-    if(!isOpen) { 
-        item.classList.add('open'); 
-        drawSVG(id); 
-    }
+    if(!isOpen) { item.classList.add('open'); drawSVG(id); }
 }
 
 function drawSVG(id) {
@@ -265,10 +272,9 @@ function render(id) {
 }
 
 function zoomIn(src) { document.getElementById('modalImg').src = src; document.getElementById('zoomModal').style.display = 'flex'; }
-function closeModal() { document.getElementById('zoomModal').style.display = 'none'; }
 function copyImg(id) {
     window[`blob_${id}`].toBlob(async b => {
-        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast(translations[localStorage.getItem('lang')||'ru'].ok); }
+        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast(T[localStorage.getItem('lang')||'ru'].ok); }
         catch(e) { showToast("❌ Error"); }
     });
 }
@@ -277,9 +283,8 @@ function showToast(text) {
     setTimeout(() => t.classList.remove('show'), 2000);
 }
 
-// Запуск при загрузке
-updateTexts();
-initPinouts();
+// Запуск
+applyLang(localStorage.getItem("lang") || "ru");
 </script>
 </body>
 </html>
