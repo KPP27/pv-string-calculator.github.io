@@ -1,97 +1,96 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0JQD4RVE06');
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Solar Toolbox - Pinouts</title>
+    <title>BMS Pinout Master</title>
     <style>
-        :root { 
-            --bg: #f8f9fa; 
-            --card-bg: #ffffff; 
-            --accent: #2a8cff; 
-            --border: #eef0f2; 
-            --radius: 16px; 
-            --text-main: #1a1a1b;
-        }
-        
+        :root { --bg: #f5f5f5; --card-bg: #ffffff; --accent: #2a8cff; --border: #ddd; --radius: 14px; }
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        
         body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            font-family: system-ui, -apple-system, sans-serif; 
             background: var(--bg); 
             margin: 0; padding: 15px; 
             display: flex; justify-content: center; min-height: 100vh;
         }
-
         .container { 
             width: 100%; max-width: 480px; 
-            background: var(--card-bg); padding: 24px; 
+            background: var(--card-bg); padding: 20px; 
             border-radius: var(--radius); border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); height: fit-content;
         }
 
-        /* Сохраняем ваше верхнее меню */
+        /* Верхняя навигация */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .back-btn { 
-            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
-            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; text-decoration: none;
+            background: #eee; border: none; padding: 8px 14px; border-radius: 10px; 
+            font-size: 14px; font-weight: 600; cursor: pointer; color: #333; text-decoration: none;
         }
-        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
+        .lang-switch { display: flex; gap: 4px; background: #eee; padding: 3px; border-radius: 10px; }
         .lang-btn {
-            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            padding: 5px 10px; font-size: 11px; font-weight: bold; border-radius: 7px;
             cursor: pointer; border: none; background: transparent; color: #666;
         }
         .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); }
-
+        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: #222; }
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
-        .acc-header { padding: 14px 16px; cursor: pointer; background: #fafafa; font-size: 14px; font-weight: 600; }
-        .acc-item.open .acc-header { color: var(--accent); background: #fff; border-bottom: 1px solid var(--border); }
-        .acc-content { display: none; padding: 12px; text-align: center; }
+        .acc-header { 
+            padding: 14px 16px; cursor: pointer; background: #fafafa; 
+            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
+            transition: 0.2s; user-select: none;
+        }
+        .acc-item.open { border-color: var(--accent); }
+        .acc-item.open .acc-header { background: #fff; color: var(--accent); }
+        .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
         .acc-item.open .acc-content { display: block; }
-
-        .svg-wrap { width: 100%; background: white; border-radius: 8px; border: 1px solid #eee; overflow: hidden; }
-        .img-overlay { width: 100%; height: auto; display: block; cursor: zoom-in; }
-        
+        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; cursor: zoom-in; }
+        .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
         .copy-btn { 
             width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
-            background: #28a745; color: white; border: none; font-weight: 600; cursor: pointer;
+            background: #28a745; color: white; border: none; cursor: pointer; 
+            font-weight: 600; font-size: 14px;
         }
-        .hint-text { font-size: 12px; color: #70757a; margin-top: 10px; font-style: italic; }
-
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
-            background: rgba(0,0,0,0.85); color: white; padding: 12px 24px; border-radius: 50px;
-            transition: 0.4s; z-index: 9999;
+            background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
+            font-size: 14px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
-        
         .modal {
             display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); justify-content: center; align-items: center; touch-action: none;
+            background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden; justify-content: center; align-items: center;
+            user-select: none;
         }
+        #modalImg { max-width: 100%; max-height: 100%; will-change: transform; cursor: move; }
     </style>
 </head>
 <body>
 
 <div id="zoomModal" class="modal">
-    <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:35px; cursor:pointer" onclick="closeModal()">×</div>
-    <img id="modalImg" src="" style="will-change: transform;">
+    <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:35px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
+    <img id="modalImg" src="">
 </div>
-
+    
 <div class="container">
     <div class="top-nav">
-        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
+        <a href="index.html" class="back-btn" id="backBtn">← Назад</a>
         <div class="lang-switch">
-            <div class="lang-btn" data-lang="ru">RU</div>
-            <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="pl">PL</div>
-            <div class="lang-btn" data-lang="en">EN</div>
+            <button class="lang-btn" data-l="ru">RU</button>
+            <button class="lang-btn" data-l="ua">UA</button>
+            <button class="lang-btn" data-l="en">EN</button>
         </div>
     </div>
-    
-    <h2 id="title">Распиновки BMS</h2>
+    <h2 id="mainTitle">BMS Connector Guide</h2>
     <div id="accordion"></div>
 </div>
 
@@ -103,13 +102,11 @@ const isAndroid = /Android/.test(navigator.userAgent);
 const isPC = !isIOS && !isAndroid;
 
 const T = {
-    ru: { back: "← Меню", title: "Распиновки BMS", copy: "📋 Скопировать схему", hint: "☝️ Зажмите фото для копирования", ok: "✅ Скопировано" },
-    ua: { back: "← Меню", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть фото для копіювання", ok: "✅ Скопійовано" },
-    pl: { back: "← Menu", title: "Pinouty BMS", copy: "📋 Skopiuj schemat", hint: "☝️ Przytrzymaj zdjęcie, aby skopiować", ok: "✅ Skopiowano" },
-    en: { back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", ok: "✅ Copied" }
+    ru: { back: "← Назад", title: "Распиновки BMS", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку для копирования", ok: "✅ Скопировано" },
+    ua: { back: "← Назад", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку для копіювання", ok: "✅ Скопійовано" },
+    en: { back: "← Back", title: "BMS Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", ok: "✅ Copied" }
 };
 
-// ... (Ваш массив pinouts и константы stdCols остаются без изменений) ...
 const pinouts = [
     { id: 1, title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
     { id: 2, title: "LuxPower/Deye/Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
@@ -126,37 +123,40 @@ const pinouts = [
     { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
     { id: 14, title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
 ];
+
 const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
 const stdStriped = [false, true, false, true, false, true, false, true, false];
 
-function applyLang(lang) {
-    if (!T[lang]) lang = 'ru';
-    localStorage.setItem("lang", lang);
+function setLang(lang) {
+    localStorage.setItem('pinout_lang', lang);
     const t = T[lang];
-    document.getElementById('backTxt').textContent = t.back;
-    document.getElementById('title').textContent = t.title;
-    document.querySelectorAll(".lang-btn").forEach(btn => btn.classList.toggle("active", btn.dataset.lang === lang));
-    initPinouts(); 
+    document.getElementById('backBtn').innerText = t.back;
+    document.getElementById('mainTitle').innerText = t.title;
+    
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.l === lang);
+    });
+    
+    initAccordion();
 }
 
-function initPinouts() {
+function initAccordion() {
+    const lang = localStorage.getItem('pinout_lang') || 'ru';
+    const t = T[lang];
     const acc = document.getElementById('accordion');
     acc.innerHTML = "";
-    const lang = localStorage.getItem('lang') || 'ru';
-    const t = T[lang];
-
+    
     pinouts.forEach(p => {
-        // Логика кнопок из вашей стабильной версии
         let actionHtml = isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">${t.copy}</button>` : 
                         (isIOS ? `<div class="hint-text">${t.hint}</div>` : '');
-
+        
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
             <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
             <div class="acc-content" id="c-${p.id}">
                 <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
                 ${actionHtml}
@@ -165,7 +165,6 @@ function initPinouts() {
     });
 }
 
-// ... (Функции draw, drawConn, addLbl и render остаются из вашей версии) ...
 function toggle(id) {
     const item = document.getElementById(`c-${id}`).parentElement;
     const isOpen = item.classList.contains('open');
@@ -177,6 +176,7 @@ function draw(id) {
     const data = pinouts.find(x => x.id === id);
     const target = document.getElementById(`svg-${id}`);
     if(target.innerHTML !== "") return;
+    
     const mP = data.m_pins || 8;
     const sP = data.s_pins || 8;
     const vH = 150 + (Math.max(mP, sP) * 36);
@@ -243,8 +243,8 @@ function render(id) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
     const xml = new XMLSerializer().serializeToString(svg);
-    const img = new Image();
     const url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
+    const img = new Image();
     img.onload = function() {
         canvas.width = vBox.width; canvas.height = vBox.height;
         ctx.fillStyle = "white"; ctx.fillRect(0,0,vBox.width,vBox.height);
@@ -256,41 +256,59 @@ function render(id) {
     img.src = url;
 }
 
-// Продвинутый Зум (ваша реализация)
+// УНИВЕРСАЛЬНЫЙ ЗУМ (ПК + ТАЧ)
 let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
 const modalImg = document.getElementById('modalImg');
+const zoomModal = document.getElementById('zoomModal');
 
 function zoomIn(src) {
-    modalImg.src = src; scale = 1; moveX = 0; moveY = 0; updateTransform();
-    document.getElementById('zoomModal').style.display = 'flex';
+    modalImg.src = src; scale = 1; moveX = 0; moveY = 0; lastDist = 0;
+    updateTransform();
+    zoomModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-function closeModal() { document.getElementById('zoomModal').style.display = 'none'; document.body.style.overflow = ''; }
+function closeModal() { zoomModal.style.display = 'none'; document.body.style.overflow = ''; }
+
+// Колесо мыши (ПК)
+zoomModal.addEventListener('wheel', e => {
+    e.preventDefault();
+    scale = Math.min(Math.max(1, scale * (e.deltaY > 0 ? 0.9 : 1.1)), 5);
+    updateTransform();
+}, { passive: false });
+
+// События касания и мыши
+const startDrag = (x, y) => { isDragging = true; lastX = x - moveX; lastY = y - moveY; };
+const doDrag = (x, y) => { if (isDragging && scale > 1) { moveX = x - lastX; moveY = y - lastY; updateTransform(); } };
+
+zoomModal.addEventListener('mousedown', e => startDrag(e.clientX, e.clientY));
+window.addEventListener('mousemove', e => doDrag(e.clientX, e.clientY));
+window.addEventListener('mouseup', () => isDragging = false);
 
 modalImg.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX - moveX; lastY = e.touches[0].clientY - moveY; }
+    if (e.touches.length === 1) startDrag(e.touches[0].clientX, e.touches[0].clientY);
     else if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
 }, {passive: false});
 
 modalImg.addEventListener('touchmove', e => {
     e.preventDefault();
-    if (e.touches.length === 1 && isDragging) { moveX = e.touches[0].clientX - lastX; moveY = e.touches[0].clientY - lastY; }
+    if (e.touches.length === 1) doDrag(e.touches[0].clientX, e.touches[0].clientY);
     else if (e.touches.length === 2) {
         const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        scale = Math.min(Math.max(1, scale * (dist/lastDist)), 5); lastDist = dist;
+        if(lastDist > 0) scale = Math.min(Math.max(1, scale * (dist/lastDist)), 5);
+        lastDist = dist;
+        updateTransform();
     }
-    updateTransform();
 }, {passive: false});
 
-modalImg.addEventListener('touchend', () => { isDragging = false; });
+modalImg.addEventListener('touchend', () => { isDragging = false; lastDist = 0; });
+
 function updateTransform() { 
-    if (scale === 1) { moveX = 0; moveY = 0; }
+    if (scale <= 1) { scale = 1; moveX = 0; moveY = 0; }
     modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
 }
 
-// Стабильное копирование (ваша реализация)
 async function copyImg(id) {
-    const lang = localStorage.getItem('lang') || 'ru';
+    const lang = localStorage.getItem('pinout_lang') || 'ru';
     window[`blob_${id}`].toBlob(async b => {
         try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast(T[lang].ok); }
         catch(e) { showToast("❌ Error"); }
@@ -302,11 +320,12 @@ function showToast(t) {
     setTimeout(() => s.classList.remove('show'), 2000); 
 }
 
-document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.onclick = () => applyLang(btn.dataset.lang);
+// Инициализация
+document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.onclick = () => setLang(btn.dataset.l);
 });
 
-applyLang(localStorage.getItem("lang") || "ru");
+setLang(localStorage.getItem('pinout_lang') || 'ru');
 </script>
 </body>
 </html>
