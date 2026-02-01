@@ -1,63 +1,39 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-0JQD4RVE06');
-    </script>
-      
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BMS Pinout Master</title>
-
     <style>
-        :root { 
-            --bg: #f8f9fa; 
-            --card-bg: #ffffff; 
-            --accent: #2a8cff; 
-            --border: #eef0f2; 
-            --radius: 16px; 
-            --text-main: #1a1a1b;
-            --text-muted: #70757a;
-        }
-
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
+        :root { --bg: #f5f5f5; --card-bg: #ffffff; --accent: #2a8cff; --border: #ddd; --radius: 14px; }
+        * { box-sizing: border-box; }
         body { 
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            font-family: system-ui, -apple-system, sans-serif; 
             background: var(--bg); 
             margin: 0; padding: 15px; 
             display: flex; justify-content: center; min-height: 100vh;
         }
-
         .container { 
             width: 100%; max-width: 480px; 
-            background: var(--card-bg); padding: 24px; 
+            background: var(--card-bg); padding: 20px; 
             border-radius: var(--radius); border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            height: fit-content;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08); height: fit-content;
         }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        
+        /* Навигация */
+        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; }
         .back-btn { 
-            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
-            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: 0.2s;
+            background: #eee; border: none; padding: 8px 12px; border-radius: 8px; 
+            font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap;
         }
-        .back-btn:active { transform: scale(0.95); }
-
-        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
+        .lang-switch { display: flex; gap: 4px; flex-wrap: nowrap; }
         .lang-btn {
-            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
-            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
+            padding: 6px 6px; font-size: 10px; font-weight: bold; border-radius: 6px;
+            cursor: pointer; border: 1px solid #ddd; background: #fff; min-width: 32px;
         }
-        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .lang-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
 
-        h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; text-align: center; }
-
+        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: #222; }
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
         .acc-header { 
             padding: 14px 16px; cursor: pointer; background: #fafafa; 
@@ -68,24 +44,28 @@
         .acc-item.open .acc-header { background: #fff; color: var(--accent); }
         .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
         .acc-item.open .acc-content { display: block; }
-
-        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; cursor: zoom-in; }
         
+        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
+        .img-overlay { 
+            width: 100%; height: auto; display: block; 
+            image-rendering: -webkit-optimize-contrast; 
+            -webkit-touch-callout: default !important; /* Разрешаем меню на iOS */
+        }
+        
+        .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
         .copy-btn { 
             width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
             background: #28a745; color: white; border: none; cursor: pointer; 
-            font-weight: 600; font-size: 14px;
+            font-weight: 600; font-size: 14px; -webkit-tap-highlight-color: transparent; 
         }
-        .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
-
+        
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
             background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
             font-size: 14px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
         }
         #toast.show { transform: translateX(-50%) translateY(0); }
-
+        
         .modal {
             display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden; justify-content: center; align-items: center;
@@ -99,31 +79,29 @@
     <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:30px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
     <img id="modalImg" src="">
 </div>
-
+    
 <div class="container">
     <div class="top-nav">
-        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
+        <button class="back-btn" onclick="location.href='index.html'" id="btn-back">← Меню</button>
         <div class="lang-switch">
-            <div class="lang-btn" data-lang="ru">RU</div>
-            <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="pl">PL</div>
-            <div class="lang-btn" data-lang="en">EN</div>
+            <button class="lang-btn active" onclick="setLang('ru')">RU</button>
+            <button class="lang-btn" onclick="setLang('ua')">UA</button>
+            <button class="lang-btn" onclick="setLang('pl')">PL</button>
+            <button class="lang-btn" onclick="setLang('en')">EN</button>
         </div>
     </div>
-
-    <h2 id="title">BMS Connector Guide</h2>
+    <h2 id="main-title">BMS Connector Guide</h2>
     <div id="accordion"></div>
 </div>
 
-<div id="toast">✅ Скопировано</div>
+<div id="toast">✅ Схема скопирована</div>
 
 <script>
-// Настройки переводов
-const T = {
-    ru: { back: "← Меню", title: "BMS Схемы", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку, чтобы скопировать", toast: "✅ Скопировано", toastErr: "❌ Ошибка" },
-    ua: { back: "← Меню", title: "BMS Схеми", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку, щоб скопіювати", toast: "✅ Скопійовано", toastErr: "❌ Помилка" },
-    pl: { back: "← Menu", title: "BMS Schematy", copy: "📋 Skopiuj schemat", hint: "☝️ Przytrzymaj obrazek, aby skopiować", toast: "✅ Skopiowano", toastErr: "❌ Błąd" },
-    en: { back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", toast: "✅ Copied", toastErr: "❌ Error" }
+const texts = {
+    ru: { title: "BMS Схемы", back: "← Меню", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку, чтобы скопировать", toast: "✅ Скопировано" },
+    ua: { title: "BMS Схеми", back: "← Меню", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку, щоб скопіювати", toast: "✅ Скопійовано" },
+    pl: { title: "Schematy BMS", back: "← Menu", copy: "📋 Kopiuj schemat", hint: "☝️ Przytrzymaj obraz, aby skopiować", toast: "✅ Skopiowano" },
+    en: { title: "BMS Pinouts", back: "← Menu", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", toast: "✅ Copied" }
 };
 
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -150,91 +128,58 @@ const pinouts = [
 const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
 const stdStriped = [false, true, false, true, false, true, false, true, false];
 
-function applyLang(lang) {
-    if (!T[lang]) lang = 'ru';
-    localStorage.setItem("lang", lang);
-    const t = T[lang];
-    
-    document.getElementById('backTxt').textContent = t.back;
-    document.getElementById('title').textContent = t.title;
-    
-    document.querySelectorAll(".lang-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.dataset.lang === lang)
-    );
-
-    document.querySelectorAll(".copy-btn").forEach(btn => btn.textContent = t.copy);
-    document.querySelectorAll(".hint-text").forEach(div => div.textContent = t.hint);
-}
-
 function init() {
     const acc = document.getElementById('accordion');
     pinouts.forEach(p => {
+        let actionHtml = !isIOS ? `<button class="copy-btn btn-copy-text" onclick="copyImg(${p.id})">${texts.ru.copy}</button>` : 
+                        `<div class="hint-text hint-copy-text">${texts.ru.hint}</div>`;
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
             <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
             <div class="acc-content" id="c-${p.id}">
                 <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
-                <div id="action-${p.id}"></div>
+                ${actionHtml}
             </div>`;
         acc.appendChild(item);
     });
+}
 
-    document.querySelectorAll(".lang-btn").forEach(btn => {
-        btn.onclick = () => applyLang(btn.dataset.lang);
+function setLang(lang) {
+    const t = texts[lang];
+    document.getElementById('main-title').innerText = t.title;
+    document.getElementById('btn-back').innerText = t.back;
+    document.querySelectorAll('.btn-copy-text').forEach(b => b.innerText = t.copy);
+    document.querySelectorAll('.hint-copy-text').forEach(h => h.innerText = t.hint);
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.innerText.toLowerCase() === lang);
     });
-
-    applyLang(localStorage.getItem("lang") || "ru");
 }
 
 function toggle(id) {
     const item = document.getElementById(`c-${id}`).parentElement;
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
-    if(!isOpen) { 
-        item.classList.add('open'); 
-        draw(id); 
-        updateActionButtons(id);
-    }
-}
-
-function updateActionButtons(id) {
-    const container = document.getElementById(`action-${id}`);
-    const t = T[localStorage.getItem("lang") || "ru"];
-    if (isPC) {
-        container.innerHTML = `<button class="copy-btn" onclick="copyImg(${id})">${t.copy}</button>`;
-    } else if (isIOS) {
-        container.innerHTML = `<div class="hint-text">${t.hint}</div>`;
-    } else {
-        container.innerHTML = `<button class="copy-btn" onclick="copyImg(${id})">${t.copy}</button>`;
-    }
+    if(!isOpen) { item.classList.add('open'); draw(id); }
 }
 
 function draw(id) {
     const data = pinouts.find(x => x.id === id);
     const target = document.getElementById(`svg-${id}`);
     if(target.innerHTML !== "") return;
-    
-    const mP = data.m_pins || 8;
-    const sP = data.s_pins || 8;
-    const maxP = Math.max(mP, sP);
-    const vH = 150 + (maxP * 36);
-
+    const mP = data.m_pins || 8, sP = data.s_pins || 8;
+    const maxP = Math.max(mP, sP), vH = 150 + (maxP * 36);
     target.innerHTML = `<svg id="raw-${id}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
         <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
-        <rect width="800" height="${vH}" fill="white"/>
-        <rect width="800" height="50" fill="#2a8cff"/>
+        <rect width="800" height="${vH}" fill="white"/><rect width="800" height="50" fill="#2a8cff"/>
         <text x="400" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${data.title}</text>
         <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
         <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
-        <g id="lines-${id}"></g>
-        <g transform="translate(130, 105)">${drawConn(id, 'm', data)}</g>
-        <g transform="translate(550, 105)">${drawConn(id, 's', data)}</g>
+        <g id="lines-${id}"></g><g transform="translate(130, 105)">${drawConn(id, 'm', data)}</g><g transform="translate(550, 105)">${drawConn(id, 's', data)}</g>
     </svg>`;
-
     data.links.forEach(l => {
         const y1 = 126 + (l[0]-1)*36, y2 = 126 + (l[1]-1)*36;
         const color = (data.m_colors && data.m_colors[l[0]]) || stdCols[l[0]] || '#0056b3';
@@ -251,19 +196,13 @@ function draw(id) {
 function drawConn(id, side, data) {
     const pins = (side === 'm' ? data.m_pins : data.s_pins) || 8;
     let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
-    const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
-    const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
+    const nulls = (side === 'm' ? data.m_null : data.s_null) || [], customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
     for(let i=1; i<=pins; i++) {
-        const y = 8 + (i-1)*36;
-        const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
+        const y = 8 + (i-1)*36, isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
         h += `<g transform="translate(10, ${y})">`;
-        if(nulls.includes(i)) {
-            h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
-        } else {
-            h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
-            if(isL || (customs[i] === undefined && stdStriped[i])) {
-                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
-            }
+        if(nulls.includes(i)) { h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`; }
+        else { h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
+            if(isL || (customs[i] === undefined && stdStriped[i])) { h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`; }
         }
         h += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
     }
@@ -281,12 +220,8 @@ function addLbl(id, idx, txt, side) {
 
 function render(id) {
     const svg = document.getElementById(`raw-${id}`);
-    const vBox = svg.viewBox.baseVal;
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-    const xml = new XMLSerializer().serializeToString(svg);
-    const url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
+    const vBox = svg.viewBox.baseVal, canvas = document.createElement('canvas'), ctx = canvas.getContext('2d'), img = new Image();
+    const xml = new XMLSerializer().serializeToString(svg), url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
     img.onload = function() {
         canvas.width = vBox.width; canvas.height = vBox.height;
         ctx.fillStyle = "white"; ctx.fillRect(0,0,vBox.width,vBox.height);
@@ -298,7 +233,7 @@ function render(id) {
     img.src = url;
 }
 
-// Функционал Модального окна и Зума
+// Зум и Модалка
 let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
 const modalImg = document.getElementById('modalImg');
 
@@ -312,17 +247,18 @@ function closeModal() { document.getElementById('zoomModal').style.display = 'no
 modalImg.addEventListener('touchstart', e => {
     if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX - moveX; lastY = e.touches[0].clientY - moveY; }
     else if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-}, {passive: false});
+});
 
 modalImg.addEventListener('touchmove', e => {
-    e.preventDefault();
-    if (e.touches.length === 1 && isDragging) { moveX = e.touches[0].clientX - lastX; moveY = e.touches[0].clientY - lastY; }
-    else if (e.touches.length === 2) {
+    if (e.touches.length === 2) e.preventDefault(); // Запрещаем скролл только при щипке
+    if (e.touches.length === 1 && isDragging && scale > 1) { 
+        moveX = e.touches[0].clientX - lastX; moveY = e.touches[0].clientY - lastY; 
+    } else if (e.touches.length === 2) {
         const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
         scale = Math.min(Math.max(1, scale * (dist/lastDist)), 5); lastDist = dist;
     }
     updateTransform();
-}, {passive: false});
+});
 
 modalImg.addEventListener('touchend', () => { isDragging = false; });
 function updateTransform() { 
@@ -330,19 +266,14 @@ function updateTransform() {
     modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
 }
 
-// Функционал копирования
+// Копирование
 async function copyImg(id) {
-    const lang = localStorage.getItem("lang") || "ru";
     if (!window[`blob_${id}`]) return;
     window[`blob_${id}`].toBlob(async b => {
-        try { 
-            await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); 
-            showToast(T[lang].toast); 
-        }
-        catch(e) { showToast(T[lang].toastErr); }
+        try { await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); showToast("✅ Скопировано"); }
+        catch(e) { showToast("❌ Ошибка"); }
     });
 }
-
 function showToast(t) { 
     const s = document.getElementById('toast'); s.textContent = t; s.classList.add('show'); 
     setTimeout(() => s.classList.remove('show'), 2000); 
