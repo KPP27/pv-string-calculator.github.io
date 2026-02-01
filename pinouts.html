@@ -38,31 +38,24 @@
             cursor: pointer; border: none; background: transparent; color: #666;
         }
         .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: center; color: #222; }
+        
+        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: left; color: #222; padding-left: 5px; }
+
         .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
         .acc-header { 
             padding: 14px 16px; cursor: pointer; background: #fafafa; 
             font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
-            transition: 0.2s; user-select: none;
+            transition: 0.2s; user-select: none; text-align: left;
         }
         .acc-item.open { border-color: var(--accent); }
         .acc-item.open .acc-header { background: #fff; color: var(--accent); }
         .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
         .acc-item.open .acc-content { display: block; }
-        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; cursor: zoom-in; }
-        .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
-        .copy-btn { 
-            width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
-            background: #28a745; color: white; border: none; cursor: pointer; 
-            font-weight: 600; font-size: 14px;
-        }
-        #toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
-            background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
-            font-size: 14px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
-        }
-        #toast.show { transform: translateX(-50%) translateY(0); }
+        
+        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: zoom-in; }
+        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; }
+        .hint-text { font-size: 12px; color: #8e8e93; margin-top: 10px; font-style: italic; }
+
         .modal {
             display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden; justify-content: center; align-items: center;
@@ -91,28 +84,12 @@
     <div id="accordion"></div>
 </div>
 
-<div id="toast">✅</div>
-
 <script>
-const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
-
 const T = {
-    ru: { 
-        back: "← Назад", title: "Распиновки BMS", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку для копирования", ok: "✅ Скопировано",
-        straigth: "Прямая витая пара (T568B)", redDips: "Красные дипы"
-    },
-    ua: { 
-        back: "← Назад", title: "Розпіновки BMS", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку для копіювання", ok: "✅ Скопійовано",
-        straigth: "Пряма вита пара (T568B)", redDips: "Червоні діпи"
-    },
-    pl: { 
-        back: "← Powrót", title: "Schematy BMS", copy: "📋 Kopiuj schemat", hint: "☝️ Przytrzymaj obraz, aby skopiować", ok: "✅ Skopiowano",
-        straigth: "Prosta skrętka (T568B)", redDips: "Czerwone przełączniki DIP"
-    },
-    en: { 
-        back: "← Back", title: "BMS Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", ok: "✅ Copied",
-        straigth: "Straight-through (T568B)", redDips: "Red DIP switches"
-    }
+    ru: { back: "← Назад", title: "Распиновки BMS", hint: "Нажмите на схему для увеличения", straigth: "Прямая витая пара (T568B)", redDips: "Красные дипы" },
+    ua: { back: "← Назад", title: "Розпіновки BMS", hint: "Натисніть на схему для збільшення", straigth: "Пряма вита пара (T568B)", redDips: "Червоні діпи" },
+    pl: { back: "← Powrót", title: "Schematy BMS", hint: "Kliknij schemat, aby powiększyć", straigth: "Prosta skrętka (T568B)", redDips: "Czerwone przełączniki DIP" },
+    en: { back: "← Back", title: "BMS Pinouts", hint: "Tap on diagram to enlarge", straigth: "Straight-through (T568B)", redDips: "Red DIP switches" }
 };
 
 const getPinouts = (lang) => {
@@ -155,22 +132,17 @@ function initAccordion() {
     const acc = document.getElementById('accordion');
     acc.innerHTML = "";
     
-    const pinouts = getPinouts(lang);
-    
-    pinouts.forEach(p => {
-        let actionHtml = isIOS ? `<div class="hint-text">${t.hint}</div>` : 
-                                 `<button class="copy-btn" onclick="copyImg(${p.id})">${t.copy}</button>`;
-        
+    getPinouts(lang).forEach(p => {
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
             <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
             <div class="acc-content" id="c-${p.id}">
-                <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
+                <div class="svg-wrap" onclick="zoomIn(document.getElementById('img-${p.id}').src)">
+                    <img class="img-overlay" id="img-${p.id}">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
-                ${actionHtml}
+                <div class="hint-text">${t.hint}</div>
             </div>`;
         acc.appendChild(item);
     });
@@ -197,7 +169,7 @@ function draw(id) {
         <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
         <rect width="800" height="${vH}" fill="white"/>
         <rect width="800" height="50" fill="#2a8cff"/>
-        <text x="400" y="30" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="white">${data.title}</text>
+        <text x="20" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="start">${data.title}</text>
         <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
         <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
         <g id="lines-${id}"></g>
@@ -232,7 +204,7 @@ function drawConn(id, side, data) {
         } else {
             h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
             if(isL || (customs[i] === undefined && stdStriped[i])) {
-                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
+                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
             }
         }
         h += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
@@ -262,16 +234,14 @@ function render(id) {
         ctx.fillStyle = "white"; ctx.fillRect(0,0,vBox.width,vBox.height);
         ctx.drawImage(img, 0, 0);
         document.getElementById(`img-${id}`).src = canvas.toDataURL("image/png");
-        window[`blob_${id}`] = canvas;
         URL.revokeObjectURL(url);
     };
     img.src = url;
 }
 
-// ZOOM & MODAL
+// ZOOM LOGIC
 let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
-const modalImg = document.getElementById('modalImg');
-const zoomModal = document.getElementById('zoomModal');
+const modalImg = document.getElementById('modalImg'), zoomModal = document.getElementById('zoomModal');
 
 function zoomIn(src) {
     modalImg.src = src; scale = 1; moveX = 0; moveY = 0;
@@ -280,10 +250,7 @@ function zoomIn(src) {
     document.body.style.overflow = 'hidden';
 }
 function closeModal() { zoomModal.style.display = 'none'; document.body.style.overflow = ''; }
-function updateTransform() { 
-    if (scale === 1) { moveX = 0; moveY = 0; }
-    modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
-}
+function updateTransform() { modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; }
 
 modalImg.addEventListener('touchstart', e => {
     if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX - moveX; lastY = e.touches[0].clientY - moveY; }
@@ -302,35 +269,7 @@ modalImg.addEventListener('touchmove', e => {
 
 modalImg.addEventListener('touchend', () => { isDragging = false; });
 
-async function copyImg(id) {
-    const lang = localStorage.getItem('pinout_lang') || 'ru';
-    const canvas = window[`blob_${id}`];
-    if(!canvas) return;
-
-    try {
-        canvas.toBlob(async (blob) => {
-            try {
-                const item = new ClipboardItem({ "image/png": blob });
-                await navigator.clipboard.write([item]);
-                showToast(T[lang].ok);
-            } catch (err) {
-                showToast(T[lang].hint);
-                zoomIn(canvas.toDataURL("image/png"));
-            }
-        });
-    } catch (e) {
-        showToast(T[lang].hint);
-    }
-}
-
-function showToast(t) { 
-    const s = document.getElementById('toast'); s.textContent = t; s.classList.add('show'); 
-    setTimeout(() => s.classList.remove('show'), 2500); 
-}
-
-document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.onclick = () => setLang(btn.dataset.l);
-});
+document.querySelectorAll('.lang-btn').forEach(btn => btn.onclick = () => setLang(btn.dataset.l));
 setLang(localStorage.getItem('pinout_lang') || 'ru');
 </script>
 </body>
