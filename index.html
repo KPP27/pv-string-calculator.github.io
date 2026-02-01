@@ -38,7 +38,7 @@
             background: var(--card-bg); padding: 24px; 
             border-radius: var(--radius); border: 1px solid var(--border);
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
-            height: fit-content; display: none;
+            height: fit-content;
             animation: fadeIn 0.3s ease;
         }
 
@@ -46,6 +46,7 @@
 
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; gap: 10px; }
         .logo-text { font-weight: 800; font-size: 20px; color: var(--text-main); letter-spacing: -0.8px; white-space: nowrap; }
+        
         .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
             padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
@@ -61,38 +62,18 @@
         .tool-card {
             background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
             padding: 16px; display: flex; align-items: center; gap: 15px;
-            cursor: pointer; transition: 0.2s; position: relative;
+            cursor: pointer; transition: 0.2s; text-decoration: none;
         }
         .tool-card:active { transform: scale(0.98); background: #f9f9f9; }
         .tool-icon { font-size: 24px; width: 48px; height: 48px; background: #f0f7ff; border-radius: 12px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .tool-info { display: flex; flex-direction: column; }
         .tool-title { font-weight: 700; color: var(--text-main); font-size: 16px; }
         .tool-desc { font-size: 12px; color: var(--text-muted); margin-top: 2px; line-height: 1.3; }
-
-        .back-btn { background: #f1f3f4; border: none; padding: 12px 20px; border-radius: 12px; font-size: 14px; font-weight: 600; cursor: pointer; margin-bottom: 20px; color: #444; }
-        
-        /* Аккордеон распиновок */
-        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; }
-        .acc-header { padding: 16px; cursor: pointer; background: #fff; font-size: 14px; font-weight: 600; }
-        .acc-item.open .acc-header { color: var(--accent); background: #f0f7ff; }
-        .acc-content { display: none; padding: 12px; text-align: center; border-top: 1px solid var(--border); background: #fff; }
-        .acc-item.open .acc-content { display: block; }
-        .svg-wrap { width: 100%; border-radius: 8px; border: 1px solid #eee; overflow: hidden; margin-bottom: 10px; }
-        .img-overlay { width: 100%; height: auto; display: block; cursor: zoom-in; }
-        .copy-btn { width: 100%; padding: 14px; border-radius: 10px; background: #28a745; color: white; border: none; font-weight: 600; cursor: pointer; }
-
-        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px); background: rgba(0,0,0,0.9); color: white; padding: 12px 24px; border-radius: 50px; transition: 0.4s; z-index: 9999; font-size: 14px; }
-        #toast.show { transform: translateX(-50%) translateY(0); }
-        .modal { display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
     </style>
 </head>
 <body>
 
-<div id="zoomModal" class="modal" onclick="this.style.display='none'">
-    <img id="modalImg" src="" style="max-width: 95%; max-height: 90%;">
-</div>
-
-<div id="screen-main" class="container" style="display: block;">
+<div class="container">
     <div class="header-top">
         <div class="logo-text">Solar Toolbox</div>
         <div class="lang-switch">
@@ -109,41 +90,31 @@
     </div>
     
     <div class="main-grid">
-        <div class="tool-card" onclick="location.href='string.html'">
+        <a href="string.html" class="tool-card">
             <div class="tool-icon">📏</div>
             <div class="tool-info">
                 <span class="tool-title" data-t="m1_t">Макс. длина стринга</span>
                 <span class="tool-desc" data-t="m1_d">Расчет Voc и напряжения по температуре</span>
             </div>
-        </div>
+        </a>
 
-        <div class="tool-card" onclick="location.href='string-range.html'">
+        <a href="string-range.html" class="tool-card">
             <div class="tool-icon">📊</div>
             <div class="tool-info">
                 <span class="tool-title" data-t="m3_t">Калькулятор диапазона</span>
                 <span class="tool-desc" data-t="m3_d">Оптимальное кол-во модулей (Min/Max)</span>
             </div>
-        </div>
+        </a>
 
-        <div class="tool-card" onclick="showScreen('screen-pinout')">
+        <a href="pinouts.html" class="tool-card">
             <div class="tool-icon">🔌</div>
             <div class="tool-info">
                 <span class="tool-title" data-t="m2_t">Распиновки BMS</span>
                 <span class="tool-desc" data-t="m2_d">Схемы CAN / RS485 / RJ45</span>
             </div>
-        </div>
+        </a>
     </div>
 </div>
-
-<div id="screen-pinout" class="container">
-    <button class="back-btn" onclick="showScreen('screen-main')" data-t="back">← Меню</button>
-    <div class="welcome">
-        <h1 data-t="m2_t">Распиновки BMS</h1>
-    </div>
-    <div id="accordion"></div>
-</div>
-
-<div id="toast">✅</div>
 
 <script>
 const translations = {
@@ -151,40 +122,27 @@ const translations = {
         w_h: "Инструменты", w_p: "Помощник инженера", 
         m1_t: "Макс. длина стринга", m1_d: "Расчет Voc и напряжения", 
         m2_t: "Распиновки BMS", m2_d: "Схемы CAN / RS485 / RJ45",
-        m3_t: "Калькулятор диапазона", m3_d: "Кол-во модулей (Min/Max)",
-        back: "← В меню", copy: "Скопировать схему", ok: "✅ Скопировано" 
+        m3_t: "Калькулятор диапазона", m3_d: "Кол-во модулей (Min/Max)"
     },
     ua: { 
         w_h: "Інструменти", w_p: "Помічник інженера", 
         m1_t: "Макс. довжина стринга", m1_d: "Розрахунок Voc та напруги", 
         m2_t: "Розпіновки BMS", m2_d: "Схеми CAN / RS485 / RJ45",
-        m3_t: "Калькулятор діапазону", m3_d: "К-сть модулів (Min/Max)",
-        back: "← У меню", copy: "Копіювати схему", ok: "✅ Скопійовано" 
+        m3_t: "Калькулятор діапазону", m3_d: "К-сть модулів (Min/Max)"
     },
     pl: { 
         w_h: "Narzędzia", w_p: "Asystent inżyniera", 
         m1_t: "Długość stringu", m1_d: "Obliczanie Voc i napięcia", 
         m2_t: "Pinouty BMS", m2_d: "Schematy CAN / RS485",
-        m3_t: "Kalkulator zakresu", m3_d: "Liczba modułów (Min/Max)",
-        back: "← Do menu", copy: "Kopiuj schemat", ok: "✅ Skopiowano" 
+        m3_t: "Kalkulator zakresu", m3_d: "Liczba modułów (Min/Max)"
     },
     en: { 
         w_h: "Toolkit", w_p: "Engineer Assistant", 
         m1_t: "Max String Length", m1_d: "Voc & voltage calculation", 
         m2_t: "BMS Pinouts", m2_d: "CAN / RS485 diagrams",
-        m3_t: "String Range Calc", m3_d: "Module count (Min/Max)",
-        back: "← Menu", copy: "Copy Diagram", ok: "✅ Copied" 
+        m3_t: "String Range Calc", m3_d: "Module count (Min/Max)"
     }
 };
-
-const pinouts = [
-    { id: 1, title: "T568B Standard (Straight)", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
-    { id: 2, title: "Deye / Solis ↔ Dyness", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
-    { id: 3, title: "Victron GX ↔ Pylontech", links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[3,6,'GND']] }
-];
-
-const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
-const stdStriped = [false, true, false, true, false, true, false, true, false];
 
 function setLang(lang) {
     localStorage.setItem('lang', lang);
@@ -203,102 +161,7 @@ function updateTexts() {
     });
 }
 
-function showScreen(id) {
-    document.querySelectorAll('.container').forEach(c => c.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
-    window.scrollTo(0,0);
-    if(id === 'screen-pinout') initPinouts();
-}
-
-function initPinouts() {
-    const acc = document.getElementById('accordion');
-    if(acc.innerHTML !== "") return;
-    const lang = localStorage.getItem('lang') || 'ru';
-    
-    pinouts.forEach(p => {
-        const item = document.createElement('div');
-        item.className = 'acc-item';
-        item.innerHTML = `
-            <div class="acc-header" onclick="toggle(${p.id})">${p.title}</div>
-            <div class="acc-content" id="c-${p.id}">
-                <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
-                    <div id="svg-${p.id}" style="display:none"></div>
-                </div>
-                <button class="copy-btn" onclick="copyImg(${p.id})">${translations[lang].copy}</button>
-            </div>`;
-        acc.appendChild(item);
-    });
-}
-
-function toggle(id) {
-    const item = document.getElementById(`c-${id}`).parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.acc-item').forEach(el => el.classList.remove('open'));
-    if(!isOpen) {
-        item.classList.add('open');
-        drawSVG(id);
-    }
-}
-
-function drawSVG(id) {
-    const data = pinouts.find(x => x.id === id);
-    const target = document.getElementById(`svg-${id}`);
-    if(target.innerHTML !== "") return;
-
-    const vH = 350;
-    target.innerHTML = `<svg id="raw-${id}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
-        <rect width="800" height="${vH}" fill="white"/>
-        <g transform="translate(130, 40)">${drawConn('Master')}</g>
-        <g transform="translate(550, 40)">${drawConn('Slave')}</g>
-        <g id="lines-${id}"></g>
-    </svg>`;
-
-    data.links.forEach(l => {
-        const y1 = 61 + (l[0]-1)*36, y2 = 61 + (l[1]-1)*36;
-        const color = stdCols[l[0]];
-        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        p.setAttribute("d", `M 240 ${y1} C 390 ${y1}, 410 ${y2}, 550 ${y2}`);
-        p.setAttribute("stroke", color); p.setAttribute("stroke-width", "6"); p.setAttribute("fill", "none");
-        if(stdStriped[l[0]]) p.setAttribute("stroke-dasharray", "12,6");
-        document.getElementById(`lines-${id}`).appendChild(p);
-    });
-    renderToImage(id);
-}
-
-function drawConn(label) {
-    let h = `<rect width="130" height="300" fill="#f8f9fa" stroke="#ccc" rx="5"/>
-             <text x="65" y="-15" font-family="Arial" font-size="14" font-weight="bold" text-anchor="middle">${label}</text>`;
-    for(let i=1; i<=8; i++) {
-        const y = 8 + (i-1)*36;
-        h += `<rect x="10" y="${y}" width="110" height="26" fill="${stdCols[i]}" rx="3"/>
-              <text x="7" y="${y+13}" font-family="Arial" font-size="10" text-anchor="end" dominant-baseline="middle">${i}</text>`;
-    }
-    return h;
-}
-
-function renderToImage(id) {
-    const svg = document.getElementById(`raw-${id}`);
-    const xml = new XMLSerializer().serializeToString(svg);
-    const svg64 = btoa(unescape(encodeURIComponent(xml)));
-    document.getElementById(`img-${id}`).src = 'data:image/svg+xml;base64,' + svg64;
-}
-
-function zoomIn(src) {
-    document.getElementById('modalImg').src = src;
-    document.getElementById('zoomModal').style.display = 'flex';
-}
-
-function showToast(text) {
-    const t = document.getElementById('toast');
-    t.textContent = text; t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
-}
-
-function copyImg(id) {
-    showToast(translations[localStorage.getItem('lang')||'ru'].ok);
-}
-
+// Устанавливаем язык при загрузке
 updateTexts();
 </script>
 </body>
