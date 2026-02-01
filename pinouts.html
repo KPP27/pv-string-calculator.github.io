@@ -1,140 +1,102 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BMS Pinout Master</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>BMS Pinout Master</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    <style>
-        :root { 
-            --bg: #f8f9fa; 
-            --card-bg: #ffffff; 
-            --accent: #2a8cff; 
-            --border: #eef0f2; 
-            --radius: 16px; 
-            --text-main: #1a1a1b;
-            --text-muted: #70757a;
-        }
+<style>
+:root { 
+  --bg: var(--tg-theme-bg-color, #f8f9fa); 
+  --card-bg: var(--tg-theme-secondary-bg-color, #ffffff); 
+  --accent: var(--tg-theme-button-color, #2a8cff); 
+  --border: rgba(0,0,0,0.1); 
+  --radius: 16px; 
+  --text-main: var(--tg-theme-text-color, #1a1a1b);
+  --text-muted: var(--tg-theme-hint-color, #70757a);
+}
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); margin: 0; padding: 10px; display: flex; justify-content: center; min-height: 100vh; }
+.container { width: 100%; max-width: 480px; background: var(--card-bg); padding: 20px; border-radius: var(--radius); border: 1px solid var(--border); box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+.top-nav { display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; }
+.back-btn { background:#f1f3f4; border:none; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; }
+.lang-switch { display:flex; gap:2px; background:#eee; padding:2px; border-radius:10px; }
+.lang-btn { padding:6px 8px; font-size:10px; font-weight:700; border-radius:8px; border:none; background:transparent; cursor:pointer; }
+.lang-btn.active { background:white; color:var(--accent); }
 
-        body { 
-            font-family: system-ui, -apple-system, sans-serif; 
-            background: var(--bg); 
-            margin: 0; padding: 15px; 
-            display: flex; justify-content: center; min-height: 100vh;
-        }
+h2 { margin: 0 0 16px 0; text-align:center; color:var(--text-main); }
 
-        .container { 
-            width: 100%; max-width: 480px; 
-            background: var(--card-bg); padding: 24px; 
-            border-radius: var(--radius); border: 1px solid var(--border);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05); height: fit-content;
-        }
+.acc-item { border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden; background:#fff; }
+.acc-header { padding:14px 16px; cursor:pointer; background:#fafafa; font-size:14px; font-weight:600; }
+.acc-item.open { border-color:var(--accent); }
+.acc-item.open .acc-header { background:#fff; color:var(--accent); }
+.acc-content { display:none; padding:10px; text-align:center; border-top:1px solid #eee; }
+.acc-item.open .acc-content { display:block; }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { 
-            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
-            font-size: 14px; font-weight: 600; cursor: pointer; color: #444;
-        }
-        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
-        .lang-btn {
-            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
-            cursor: pointer; border: none; background: transparent; color: #666;
-        }
-        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+.svg-wrap { position:relative; width:100%; background:white; border-radius:8px; overflow:hidden; border:1px solid #eee; }
+.img-overlay { width:100%; height:auto; display:block; cursor:zoom-in; }
 
-        h2 { margin: 0 0 20px 0; font-size: 20px; text-align: center; color: var(--text-main); }
+.hint-text { font-size:13px; color:var(--text-muted); margin-top:10px; font-style:italic; }
+.copy-btn { width:100%; margin-top:12px; padding:14px; border-radius:12px; background:#28a745; color:white; border:none; font-weight:600; cursor:pointer; }
 
-        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
-        .acc-header { 
-            padding: 14px 16px; cursor: pointer; background: #fafafa; 
-            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
-            user-select: none;
-        }
-        .acc-item.open { border-color: var(--accent); }
-        .acc-item.open .acc-header { background: #fff; color: var(--accent); }
-        .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
-        .acc-item.open .acc-content { display: block; }
+#toast { position:fixed; bottom:30px; left:50%; transform:translateX(-50%) translateY(120px); background:rgba(0,0,0,0.85); color:white; padding:12px 24px; border-radius:50px; font-size:14px; transition:.4s; z-index:9999; }
+#toast.show { transform:translateX(-50%) translateY(0); }
 
-        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .img-overlay { width: 100%; height: auto; display: block; }
-
-        .hint-text { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
-        .copy-btn { 
-            width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
-            background: #28a745; color: white; border: none; cursor: pointer; 
-            font-weight: 600; font-size: 14px;
-        }
-
-        #toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
-            background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
-            font-size: 14px; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9999;
-        }
-        #toast.show { transform: translateX(-50%) translateY(0); }
-
-        .modal {
-            display: none; position: fixed; z-index: 10000; inset: 0;
-            background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden;
-            justify-content: center; align-items: center;
-        }
-        #modalImg { max-width: 100%; max-height: 100%; cursor: move; }
-    </style>
+.modal { display:none; position:fixed; z-index:10000; inset:0; background:rgba(0,0,0,.95); touch-action:none; overflow:hidden; justify-content:center; align-items:center; }
+#modalImg { max-width:100%; max-height:100%; cursor:move; }
+</style>
 </head>
 <body>
 
 <div id="zoomModal" class="modal">
-    <div style="position:absolute; top:20px; right:20px; color:white; font-size:30px; cursor:pointer" onclick="closeModal()">×</div>
-    <img id="modalImg">
+  <div style="position:absolute;top:20px;right:20px;color:white;font-size:30px;cursor:pointer" onclick="closeModal()">×</div>
+  <img id="modalImg">
 </div>
 
 <div class="container">
-    <div class="top-nav">
-        <button class="back-btn" id="backTxt" onclick="location.href='index.html'">← Меню</button>
-        <div class="lang-switch">
-            <button class="lang-btn" data-lang="ru">RU</button>
-            <button class="lang-btn" data-lang="ua">UA</button>
-            <button class="lang-btn" data-lang="pl">PL</button>
-            <button class="lang-btn" data-lang="en">EN</button>
-        </div>
+  <div class="top-nav">
+    <button class="back-btn" id="backTxt">← Меню</button>
+    <div class="lang-switch">
+      <button class="lang-btn" data-lang="ru">RU</button>
+      <button class="lang-btn" data-lang="ua">UA</button>
+      <button class="lang-btn" data-lang="pl">PL</button>
+      <button class="lang-btn" data-lang="en">EN</button>
     </div>
+  </div>
 
-    <h2 id="title">BMS Connector Guide</h2>
-    <div id="accordion"></div>
+  <h2 id="title">BMS Connector Guide</h2>
+  <div id="accordion"></div>
 </div>
 
-<div id="toast">✅ Скопировано</div>
+<div id="toast"></div>
 
 <script>
+/* ===== TELEGRAM ===== */
+const tg = window.Telegram.WebApp;
+tg.expand();
+
+/* ===== LANG ===== */
 const T = {
-  ru: { title: "Схемы подключения BMS", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку, чтобы скопировать", toast: "✅ Скопировано", back: "← Меню" },
-  ua: { title: "Схеми підключення BMS", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку, щоб скопіювати", toast: "✅ Скопійовано", back: "← Меню" },
-  pl: { title: "Schematy połączeń BMS", copy: "📋 Skopiuj schemat", hint: "☝️ Przytrzymaj obraz, aby skopiować", toast: "✅ Skopiowano", back: "← Menu" },
-  en: { title: "BMS Connection схемes", copy: "📋 Copy diagram", hint: "☝️ Long press image to copy", toast: "✅ Copied", back: "← Menu" }
+  ru:{title:"Схемы подключения BMS", copy:"📋 Скопировать схему", hint:"☝️ Зажмите картинку, чтобы скопировать", toast:"✅ Скопировано", back:"← Меню"},
+  ua:{title:"Схеми підключення BMS", copy:"📋 Скопіювати схему", hint:"☝️ Затисніть картинку, щоб скопіювати", toast:"✅ Скопійовано", back:"← Меню"},
+  pl:{title:"Schematy połączeń BMS", copy:"📋 Skopiuj schemat", hint:"☝️ Przytrzymaj obraz, aby skopiować", toast:"✅ Skopiowano", back:"← Menu"},
+  en:{title:"BMS Connector Guide", copy:"📋 Copy diagram", hint:"☝️ Long press image to copy", toast:"✅ Copied", back:"← Menu"}
 };
-
-function applyLang(lang) {
-    if(!T[lang]) lang = "ru";
-    localStorage.setItem("lang", lang);
-    const t = T[lang];
-
-    document.getElementById("title").textContent = t.title;
-    document.getElementById("backTxt").textContent = t.back;
-
-    document.querySelectorAll(".lang-btn").forEach(b =>
-        b.classList.toggle("active", b.dataset.lang === lang)
-    );
-
-    document.querySelectorAll(".copy-btn").forEach(b => b.textContent = t.copy);
-    document.querySelectorAll(".hint-text").forEach(h => h.textContent = t.hint);
+function applyLang(lang){
+  localStorage.setItem("lang",lang);
+  const t=T[lang];
+  document.getElementById("title").textContent=t.title;
+  document.getElementById("backTxt").textContent=t.back;
+  document.querySelectorAll(".lang-btn").forEach(b=>b.classList.toggle("active",b.dataset.lang===lang));
+  document.querySelectorAll(".copy-btn").forEach(b=>b.textContent=t.copy);
+  document.querySelectorAll(".hint-text").forEach(h=>h.textContent=t.hint);
 }
+document.querySelectorAll(".lang-btn").forEach(b=>b.onclick=()=>applyLang(b.dataset.lang));
 
-document.querySelectorAll(".lang-btn").forEach(btn =>
-    btn.onclick = () => applyLang(btn.dataset.lang)
-);
+/* ===== Распиновки ===== */
 
-applyLang(localStorage.getItem("lang") || "ru");
 </script>
 
 </body>
