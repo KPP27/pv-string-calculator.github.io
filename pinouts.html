@@ -8,10 +8,11 @@
       gtag('js', new Date());
       gtag('config', 'G-0JQD4RVE06');
     </script>
-
+      
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>BMS Pinout Master</title>
+
     <style>
         :root { 
             --bg: #f8f9fa; 
@@ -40,7 +41,6 @@
             height: fit-content;
         }
 
-        /* Top Nav Styles */
         .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         
         .back-btn { 
@@ -58,32 +58,27 @@
 
         h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; text-align: center; }
 
-        /* Accordion Styles */
-        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; transition: 0.2s; }
+        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
         .acc-header { 
             padding: 14px 16px; cursor: pointer; background: #fafafa; 
             font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
-            transition: 0.2s; user-select: none; color: var(--text-main);
+            transition: 0.2s; user-select: none;
         }
-        .acc-item.open { border-color: var(--accent); box-shadow: 0 4px 12px rgba(42,140,255,0.1); }
+        .acc-item.open { border-color: var(--accent); }
         .acc-item.open .acc-header { background: #fff; color: var(--accent); }
         .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
-        .acc-item.open .acc-content { display: block; animation: slideDown 0.3s ease; }
-
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
+        .acc-item.open .acc-content { display: block; }
 
         .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; }
-        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; }
+        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; cursor: zoom-in; }
         
         .copy-btn { 
             width: 100%; margin-top: 12px; padding: 14px; border-radius: 12px; 
             background: #28a745; color: white; border: none; cursor: pointer; 
-            font-weight: 600; font-size: 14px; transition: 0.2s;
+            font-weight: 600; font-size: 14px;
         }
-        .copy-btn:active { transform: scale(0.98); }
-        .hint-text { font-size: 13px; color: var(--text-muted); margin-top: 10px; font-style: italic; }
+        .hint-text { font-size: 13px; color: #666; margin-top: 10px; font-style: italic; }
 
-        /* Toast & Modal */
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(120px);
             background: rgba(0, 0, 0, 0.85); color: white; padding: 12px 24px; border-radius: 50px;
@@ -104,10 +99,10 @@
     <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:30px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
     <img id="modalImg" src="">
 </div>
-    
+
 <div class="container">
     <div class="top-nav">
-        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Меню</button>
+        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
         <div class="lang-switch">
             <div class="lang-btn" data-lang="ru">RU</div>
             <div class="lang-btn" data-lang="ua">UA</div>
@@ -116,18 +111,19 @@
         </div>
     </div>
 
-    <h2 id="mainTitle">BMS Connector Guide</h2>
+    <h2 id="title">BMS Connector Guide</h2>
     <div id="accordion"></div>
 </div>
 
-<div id="toast">✅ Схема скопирована</div>
+<div id="toast">✅ Скопировано</div>
 
 <script>
+// Настройки переводов
 const T = {
-    ru: { back: "← Меню", title: "Схемы BMS кабелей", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку, чтобы скопировать", toastOk: "✅ Скопировано", toastErr: "❌ Ошибка" },
-    ua: { back: "← Меню", title: "Схеми BMS кабелів", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку, щоб скопіювати", toastOk: "✅ Скопійовано", toastErr: "❌ Помилка" },
-    pl: { back: "← Menu", title: "Schematy kabli BMS", copy: "📋 Skopiuj schemat", hint: "☝️ Przytrzymaj obrazek, aby skopiować", toastOk: "✅ Skopiowano", toastErr: "❌ Błąd" },
-    en: { back: "← Menu", title: "BMS Cable Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", toastOk: "✅ Copied", toastErr: "❌ Error" }
+    ru: { back: "← Меню", title: "BMS Схемы", copy: "📋 Скопировать схему", hint: "☝️ Зажмите картинку, чтобы скопировать", toast: "✅ Скопировано", toastErr: "❌ Ошибка" },
+    ua: { back: "← Меню", title: "BMS Схеми", copy: "📋 Скопіювати схему", hint: "☝️ Затисніть картинку, щоб скопіювати", toast: "✅ Скопійовано", toastErr: "❌ Помилка" },
+    pl: { back: "← Menu", title: "BMS Schematy", copy: "📋 Skopiuj schemat", hint: "☝️ Przytrzymaj obrazek, aby skopiować", toast: "✅ Skopiowano", toastErr: "❌ Błąd" },
+    en: { back: "← Menu", title: "BMS Pinouts", copy: "📋 Copy Diagram", hint: "☝️ Long press image to copy", toast: "✅ Copied", toastErr: "❌ Error" }
 };
 
 const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent);
@@ -142,9 +138,9 @@ const pinouts = [
     { id: 5, title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
     { id: 6, title: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
     { id: 7, title: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
-    { id: 8, title: "LuxPower (Red DIP) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-    { id: 9, title: "LuxPower (Red DIP) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-    { id: 10, title: "LuxPower (Red DIP) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 8, title: "LuxPower (Червоні діпи) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 9, title: "LuxPower (Червоні діпи) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+    { id: 10, title: "LuxPower (Червоні діпи) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
     { id: 11, title: "Sungrow (RJ45) ↔ Sungrow", m: "Sungrow Inv", s: "Sungrow Bat", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
     { id: 12, title: "Sungrow (COM Terminal) ↔ Sungrow", m: "Sungrow (10-pin)", s: "Sungrow (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} },
     { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
@@ -160,34 +156,29 @@ function applyLang(lang) {
     const t = T[lang];
     
     document.getElementById('backTxt').textContent = t.back;
-    document.getElementById('mainTitle').textContent = t.title;
+    document.getElementById('title').textContent = t.title;
     
     document.querySelectorAll(".lang-btn").forEach(btn =>
         btn.classList.toggle("active", btn.dataset.lang === lang)
     );
-    // Обновляем тексты внутри аккордеона если он уже создан
-    document.querySelectorAll('.copy-btn').forEach(btn => btn.textContent = t.copy);
-    document.querySelectorAll('.hint-text').forEach(ht => ht.textContent = t.hint);
+
+    document.querySelectorAll(".copy-btn").forEach(btn => btn.textContent = t.copy);
+    document.querySelectorAll(".hint-text").forEach(div => div.textContent = t.hint);
 }
 
 function init() {
     const acc = document.getElementById('accordion');
-    const lang = localStorage.getItem("lang") || "ru";
-    const t = T[lang];
-
     pinouts.forEach(p => {
-        let actionHtml = isPC ? `<button class="copy-btn" onclick="copyImg(${p.id})">${t.copy}</button>` : 
-                        (isIOS ? `<div class="hint-text">${t.hint}</div>` : '');
         const item = document.createElement('div');
         item.className = 'acc-item';
         item.innerHTML = `
             <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
             <div class="acc-content" id="c-${p.id}">
                 <div class="svg-wrap">
-                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)" style="cursor:zoom-in">
+                    <img class="img-overlay" id="img-${p.id}" onclick="zoomIn(this.src)">
                     <div id="svg-${p.id}" style="display:none"></div>
                 </div>
-                ${actionHtml}
+                <div id="action-${p.id}"></div>
             </div>`;
         acc.appendChild(item);
     });
@@ -195,14 +186,31 @@ function init() {
     document.querySelectorAll(".lang-btn").forEach(btn => {
         btn.onclick = () => applyLang(btn.dataset.lang);
     });
-    applyLang(lang);
+
+    applyLang(localStorage.getItem("lang") || "ru");
 }
 
 function toggle(id) {
     const item = document.getElementById(`c-${id}`).parentElement;
     const isOpen = item.classList.contains('open');
     document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
-    if(!isOpen) { item.classList.add('open'); draw(id); }
+    if(!isOpen) { 
+        item.classList.add('open'); 
+        draw(id); 
+        updateActionButtons(id);
+    }
+}
+
+function updateActionButtons(id) {
+    const container = document.getElementById(`action-${id}`);
+    const t = T[localStorage.getItem("lang") || "ru"];
+    if (isPC) {
+        container.innerHTML = `<button class="copy-btn" onclick="copyImg(${id})">${t.copy}</button>`;
+    } else if (isIOS) {
+        container.innerHTML = `<div class="hint-text">${t.hint}</div>`;
+    } else {
+        container.innerHTML = `<button class="copy-btn" onclick="copyImg(${id})">${t.copy}</button>`;
+    }
 }
 
 function draw(id) {
@@ -245,7 +253,6 @@ function drawConn(id, side, data) {
     let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
     const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
     const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
-    
     for(let i=1; i<=pins; i++) {
         const y = 8 + (i-1)*36;
         const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
@@ -291,6 +298,7 @@ function render(id) {
     img.src = url;
 }
 
+// Функционал Модального окна и Зума
 let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
 const modalImg = document.getElementById('modalImg');
 
@@ -322,12 +330,14 @@ function updateTransform() {
     modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; 
 }
 
+// Функционал копирования
 async function copyImg(id) {
     const lang = localStorage.getItem("lang") || "ru";
+    if (!window[`blob_${id}`]) return;
     window[`blob_${id}`].toBlob(async b => {
         try { 
             await navigator.clipboard.write([new ClipboardItem({"image/png":b})]); 
-            showToast(T[lang].toastOk); 
+            showToast(T[lang].toast); 
         }
         catch(e) { showToast(T[lang].toastErr); }
     });
