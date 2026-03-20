@@ -113,34 +113,46 @@
                 <span class="tool-desc" data-t="m2_d">Схемы CAN / RS485 / RJ45</span>
             </div>
         </a>
+
+        <a href="voltage-temperature.html" class="tool-card">
+            <div class="tool-icon">🌡️</div>
+            <div class="tool-info">
+                <span class="tool-title" data-t="m4_t">Напряжение от температуры</span>
+                <span class="tool-desc" data-t="m4_d">Расчет Voc при низких/высоких температурах</span>
+            </div>
+        </a>
     </div>
 </div>
 
 <script>
 const translations = {
     ru: { 
-        w_h: "Инструменты", w_p: "Помощник инженера", 
-        m1_t: "Макс. длина стринга", m1_d: "Расчет напряжения", 
-        m2_t: "Распиновки BMS", m2_d: "Схемы подключения",
-        m3_t: "Калькулятор диапазона", m3_d: "Количество модулей (Min/Max)"
+        w_h: "Инструменты", w_p: "Помощник инженера солнечных систем", 
+        m1_t: "Макс. длина стринга", m1_d: "Расчет Voc и напряжения по температуре", 
+        m2_t: "Распиновки BMS", m2_d: "Схемы CAN / RS485 / RJ45",
+        m3_t: "Калькулятор диапазона", m3_d: "Оптимальное кол-во модулей (Min/Max)",
+        m4_t: "Напряжение от температуры", m4_d: "Расчет Voc при низких/высоких температурах"
     },
     ua: { 
-        w_h: "Інструменти", w_p: "Помічник інженера", 
-        m1_t: "Макс. довжина стринга", m1_d: "Розрахунок напруги", 
-        m2_t: "Розпіновки BMS", m2_d: "Схеми підключення",
-        m3_t: "Калькулятор діапазону", m3_d: "Кількість модулів (Min/Max)"
+        w_h: "Інструменти", w_p: "Помічник інженера сонячних систем", 
+        m1_t: "Макс. довжина стринга", m1_d: "Розрахунок Voc та напруги за температурою", 
+        m2_t: "Розпіновки BMS", m2_d: "Схеми CAN / RS485 / RJ45",
+        m3_t: "Калькулятор діапазону", m3_d: "Оптимальна кількість модулів (Min/Max)",
+        m4_t: "Напруга від температури", m4_d: "Розрахунок Voc при низьких/високих температурах"
     },
     pl: { 
-        w_h: "Narzędzia", w_p: "Asystent inżyniera", 
-        m1_t: "Długość stringu", m1_d: "Obliczanie napięcia", 
-        m2_t: "Pinouty BMS", m2_d: "Schematy ",
-        m3_t: "Kalkulator zakresu", m3_d: "Liczba modułów (Min/Max)"
+        w_h: "Narzędzia", w_p: "Asystent inżyniera systemów słonecznych", 
+        m1_t: "Maks. długość stringa", m1_d: "Obliczanie Voc i napięcia w zależności od temperatury", 
+        m2_t: "Pinouty BMS", m2_d: "Schematy CAN / RS485 / RJ45",
+        m3_t: "Kalkulator zakresu", m3_d: "Optymalna liczba modułów (Min/Max)",
+        m4_t: "Napięcie od temperatury", m4_d: "Obliczanie Voc w niskich/wysokich temperaturach"
     },
     en: { 
-        w_h: "Toolkit", w_p: "Engineer Assistant", 
-        m1_t: "Max String Length", m1_d: "Voltage calculation", 
-        m2_t: "BMS Pinouts", m2_d: "Diagrams",
-        m3_t: "String Range Calc", m3_d: "Module count (Min/Max)"
+        w_h: "Toolkit", w_p: "Solar Systems Engineer Assistant", 
+        m1_t: "Max String Length", m1_d: "Voc & voltage temperature calculation", 
+        m2_t: "BMS Pinouts", m2_d: "CAN / RS485 / RJ45 diagrams",
+        m3_t: "String Range Calc", m3_d: "Optimal module count (Min/Max)",
+        m4_t: "Voltage vs Temperature", m4_d: "Voc calculation at low/high temperatures"
     }
 };
 
