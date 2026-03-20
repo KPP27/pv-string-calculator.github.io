@@ -55,7 +55,6 @@
             transition: 0.2s;
         }
         .back-btn:active { background: #e0e0e0; transform: scale(0.97); }
-        .logo-text { font-weight: 800; font-size: 20px; color: var(--text-main); letter-spacing: -0.8px; }
         
         .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
@@ -93,6 +92,10 @@
             border-color: var(--accent);
             box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1);
         }
+        .input-group input::placeholder {
+            color: #bbb;
+            font-size: 14px;
+        }
         .input-row {
             display: flex;
             gap: 12px;
@@ -128,7 +131,12 @@
             padding-top: 12px;
             border-top: 1px solid rgba(0,0,0,0.1);
             font-size: 13px;
-            color: var(--text-muted);
+        }
+        .sub-result.positive {
+            color: #d32f2f;
+        }
+        .sub-result.negative {
+            color: #2e7d32;
         }
 
         .info-box {
@@ -147,12 +155,17 @@
         .note {
             font-size: 11px;
             color: var(--text-muted);
-            text-align: center;
-            margin-top: 15px;
+            margin-top: 8px;
         }
 
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
         button {
-            width: 100%;
+            flex: 1;
             padding: 14px;
             background: var(--accent);
             color: white;
@@ -167,10 +180,65 @@
             transform: scale(0.98);
             background: #1a6fd6;
         }
+        
+        .copy-btn {
+            background: #28a745;
+        }
+        .copy-btn:active {
+            background: #218838;
+        }
+        
+        .error-message {
+            background: #fff0f0;
+            border-left: 3px solid var(--danger);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d32f2f;
+            display: none;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: fadeOut 2s ease forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+        }
+        
+        .warning-note {
+            background: #fff0f0;
+            border-left: 3px solid var(--danger);
+        }
+        
+        .coeff-hint {
+            background: #e8f0fe;
+            padding: 10px;
+            border-radius: 10px;
+            margin-top: 5px;
+            font-size: 11px;
+            color: var(--accent);
+        }
 
         @media (max-width: 480px) {
             .container { padding: 20px; }
             .result-value { font-size: 24px; }
+            .button-group { flex-direction: column; }
+            button { padding: 12px; }
         }
     </style>
 </head>
@@ -179,7 +247,6 @@
 <div class="container">
     <div class="header-top">
         <a href="index.html" class="back-btn">← <span data-t="back">Назад</span></a>
-        <div class="logo-text">Solar Toolbox</div>
         <div class="lang-switch">
             <button class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</button>
             <button class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</button>
@@ -192,30 +259,36 @@
         <h1 data-t="title">Напряжение от температуры</h1>
         <p data-t="subtitle">Расчет Voc солнечного модуля при различных температурах</p>
     </div>
+    
+    <div class="error-message" id="errorMessage"></div>
 
     <div class="input-group">
         <label data-t="label_voc">Voc при STC (25°C), В</label>
-        <input type="number" id="voc_stc" value="49.8" step="0.1" placeholder="Например: 49.8">
+        <input type="number" id="voc_stc" placeholder="" data-placeholder="voc_placeholder">
     </div>
 
     <div class="input-group">
         <label data-t="label_coeff">Температурный коэффициент Voc (β), %/°C</label>
-        <input type="number" id="temp_coeff" value="0.27" step="0.01" placeholder="Например: 0.27">
-        <div class="note" data-t="coeff_note">* Обычно указывается в даташите, значение от 0.25 до 0.35 %/°C</div>
+        <input type="number" id="temp_coeff" placeholder="" data-placeholder="coeff_placeholder">
+        <div class="coeff-hint" data-t="coeff_hint">💡 Для большинства модулей β отрицательный: от -0.25 до -0.35 %/°C</div>
+        <div class="note" data-t="coeff_note">* Указывается в даташите модуля. При низких температурах напряжение растет!</div>
     </div>
 
     <div class="input-row">
         <div class="input-group">
             <label data-t="label_tmin">Мин. температура, °C</label>
-            <input type="number" id="temp_min" value="-25" step="1" placeholder="-25">
+            <input type="number" id="temp_min" placeholder="" data-placeholder="temp_placeholder">
         </div>
         <div class="input-group">
             <label data-t="label_tmax">Макс. температура, °C</label>
-            <input type="number" id="temp_max" value="70" step="1" placeholder="70">
+            <input type="number" id="temp_max" placeholder="" data-placeholder="temp_placeholder">
         </div>
     </div>
 
-    <button onclick="calculateVoltage()" data-t="calc_btn">Рассчитать</button>
+    <div class="button-group">
+        <button onclick="calculateVoltage()" data-t="calc_btn">Рассчитать</button>
+        <button onclick="copyResults()" class="copy-btn" data-t="copy_btn">📋 Копировать</button>
+    </div>
 
     <div class="result-card" id="resultArea">
         <div class="result-label" data-t="result_voc_min">Напряжение при минимальной температуре</div>
@@ -231,9 +304,10 @@
 
     <div class="info-box">
         <strong data-t="formula_title">📐 Формула расчета:</strong><br>
-        <span data-t="formula">Voc(T) = Voc_STC × [1 + β × (T - 25°C)]</span><br><br>
+        <span data-t="formula">Voc(T) = Voc_STC × [1 + β × (T - 25°C)]</span><br>
+        <span data-t="formula_note" style="font-size: 11px;">* β обычно отрицательный, поэтому при T < 25°C напряжение увеличивается</span><br><br>
         <strong data-t="note_title">⚠️ Важно:</strong><br>
-        <span data-t="note_text">При низких температурах напряжение модуля увеличивается. Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!</span>
+        <span data-t="note_text">При низких температурах напряжение модуля УВЕЛИЧИВАЕТСЯ! Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!</span>
     </div>
 </div>
 
@@ -245,17 +319,27 @@ const translations = {
         subtitle: "Расчет Voc солнечного модуля при различных температурах",
         label_voc: "Voc при STC (25°C), В",
         label_coeff: "Температурный коэффициент Voc (β), %/°C",
-        coeff_note: "* Обычно указывается в даташите, значение от 0.25 до 0.35 %/°C",
+        coeff_hint: "💡 Для большинства модулей β отрицательный: от -0.25 до -0.35 %/°C",
+        coeff_note: "* Указывается в даташите модуля. При низких температурах напряжение растет!",
         label_tmin: "Мин. температура, °C",
         label_tmax: "Макс. температура, °C",
         calc_btn: "Рассчитать",
+        copy_btn: "📋 Копировать",
         result_voc_min: "Напряжение при минимальной температуре",
         result_voc_max: "Напряжение при максимальной температуре",
         formula_title: "📐 Формула расчета:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        formula_note: "* β обычно отрицательный, поэтому при T < 25°C напряжение увеличивается",
         note_title: "⚠️ Важно:",
-        note_text: "При низких температурах напряжение модуля увеличивается. Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!",
-        delta_info: "Изменение: {change} В ({percent}%)"
+        note_text: "При низких температурах напряжение модуля УВЕЛИЧИВАЕТСЯ! Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!",
+        delta_info_positive: "↑ Увеличение: {change} В (+{percent}%)",
+        delta_info_negative: "↓ Уменьшение: {change} В ({percent}%)",
+        error_empty: "Пожалуйста, заполните все поля",
+        copied: "✅ Результаты скопированы!",
+        share_text: "📊 Расчет напряжения солнечного модуля от температуры:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\n\n❄️ При {t_min}°C: {voc_min} В ({delta_min})\n🔥 При {t_max}°C: {voc_max} В ({delta_max})\n\n⚠️ При низких температурах напряжение УВЕЛИЧИВАЕТСЯ!\n#SolarToolbox #СолнечнаяЭнергетика",
+        voc_placeholder: "Например: 49.8",
+        coeff_placeholder: "Например: -0.27",
+        temp_placeholder: "Например: -25"
     },
     ua: {
         back: "Назад",
@@ -263,17 +347,27 @@ const translations = {
         subtitle: "Розрахунок Voc сонячного модуля при різних температурах",
         label_voc: "Voc при STC (25°C), В",
         label_coeff: "Температурний коефіцієнт Voc (β), %/°C",
-        coeff_note: "* Зазвичай вказується в даташиті, значення від 0.25 до 0.35 %/°C",
+        coeff_hint: "💡 Для більшості модулів β від'ємний: від -0.25 до -0.35 %/°C",
+        coeff_note: "* Вказується в даташиті модуля. При низьких температурах напруга зростає!",
         label_tmin: "Мін. температура, °C",
         label_tmax: "Макс. температура, °C",
         calc_btn: "Розрахувати",
+        copy_btn: "📋 Копіювати",
         result_voc_min: "Напруга при мінімальній температурі",
         result_voc_max: "Напруга при максимальній температурі",
         formula_title: "📐 Формула розрахунку:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        formula_note: "* β зазвичай від'ємний, тому при T < 25°C напруга збільшується",
         note_title: "⚠️ Важливо:",
-        note_text: "При низьких температурах напруга модуля збільшується. Переконайтеся, що Voc при мінімальній температурі не перевищує максимальну вхідну напругу інвертора!",
-        delta_info: "Зміна: {change} В ({percent}%)"
+        note_text: "При низьких температурах напруга модуля ЗБІЛЬШУЄТЬСЯ! Переконайтеся, що Voc при мінімальній температурі не перевищує максимальну вхідну напругу інвертора!",
+        delta_info_positive: "↑ Збільшення: {change} В (+{percent}%)",
+        delta_info_negative: "↓ Зменшення: {change} В ({percent}%)",
+        error_empty: "Будь ласка, заповніть всі поля",
+        copied: "✅ Результати скопійовано!",
+        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\n\n❄️ При {t_min}°C: {voc_min} В ({delta_min})\n🔥 При {t_max}°C: {voc_max} В ({delta_max})\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!\n#SolarToolbox #СонячнаЕнергетика",
+        voc_placeholder: "Наприклад: 49.8",
+        coeff_placeholder: "Наприклад: -0.27",
+        temp_placeholder: "Наприклад: -25"
     },
     pl: {
         back: "Wstecz",
@@ -281,17 +375,27 @@ const translations = {
         subtitle: "Obliczanie Voc modułu słonecznego w różnych temperaturach",
         label_voc: "Voc w STC (25°C), V",
         label_coeff: "Współczynnik temperaturowy Voc (β), %/°C",
-        coeff_note: "* Zwykle podawany w karcie katalogowej, wartość od 0.25 do 0.35 %/°C",
+        coeff_hint: "💡 Dla większości modułów β jest ujemny: od -0.25 do -0.35 %/°C",
+        coeff_note: "* Podawany w karcie katalogowej modułu. W niskich temperaturach napięcie rośnie!",
         label_tmin: "Min. temperatura, °C",
         label_tmax: "Maks. temperatura, °C",
         calc_btn: "Oblicz",
+        copy_btn: "📋 Kopiuj",
         result_voc_min: "Napięcie w minimalnej temperaturze",
         result_voc_max: "Napięcie w maksymalnej temperaturze",
         formula_title: "📐 Wzór obliczeniowy:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        formula_note: "* β jest zwykle ujemny, więc przy T < 25°C napięcie wzrasta",
         note_title: "⚠️ Ważne:",
-        note_text: "W niskich temperaturach napięcie modułu wzrasta. Upewnij się, że Voc w minimalnej temperaturze nie przekracza maksymalnego napięcia wejściowego falownika!",
-        delta_info: "Zmiana: {change} V ({percent}%)"
+        note_text: "W niskich temperaturach napięcie modułu WZRASTA! Upewnij się, że Voc w minimalnej temperaturze nie przekracza maksymalnego napięcia wejściowego falownika!",
+        delta_info_positive: "↑ Wzrost: {change} V (+{percent}%)",
+        delta_info_negative: "↓ Spadek: {change} V ({percent}%)",
+        error_empty: "Proszę wypełnić wszystkie pola",
+        copied: "✅ Wyniki skopiowane!",
+        share_text: "📊 Obliczanie napięcia modułu słonecznego od temperatury:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\n\n❄️ Przy {t_min}°C: {voc_min} V ({delta_min})\n🔥 Przy {t_max}°C: {voc_max} V ({delta_max})\n\n⚠️ W niskich temperaturach napięcie WZRASTA!\n#SolarToolbox #EnergiaSłoneczna",
+        voc_placeholder: "Np: 49.8",
+        coeff_placeholder: "Np: -0.27",
+        temp_placeholder: "Np: -25"
     },
     en: {
         back: "Back",
@@ -299,17 +403,27 @@ const translations = {
         subtitle: "Solar module Voc calculation at different temperatures",
         label_voc: "Voc at STC (25°C), V",
         label_coeff: "Voc temperature coefficient (β), %/°C",
-        coeff_note: "* Usually specified in datasheet, typical value 0.25-0.35 %/°C",
+        coeff_hint: "💡 For most modules β is negative: from -0.25 to -0.35 %/°C",
+        coeff_note: "* Specified in module datasheet. Voltage increases at low temperatures!",
         label_tmin: "Min temperature, °C",
         label_tmax: "Max temperature, °C",
         calc_btn: "Calculate",
+        copy_btn: "📋 Copy",
         result_voc_min: "Voltage at minimum temperature",
         result_voc_max: "Voltage at maximum temperature",
         formula_title: "📐 Formula:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        formula_note: "* β is usually negative, so at T < 25°C voltage increases",
         note_title: "⚠️ Important:",
-        note_text: "At low temperatures, module voltage increases. Make sure Voc at minimum temperature does not exceed inverter's maximum input voltage!",
-        delta_info: "Change: {change} V ({percent}%)"
+        note_text: "At low temperatures, module voltage INCREASES! Make sure Voc at minimum temperature does not exceed inverter's maximum input voltage!",
+        delta_info_positive: "↑ Increase: {change} V (+{percent}%)",
+        delta_info_negative: "↓ Decrease: {change} V ({percent}%)",
+        error_empty: "Please fill all fields",
+        copied: "✅ Results copied!",
+        share_text: "📊 Solar module voltage temperature calculation:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\n\n❄️ At {t_min}°C: {voc_min} V ({delta_min})\n🔥 At {t_max}°C: {voc_max} V ({delta_max})\n\n⚠️ At low temperatures voltage INCREASES!\n#SolarToolbox #SolarEnergy",
+        voc_placeholder: "Example: 49.8",
+        coeff_placeholder: "Example: -0.27",
+        temp_placeholder: "Example: -25"
     }
 };
 
@@ -319,6 +433,8 @@ function setLang(lang) {
     localStorage.setItem('lang', lang);
     currentLang = lang;
     updateTexts();
+    updatePlaceholders();
+    calculateVoltage();
 }
 
 function updateTexts() {
@@ -333,18 +449,81 @@ function updateTexts() {
     });
 }
 
-function calculateVoltage() {
+function updatePlaceholders() {
+    const lang = currentLang;
+    // Обновляем placeholder для поля Voc
+    const vocInput = document.getElementById('voc_stc');
+    if (vocInput && translations[lang].voc_placeholder) {
+        vocInput.placeholder = translations[lang].voc_placeholder;
+    }
+    
+    // Обновляем placeholder для поля температурного коэффициента
+    const coeffInput = document.getElementById('temp_coeff');
+    if (coeffInput && translations[lang].coeff_placeholder) {
+        coeffInput.placeholder = translations[lang].coeff_placeholder;
+    }
+    
+    // Обновляем placeholder для полей температуры
+    const tempInputs = document.querySelectorAll('#temp_min, #temp_max');
+    tempInputs.forEach(input => {
+        if (input && translations[lang].temp_placeholder) {
+            input.placeholder = translations[lang].temp_placeholder;
+        }
+    });
+}
+
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 2000);
+}
+
+function hideError() {
+    document.getElementById('errorMessage').style.display = 'none';
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    errorDiv.textContent = message;
+    errorDiv.style.display = 'block';
+    setTimeout(() => {
+        errorDiv.style.display = 'none';
+    }, 3000);
+}
+
+function validateInputs() {
     const vocSTC = parseFloat(document.getElementById('voc_stc').value);
     const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
     const tMin = parseFloat(document.getElementById('temp_min').value);
     const tMax = parseFloat(document.getElementById('temp_max').value);
     
     if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(tMin) || isNaN(tMax)) {
-        alert(currentLang === 'ru' ? 'Пожалуйста, заполните все поля' : 
-               currentLang === 'ua' ? 'Будь ласка, заповніть всі поля' :
-               currentLang === 'pl' ? 'Proszę wypełnić wszystkie pola' : 'Please fill all fields');
+        showError(translations[currentLang].error_empty);
+        return false;
+    }
+    return true;
+}
+
+function calculateVoltage() {
+    if (!validateInputs()) {
+        // Если поля пустые, показываем прочерки
+        document.getElementById('voc_min_value').innerHTML = '— <span class="result-unit">В</span>';
+        document.getElementById('voc_max_value').innerHTML = '— <span class="result-unit">В</span>';
+        document.getElementById('delta_min_info').innerHTML = '—';
+        document.getElementById('delta_max_info').innerHTML = '—';
         return;
     }
+    
+    hideError();
+    
+    const vocSTC = parseFloat(document.getElementById('voc_stc').value);
+    const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const tMax = parseFloat(document.getElementById('temp_max').value);
     
     const coeff = coeffPercent / 100;
     
@@ -362,24 +541,54 @@ function calculateVoltage() {
     document.getElementById('voc_min_value').innerHTML = vocMin.toFixed(1) + ' <span class="result-unit">В</span>';
     document.getElementById('voc_max_value').innerHTML = vocMax.toFixed(1) + ' <span class="result-unit">В</span>';
     
-    const deltaInfoTemplate = translations[currentLang].delta_info || "Изменение: {change} В ({percent}%)";
+    // Форматирование информации об изменении
+    const deltaMinFormatted = (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1);
+    const deltaMinPercentFormatted = (deltaMinPercent > 0 ? '+' : '') + deltaMinPercent.toFixed(1);
+    const deltaMaxFormatted = (deltaMax > 0 ? '+' : '') + deltaMax.toFixed(1);
+    const deltaMaxPercentFormatted = (deltaMaxPercent > 0 ? '+' : '') + deltaMaxPercent.toFixed(1);
     
-    document.getElementById('delta_min_info').innerHTML = deltaInfoTemplate
-        .replace('{change}', (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1))
-        .replace('{percent}', (deltaMinPercent > 0 ? '+' : '') + deltaMinPercent.toFixed(1));
+    const deltaInfoPositive = translations[currentLang].delta_info_positive;
+    const deltaInfoNegative = translations[currentLang].delta_info_negative;
     
-    document.getElementById('delta_max_info').innerHTML = deltaInfoTemplate
-        .replace('{change}', (deltaMax > 0 ? '+' : '') + deltaMax.toFixed(1))
-        .replace('{percent}', (deltaMaxPercent > 0 ? '+' : '') + deltaMaxPercent.toFixed(1));
+    let minInfo, maxInfo;
+    
+    if (deltaMin > 0) {
+        minInfo = deltaInfoPositive
+            .replace('{change}', deltaMinFormatted)
+            .replace('{percent}', deltaMinPercentFormatted);
+    } else {
+        minInfo = deltaInfoNegative
+            .replace('{change}', deltaMinFormatted)
+            .replace('{percent}', deltaMinPercentFormatted);
+    }
+    
+    if (deltaMax > 0) {
+        maxInfo = deltaInfoPositive
+            .replace('{change}', deltaMaxFormatted)
+            .replace('{percent}', deltaMaxPercentFormatted);
+    } else {
+        maxInfo = deltaInfoNegative
+            .replace('{change}', deltaMaxFormatted)
+            .replace('{percent}', deltaMaxPercentFormatted);
+    }
+    
+    const minInfoElement = document.getElementById('delta_min_info');
+    const maxInfoElement = document.getElementById('delta_max_info');
+    
+    minInfoElement.innerHTML = minInfo;
+    maxInfoElement.innerHTML = maxInfo;
+    
+    // Применяем классы для цвета
+    minInfoElement.className = 'sub-result ' + (deltaMin > 0 ? 'positive' : 'negative');
+    maxInfoElement.className = 'sub-result ' + (deltaMax > 0 ? 'positive' : 'negative');
     
     // Добавляем предупреждение, если напряжение слишком высокое
-    const resultCard = document.getElementById('resultArea');
     let existingWarning = document.querySelector('.warning-note');
     if (existingWarning) existingWarning.remove();
     
     if (vocMin > 1000) {
         const warning = document.createElement('div');
-        warning.className = 'info-box';
+        warning.className = 'info-box warning-note';
         warning.style.background = '#fff0f0';
         warning.style.borderLeftColor = '#ff6b6b';
         warning.style.marginTop = '15px';
@@ -390,18 +599,79 @@ function calculateVoltage() {
                              currentLang === 'ua' ? 'Voc перевищує 1000В! Перевірте сумісність з інвертором.' :
                              currentLang === 'pl' ? 'Voc przekracza 1000V! Sprawdź kompatybilność z falownikiem.' :
                              'Voc exceeds 1000V! Check inverter compatibility.');
-        resultCard.after(warning);
+        document.getElementById('resultArea').after(warning);
     }
+}
+
+function getCurrentResults() {
+    const vocSTC = parseFloat(document.getElementById('voc_stc').value);
+    const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const tMax = parseFloat(document.getElementById('temp_max').value);
+    
+    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(tMin) || isNaN(tMax)) {
+        return null;
+    }
+    
+    const coeff = coeffPercent / 100;
+    const vocMin = vocSTC * (1 + coeff * (tMin - 25));
+    const vocMax = vocSTC * (1 + coeff * (tMax - 25));
+    const deltaMin = vocMin - vocSTC;
+    const deltaMax = vocMax - vocSTC;
+    
+    return {
+        voc_stc: vocSTC.toFixed(1),
+        coeff: coeffPercent.toFixed(2),
+        t_min: tMin,
+        t_max: tMax,
+        voc_min: vocMin.toFixed(1),
+        voc_max: vocMax.toFixed(1),
+        delta_min: (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1),
+        delta_max: (deltaMax > 0 ? '+' : '') + deltaMax.toFixed(1)
+    };
+}
+
+function copyResults() {
+    const results = getCurrentResults();
+    if (!results) {
+        showError(translations[currentLang].error_empty);
+        return;
+    }
+    
+    const text = translations[currentLang].share_text
+        .replace('{voc_stc}', results.voc_stc)
+        .replace('{coeff}', results.coeff)
+        .replace('{t_min}', results.t_min)
+        .replace('{t_max}', results.t_max)
+        .replace('{voc_min}', results.voc_min)
+        .replace('{voc_max}', results.voc_max)
+        .replace('{delta_min}', results.delta_min)
+        .replace('{delta_max}', results.delta_max);
+    
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(translations[currentLang].copied);
+    }).catch(() => {
+        showError('Failed to copy');
+    });
 }
 
 // Инициализация языка
 const savedLang = localStorage.getItem('lang') || 'ru';
 currentLang = savedLang;
 updateTexts();
+updatePlaceholders();
 
-// Автоматический расчет при загрузке
+// Автоматический расчет при загрузке (если поля заполнены)
 window.addEventListener('load', () => {
-    calculateVoltage();
+    // Проверяем, есть ли значения в полях
+    const vocSTC = document.getElementById('voc_stc').value;
+    const tempCoeff = document.getElementById('temp_coeff').value;
+    const tempMin = document.getElementById('temp_min').value;
+    const tempMax = document.getElementById('temp_max').value;
+    
+    if (vocSTC || tempCoeff || tempMin || tempMax) {
+        calculateVoltage();
+    }
 });
 
 // Добавляем расчет при изменении полей
