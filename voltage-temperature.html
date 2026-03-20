@@ -238,11 +238,6 @@
             100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
         }
         
-        .warning-note {
-            background: #fff0f0;
-            border-left: 3px solid var(--danger);
-        }
-        
         .coeff-hint {
             background: #e8f0fe;
             padding: 10px;
@@ -383,7 +378,7 @@ const translations = {
         subtitle: "Розрахунок Voc сонячного модуля при різних температурах",
         label_voc: "Voc при STC (25°C), В",
         label_coeff: "Температурний коефіцієнт Voc (β), %/°C",
-        label_modules: "Кількість модулів у стрингу, шт",
+        label_modules: "Кількість модулів у стрінгу, шт",
         coeff_hint: "💡 Для більшості модулів β від'ємний: від -0.25 до -0.35 %/°C",
         coeff_note: "* Вказується в даташиті модуля. При низьких температурах напруга зростає!",
         label_tmin: "Мін. температура, °C",
@@ -403,7 +398,7 @@ const translations = {
         delta_info_negative: "↓ Зменшення: {change} В ({percent}%)",
         error_empty: "Будь ласка, заповніть всі поля",
         copied: "✅ Результати скопійовано!",
-        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКількість модулів: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стрінг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стрінг: {string_max} В\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!\n,
+        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКількість модулів: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стрінг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стрінг: {string_max} В\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!\n#SolarToolbox #СонячнаЕнергетика",
         voc_placeholder: "Наприклад: 49.8",
         coeff_placeholder: "Наприклад: -0.27",
         modules_placeholder: "Наприклад: 12",
@@ -496,17 +491,27 @@ function updateTexts() {
         }
     });
     document.querySelectorAll('.lang-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.l === lang);
+        if (b.dataset.l === lang) {
+            b.classList.add('active');
+        } else {
+            b.classList.remove('active');
+        }
     });
 }
 
 function updatePlaceholders() {
     const lang = currentLang;
-    document.getElementById('voc_stc').placeholder = translations[lang].voc_placeholder;
-    document.getElementById('temp_coeff').placeholder = translations[lang].coeff_placeholder;
-    document.getElementById('modules_count').placeholder = translations[lang].modules_placeholder;
-    document.getElementById('temp_min').placeholder = translations[lang].temp_min_placeholder;
-    document.getElementById('temp_max').placeholder = translations[lang].temp_max_placeholder;
+    const vocInput = document.getElementById('voc_stc');
+    const coeffInput = document.getElementById('temp_coeff');
+    const modulesInput = document.getElementById('modules_count');
+    const tempMinInput = document.getElementById('temp_min');
+    const tempMaxInput = document.getElementById('temp_max');
+    
+    if (vocInput) vocInput.placeholder = translations[lang].voc_placeholder;
+    if (coeffInput) coeffInput.placeholder = translations[lang].coeff_placeholder;
+    if (modulesInput) modulesInput.placeholder = translations[lang].modules_placeholder;
+    if (tempMinInput) tempMinInput.placeholder = translations[lang].temp_min_placeholder;
+    if (tempMaxInput) tempMaxInput.placeholder = translations[lang].temp_max_placeholder;
 }
 
 function showToast(message) {
@@ -520,16 +525,19 @@ function showToast(message) {
 }
 
 function hideError() {
-    document.getElementById('errorMessage').style.display = 'none';
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) errorDiv.style.display = 'none';
 }
 
 function showError(message) {
     const errorDiv = document.getElementById('errorMessage');
-    errorDiv.textContent = message;
-    errorDiv.style.display = 'block';
-    setTimeout(() => {
-        errorDiv.style.display = 'none';
-    }, 3000);
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
 }
 
 function validateInputs() {
@@ -567,11 +575,8 @@ function calculateVoltage() {
     
     const coeff = coeffPercent / 100;
     
-    // Расчет напряжения одного модуля
     const vocMin = vocSTC * (1 + coeff * (tMin - 25));
     const vocMax = vocSTC * (1 + coeff * (tMax - 25));
-    
-    // Расчет напряжения стринга
     const stringMin = vocMin * modulesCount;
     const stringMax = vocMax * modulesCount;
     
@@ -580,13 +585,11 @@ function calculateVoltage() {
     const deltaMax = vocMax - vocSTC;
     const deltaMaxPercent = (deltaMax / vocSTC) * 100;
     
-    // Обновление UI
     document.getElementById('voc_min_value').innerHTML = vocMin.toFixed(1) + ' <span class="result-unit">В</span>';
     document.getElementById('voc_max_value').innerHTML = vocMax.toFixed(1) + ' <span class="result-unit">В</span>';
     document.getElementById('string_min_value').innerHTML = stringMin.toFixed(1) + ' <span class="result-unit">В</span>';
     document.getElementById('string_max_value').innerHTML = stringMax.toFixed(1) + ' <span class="result-unit">В</span>';
     
-    // Форматирование информации об изменении
     const deltaMinFormatted = (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1);
     const deltaMinPercentFormatted = (deltaMinPercent > 0 ? '+' : '') + deltaMinPercent.toFixed(1);
     const deltaMaxFormatted = (deltaMax > 0 ? '+' : '') + deltaMax.toFixed(1);
@@ -598,23 +601,15 @@ function calculateVoltage() {
     let minInfo, maxInfo;
     
     if (deltaMin > 0) {
-        minInfo = deltaInfoPositive
-            .replace('{change}', deltaMinFormatted)
-            .replace('{percent}', deltaMinPercentFormatted);
+        minInfo = deltaInfoPositive.replace('{change}', deltaMinFormatted).replace('{percent}', deltaMinPercentFormatted);
     } else {
-        minInfo = deltaInfoNegative
-            .replace('{change}', deltaMinFormatted)
-            .replace('{percent}', deltaMinPercentFormatted);
+        minInfo = deltaInfoNegative.replace('{change}', deltaMinFormatted).replace('{percent}', deltaMinPercentFormatted);
     }
     
     if (deltaMax > 0) {
-        maxInfo = deltaInfoPositive
-            .replace('{change}', deltaMaxFormatted)
-            .replace('{percent}', deltaMaxPercentFormatted);
+        maxInfo = deltaInfoPositive.replace('{change}', deltaMaxFormatted).replace('{percent}', deltaMaxPercentFormatted);
     } else {
-        maxInfo = deltaInfoNegative
-            .replace('{change}', deltaMaxFormatted)
-            .replace('{percent}', deltaMaxPercentFormatted);
+        maxInfo = deltaInfoNegative.replace('{change}', deltaMaxFormatted).replace('{percent}', deltaMaxPercentFormatted);
     }
     
     const minInfoElement = document.getElementById('delta_min_info');
@@ -625,26 +620,6 @@ function calculateVoltage() {
     
     minInfoElement.className = 'sub-result ' + (deltaMin > 0 ? 'positive' : 'negative');
     maxInfoElement.className = 'sub-result ' + (deltaMax > 0 ? 'positive' : 'negative');
-    
-    // Предупреждение о превышении напряжения
-    let existingWarning = document.querySelector('.warning-note');
-    if (existingWarning) existingWarning.remove();
-    
-    if (stringMin > 1000) {
-        const warning = document.createElement('div');
-        warning.className = 'info-box warning-note';
-        warning.style.background = '#fff0f0';
-        warning.style.borderLeftColor = '#ff6b6b';
-        warning.style.marginTop = '15px';
-        warning.innerHTML = '⚠️ <strong>' + (currentLang === 'ru' ? 'Внимание!' : 
-                            currentLang === 'ua' ? 'Увага!' : 
-                            currentLang === 'pl' ? 'Uwaga!' : 'Warning!') + '</strong> ' +
-                            (currentLang === 'ru' ? 'Напряжение стринга превышает 1000В! Проверьте совместимость с инвертором.' :
-                             currentLang === 'ua' ? 'Напруга стринга перевищує 1000В! Перевірте сумісність з інвертором.' :
-                             currentLang === 'pl' ? 'Napięcie stringa przekracza 1000V! Sprawdź kompatybilność z falownikiem.' :
-                             'String voltage exceeds 1000V! Check inverter compatibility.');
-        document.getElementById('stringResultArea').after(warning);
-    }
 }
 
 function getCurrentResults() {
@@ -688,18 +663,18 @@ function copyResults() {
         return;
     }
     
-    const text = translations[currentLang].share_text
-        .replace('{voc_stc}', results.voc_stc)
-        .replace('{coeff}', results.coeff)
-        .replace('{modules}', results.modules)
-        .replace('{t_min}', results.t_min)
-        .replace('{t_max}', results.t_max)
-        .replace('{voc_min}', results.voc_min)
-        .replace('{voc_max}', results.voc_max)
-        .replace('{string_min}', results.string_min)
-        .replace('{string_max}', results.string_max)
-        .replace('{delta_min}', results.delta_min)
-        .replace('{delta_max}', results.delta_max);
+    let text = translations[currentLang].share_text;
+    text = text.replace('{voc_stc}', results.voc_stc)
+               .replace('{coeff}', results.coeff)
+               .replace('{modules}', results.modules)
+               .replace('{t_min}', results.t_min)
+               .replace('{t_max}', results.t_max)
+               .replace('{voc_min}', results.voc_min)
+               .replace('{voc_max}', results.voc_max)
+               .replace('{string_min}', results.string_min)
+               .replace('{string_max}', results.string_max)
+               .replace('{delta_min}', results.delta_min)
+               .replace('{delta_max}', results.delta_max);
     
     navigator.clipboard.writeText(text).then(() => {
         showToast(translations[currentLang].copied);
