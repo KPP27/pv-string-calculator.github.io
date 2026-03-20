@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solar Toolbox - Напряжение от температуры</title>
+    <style>
+        :root { 
+            --bg: #f8f9fa; 
+            --card-bg: #ffffff; 
+            --accent: #2a8cff; 
+            --accent-light: #e6f2ff;
+            --border: #eef0f2; 
+            --radius: 16px; 
+            --text-main: #1a1a1b;
+            --text-muted: #70757a;
+            --danger: #ff6b6b;
+            --success: #51cf66;
+            --warning: #ffd93d;
+        }
+        
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 15px; 
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+
+        .container { 
+            width: 100%; max-width: 480px; 
+            background: var(--card-bg); padding: 24px; 
+            border-radius: var(--radius); border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            height: fit-content;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .back-btn:active { background: #e0e0e0; transform: scale(0.97); }
+        .logo-text { font-weight: 800; font-size: 20px; color: var(--text-main); letter-spacing: -0.8px; }
+        
+        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
+        .lang-btn {
+            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
+        }
+        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        .page-title { margin-bottom: 20px; }
+        .page-title h1 { font-size: 22px; margin: 0; color: var(--text-main); }
+        .page-title p { font-size: 13px; color: var(--text-muted); margin: 5px 0 0; }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: 0.2s;
+            background: #fff;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1);
+        }
+        .input-row {
+            display: flex;
+            gap: 12px;
+        }
+        .input-row .input-group {
+            flex: 1;
+        }
+
+        .result-card {
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .result-unit {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+        .sub-result {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent);
+        }
+        .info-box strong {
+            color: var(--text-main);
+        }
+
+        .note {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:active {
+            transform: scale(0.98);
+            background: #1a6fd6;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            .result-value { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-top">
+        <a href="index.html" class="back-btn">← <span data-t="back">Назад</span></a>
+        <div class="logo-text">Solar Toolbox</div>
+        <div class="lang-switch">
+            <button class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</button>
+            <button class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</button>
+            <button class="lang-btn" onclick="setLang('pl')" data-l="pl">PL</button>
+            <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
+        </div>
+    </div>
+
+    <div class="page-title">
+        <h1 data-t="title">Напряжение от температуры</h1>
+        <p data-t="subtitle">Расчет Voc солнечного модуля при различных температурах</p>
+    </div>
+
+    <div class="input-group">
+        <label data-t="label_voc">Voc при STC (25°C), В</label>
+        <input type="number" id="voc_stc" value="49.8" step="0.1" placeholder="Например: 49.8">
+    </div>
+
+    <div class="input-group">
+        <label data-t="label_coeff">Температурный коэффициент Voc (β), %/°C</label>
+        <input type="number" id="temp_coeff" value="0.27" step="0.01" placeholder="Например: 0.27">
+        <div class="note" data-t="coeff_note">* Обычно указывается в даташите, значение от 0.25 до 0.35 %/°C</div>
+    </div>
+
+    <div class="input-row">
+        <div class="input-group">
+            <label data-t="label_tmin">Мин. температура, °C</label>
+            <input type="number" id="temp_min" value="-25" step="1" placeholder="-25">
+        </div>
+        <div class="input-group">
+            <label data-t="label_tmax">Макс. температура, °C</label>
+            <input type="number" id="temp_max" value="70" step="1" placeholder="70">
+        </div>
+    </div>
+
+    <button onclick="calculateVoltage()" data-t="calc_btn">Рассчитать</button>
+
+    <div class="result-card" id="resultArea">
+        <div class="result-label" data-t="result_voc_min">Напряжение при минимальной температуре</div>
+        <div class="result-value" id="voc_min_value">— <span class="result-unit">В</span></div>
+        <div class="sub-result" id="delta_min_info">—</div>
+        
+        <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1);">
+            <div class="result-label" data-t="result_voc_max">Напряжение при максимальной температуре</div>
+            <div class="result-value" id="voc_max_value">— <span class="result-unit">В</span></div>
+            <div class="sub-result" id="delta_max_info">—</div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <strong data-t="formula_title">📐 Формула расчета:</strong><br>
+        <span data-t="formula">Voc(T) = Voc_STC × [1 + β × (T - 25°C)]</span><br><br>
+        <strong data-t="note_title">⚠️ Важно:</strong><br>
+        <span data-t="note_text">При низких температурах напряжение модуля увеличивается. Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!</span>
+    </div>
+</div>
+
+<script>
+const translations = {
+    ru: {
+        back: "Назад",
+        title: "Напряжение от температуры",
+        subtitle: "Расчет Voc солнечного модуля при различных температурах",
+        label_voc: "Voc при STC (25°C), В",
+        label_coeff: "Температурный коэффициент Voc (β), %/°C",
+        coeff_note: "* Обычно указывается в даташите, значение от 0.25 до 0.35 %/°C",
+        label_tmin: "Мин. температура, °C",
+        label_tmax: "Макс. температура, °C",
+        calc_btn: "Рассчитать",
+        result_voc_min: "Напряжение при минимальной температуре",
+        result_voc_max: "Напряжение при максимальной температуре",
+        formula_title: "📐 Формула расчета:",
+        formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        note_title: "⚠️ Важно:",
+        note_text: "При низких температурах напряжение модуля увеличивается. Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!",
+        delta_info: "Изменение: {change} В ({percent}%)"
+    },
+    ua: {
+        back: "Назад",
+        title: "Напруга від температури",
+        subtitle: "Розрахунок Voc сонячного модуля при різних температурах",
+        label_voc: "Voc при STC (25°C), В",
+        label_coeff: "Температурний коефіцієнт Voc (β), %/°C",
+        coeff_note: "* Зазвичай вказується в даташиті, значення від 0.25 до 0.35 %/°C",
+        label_tmin: "Мін. температура, °C",
+        label_tmax: "Макс. температура, °C",
+        calc_btn: "Розрахувати",
+        result_voc_min: "Напруга при мінімальній температурі",
+        result_voc_max: "Напруга при максимальній температурі",
+        formula_title: "📐 Формула розрахунку:",
+        formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        note_title: "⚠️ Важливо:",
+        note_text: "При низьких температурах напруга модуля збільшується. Переконайтеся, що Voc при мінімальній температурі не перевищує максимальну вхідну напругу інвертора!",
+        delta_info: "Зміна: {change} В ({percent}%)"
+    },
+    pl: {
+        back: "Wstecz",
+        title: "Napięcie od temperatury",
+        subtitle: "Obliczanie Voc modułu słonecznego w różnych temperaturach",
+        label_voc: "Voc w STC (25°C), V",
+        label_coeff: "Współczynnik temperaturowy Voc (β), %/°C",
+        coeff_note: "* Zwykle podawany w karcie katalogowej, wartość od 0.25 do 0.35 %/°C",
+        label_tmin: "Min. temperatura, °C",
+        label_tmax: "Maks. temperatura, °C",
+        calc_btn: "Oblicz",
+        result_voc_min: "Napięcie w minimalnej temperaturze",
+        result_voc_max: "Napięcie w maksymalnej temperaturze",
+        formula_title: "📐 Wzór obliczeniowy:",
+        formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        note_title: "⚠️ Ważne:",
+        note_text: "W niskich temperaturach napięcie modułu wzrasta. Upewnij się, że Voc w minimalnej temperaturze nie przekracza maksymalnego napięcia wejściowego falownika!",
+        delta_info: "Zmiana: {change} V ({percent}%)"
+    },
+    en: {
+        back: "Back",
+        title: "Voltage vs Temperature",
+        subtitle: "Solar module Voc calculation at different temperatures",
+        label_voc: "Voc at STC (25°C), V",
+        label_coeff: "Voc temperature coefficient (β), %/°C",
+        coeff_note: "* Usually specified in datasheet, typical value 0.25-0.35 %/°C",
+        label_tmin: "Min temperature, °C",
+        label_tmax: "Max temperature, °C",
+        calc_btn: "Calculate",
+        result_voc_min: "Voltage at minimum temperature",
+        result_voc_max: "Voltage at maximum temperature",
+        formula_title: "📐 Formula:",
+        formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
+        note_title: "⚠️ Important:",
+        note_text: "At low temperatures, module voltage increases. Make sure Voc at minimum temperature does not exceed inverter's maximum input voltage!",
+        delta_info: "Change: {change} V ({percent}%)"
+    }
+};
+
+let currentLang = 'ru';
+
+function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    currentLang = lang;
+    updateTexts();
+}
+
+function updateTexts() {
+    const lang = currentLang;
+    document.querySelectorAll('[data-t]').forEach(el => {
+        if(translations[lang][el.dataset.t]) {
+            el.textContent = translations[lang][el.dataset.t];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.l === lang);
+    });
+}
+
+function calculateVoltage() {
+    const vocSTC = parseFloat(document.getElementById('voc_stc').value);
+    const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const tMax = parseFloat(document.getElementById('temp_max').value);
+    
+    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(tMin) || isNaN(tMax)) {
+        alert(currentLang === 'ru' ? 'Пожалуйста, заполните все поля' : 
+               currentLang === 'ua' ? 'Будь ласка, заповніть всі поля' :
+               currentLang === 'pl' ? 'Proszę wypełnić wszystkie pola' : 'Please fill all fields');
+        return;
+    }
+    
+    const coeff = coeffPercent / 100;
+    
+    // Расчет напряжения при мин температуре
+    const vocMin = vocSTC * (1 + coeff * (tMin - 25));
+    const deltaMin = vocMin - vocSTC;
+    const deltaMinPercent = (deltaMin / vocSTC) * 100;
+    
+    // Расчет напряжения при макс температуре
+    const vocMax = vocSTC * (1 + coeff * (tMax - 25));
+    const deltaMax = vocMax - vocSTC;
+    const deltaMaxPercent = (deltaMax / vocSTC) * 100;
+    
+    // Обновление UI
+    document.getElementById('voc_min_value').innerHTML = vocMin.toFixed(1) + ' <span class="result-unit">В</span>';
+    document.getElementById('voc_max_value').innerHTML = vocMax.toFixed(1) + ' <span class="result-unit">В</span>';
+    
+    const deltaInfoTemplate = translations[currentLang].delta_info || "Изменение: {change} В ({percent}%)";
+    
+    document.getElementById('delta_min_info').innerHTML = deltaInfoTemplate
+        .replace('{change}', (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1))
+        .replace('{percent}', (deltaMinPercent > 0 ? '+' : '') + deltaMinPercent.toFixed(1));
+    
+    document.getElementById('delta_max_info').innerHTML = deltaInfoTemplate
+        .replace('{change}', (deltaMax > 0 ? '+' : '') + deltaMax.toFixed(1))
+        .replace('{percent}', (deltaMaxPercent > 0 ? '+' : '') + deltaMaxPercent.toFixed(1));
+    
+    // Добавляем предупреждение, если напряжение слишком высокое
+    const resultCard = document.getElementById('resultArea');
+    let existingWarning = document.querySelector('.warning-note');
+    if (existingWarning) existingWarning.remove();
+    
+    if (vocMin > 1000) {
+        const warning = document.createElement('div');
+        warning.className = 'info-box';
+        warning.style.background = '#fff0f0';
+        warning.style.borderLeftColor = '#ff6b6b';
+        warning.style.marginTop = '15px';
+        warning.innerHTML = '⚠️ <strong>' + (currentLang === 'ru' ? 'Внимание!' : 
+                            currentLang === 'ua' ? 'Увага!' : 
+                            currentLang === 'pl' ? 'Uwaga!' : 'Warning!') + '</strong> ' +
+                            (currentLang === 'ru' ? 'Voc превышает 1000В! Проверьте совместимость с инвертором.' :
+                             currentLang === 'ua' ? 'Voc перевищує 1000В! Перевірте сумісність з інвертором.' :
+                             currentLang === 'pl' ? 'Voc przekracza 1000V! Sprawdź kompatybilność z falownikiem.' :
+                             'Voc exceeds 1000V! Check inverter compatibility.');
+        resultCard.after(warning);
+    }
+}
+
+// Инициализация языка
+const savedLang = localStorage.getItem('lang') || 'ru';
+currentLang = savedLang;
+updateTexts();
+
+// Автоматический расчет при загрузке
+window.addEventListener('load', () => {
+    calculateVoltage();
+});
+
+// Добавляем расчет при изменении полей
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => calculateVoltage());
+});
+</script>
+</body>
+</html>
