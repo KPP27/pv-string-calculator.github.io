@@ -305,7 +305,7 @@
     </div>
 
     <div class="button-group">
-        <button onclick="calculateVoltage()" data-t="calc_btn">Рассчитать</button>
+        <button onclick="calculateVoltage(true)" data-t="calc_btn">Рассчитать</button>
         <button onclick="copyResults()" class="copy-btn" data-t="copy_btn">📋 Копировать</button>
     </div>
 
@@ -365,7 +365,7 @@ const translations = {
         delta_info_negative: "↓ Уменьшение: {change} В ({percent}%)",
         error_empty: "Пожалуйста, заполните все поля",
         copied: "✅ Результаты скопированы!",
-        share_text: "📊 Расчет напряжения солнечного модуля от температуры:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКоличество модулей: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стринг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стринг: {string_max} В\n\n⚠️ При низких температурах напряжение УВЕЛИЧИВАЕТСЯ!\n,
+        share_text: "📊 Расчет напряжения солнечного модуля от температуры:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКоличество модулей: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стринг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стринг: {string_max} В\n\n⚠️ При низких температурах напряжение УВЕЛИЧИВАЕТСЯ!",
         voc_placeholder: "Например: 49.8",
         coeff_placeholder: "Например: -0.27",
         modules_placeholder: "Например: 12",
@@ -398,7 +398,7 @@ const translations = {
         delta_info_negative: "↓ Зменшення: {change} В ({percent}%)",
         error_empty: "Будь ласка, заповніть всі поля",
         copied: "✅ Результати скопійовано!",
-        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКількість модулів: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стрінг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стрінг: {string_max} В\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!\n,
+        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКількість модулів: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стрінг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стрінг: {string_max} В\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!",
         voc_placeholder: "Наприклад: 49.8",
         coeff_placeholder: "Наприклад: -0.27",
         modules_placeholder: "Наприклад: 12",
@@ -431,7 +431,7 @@ const translations = {
         delta_info_negative: "↓ Spadek: {change} V ({percent}%)",
         error_empty: "Proszę wypełnić wszystkie pola",
         copied: "✅ Wyniki skopiowane!",
-        share_text: "📊 Obliczanie napięcia modułu słonecznego od temperatury:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\nLiczba modułów: {modules} szt.\n\n❄️ Przy {t_min}°C:\n• Pojedynczy moduł: {voc_min} V ({delta_min})\n• String: {string_min} V\n\n🔥 Przy {t_max}°C:\n• Pojedynczy moduł: {voc_max} V ({delta_max})\n• String: {string_max} V\n\n⚠️ W niskich temperaturach napięcie WZRASTA!\n,
+        share_text: "📊 Obliczanie napięcia modułu słonecznego od temperatury:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\nLiczba modułów: {modules} szt.\n\n❄️ Przy {t_min}°C:\n• Pojedynczy moduł: {voc_min} V ({delta_min})\n• String: {string_min} V\n\n🔥 Przy {t_max}°C:\n• Pojedynczy moduł: {voc_max} V ({delta_max})\n• String: {string_max} V\n\n⚠️ W niskich temperaturach napięcie WZRASTA!",
         voc_placeholder: "Np: 49.8",
         coeff_placeholder: "Np: -0.27",
         modules_placeholder: "Np: 12",
@@ -464,7 +464,7 @@ const translations = {
         delta_info_negative: "↓ Decrease: {change} V ({percent}%)",
         error_empty: "Please fill all fields",
         copied: "✅ Results copied!",
-        share_text: "📊 Solar module voltage temperature calculation:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\nModules count: {modules} pcs\n\n❄️ At {t_min}°C:\n• Single module: {voc_min} V ({delta_min})\n• String: {string_min} V\n\n🔥 At {t_max}°C:\n• Single module: {voc_max} V ({delta_max})\n• String: {string_max} V\n\n⚠️ At low temperatures voltage INCREASES!\n,
+        share_text: "📊 Solar module voltage temperature calculation:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\nModules count: {modules} pcs\n\n❄️ At {t_min}°C:\n• Single module: {voc_min} V ({delta_min})\n• String: {string_min} V\n\n🔥 At {t_max}°C:\n• Single module: {voc_max} V ({delta_max})\n• String: {string_max} V\n\n⚠️ At low temperatures voltage INCREASES!",
         voc_placeholder: "Example: 49.8",
         coeff_placeholder: "Example: -0.27",
         modules_placeholder: "Example: 12",
@@ -480,7 +480,7 @@ function setLang(lang) {
     currentLang = lang;
     updateTexts();
     updatePlaceholders();
-    calculateVoltage();
+    updateResultsDisplay();
 }
 
 function updateTexts() {
@@ -540,22 +540,18 @@ function showError(message) {
     }
 }
 
-function validateInputs() {
+function areInputsValid() {
     const vocSTC = parseFloat(document.getElementById('voc_stc').value);
     const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
     const modulesCount = parseFloat(document.getElementById('modules_count').value);
     const tMin = parseFloat(document.getElementById('temp_min').value);
     const tMax = parseFloat(document.getElementById('temp_max').value);
     
-    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(modulesCount) || isNaN(tMin) || isNaN(tMax)) {
-        showError(translations[currentLang].error_empty);
-        return false;
-    }
-    return true;
+    return !(isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(modulesCount) || isNaN(tMin) || isNaN(tMax));
 }
 
-function calculateVoltage() {
-    if (!validateInputs()) {
+function updateResultsDisplay() {
+    if (!areInputsValid()) {
         document.getElementById('voc_min_value').innerHTML = '— <span class="result-unit">В</span>';
         document.getElementById('voc_max_value').innerHTML = '— <span class="result-unit">В</span>';
         document.getElementById('string_min_value').innerHTML = '— <span class="result-unit">В</span>';
@@ -564,8 +560,6 @@ function calculateVoltage() {
         document.getElementById('delta_max_info').innerHTML = '—';
         return;
     }
-    
-    hideError();
     
     const vocSTC = parseFloat(document.getElementById('voc_stc').value);
     const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
@@ -620,6 +614,19 @@ function calculateVoltage() {
     
     minInfoElement.className = 'sub-result ' + (deltaMin > 0 ? 'positive' : 'negative');
     maxInfoElement.className = 'sub-result ' + (deltaMax > 0 ? 'positive' : 'negative');
+}
+
+function calculateVoltage(showErrorOnEmpty = false) {
+    if (!areInputsValid()) {
+        if (showErrorOnEmpty) {
+            showError(translations[currentLang].error_empty);
+        }
+        updateResultsDisplay();
+        return;
+    }
+    
+    hideError();
+    updateResultsDisplay();
 }
 
 function getCurrentResults() {
@@ -688,21 +695,13 @@ const savedLang = localStorage.getItem('lang') || 'ru';
 currentLang = savedLang;
 updateTexts();
 updatePlaceholders();
+updateResultsDisplay();
 
-window.addEventListener('load', () => {
-    const vocSTC = document.getElementById('voc_stc').value;
-    const tempCoeff = document.getElementById('temp_coeff').value;
-    const modulesCount = document.getElementById('modules_count').value;
-    const tempMin = document.getElementById('temp_min').value;
-    const tempMax = document.getElementById('temp_max').value;
-    
-    if (vocSTC || tempCoeff || modulesCount || tempMin || tempMax) {
-        calculateVoltage();
-    }
-});
-
+// Автоматическое обновление при вводе данных (без ошибок)
 document.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', () => calculateVoltage());
+    input.addEventListener('input', () => {
+        updateResultsDisplay();
+    });
 });
 </script>
 </body>
