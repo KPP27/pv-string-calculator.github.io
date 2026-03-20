@@ -138,6 +138,22 @@
         .sub-result.negative {
             color: #2e7d32;
         }
+        .string-result {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 16px;
+            margin-top: 15px;
+            text-align: center;
+            border: 1px solid var(--border);
+        }
+        .string-result .result-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .string-result .result-value {
+            font-size: 24px;
+        }
 
         .info-box {
             background: #f8f9fa;
@@ -239,6 +255,7 @@
             .result-value { font-size: 24px; }
             .button-group { flex-direction: column; }
             button { padding: 12px; }
+            .string-result .result-value { font-size: 20px; }
         }
     </style>
 </head>
@@ -274,14 +291,19 @@
         <div class="note" data-t="coeff_note">* Указывается в даташите модуля. При низких температурах напряжение растет!</div>
     </div>
 
+    <div class="input-group">
+        <label data-t="label_modules">Количество модулей в стринге, шт</label>
+        <input type="number" id="modules_count" placeholder="" data-placeholder="modules_placeholder">
+    </div>
+
     <div class="input-row">
         <div class="input-group">
             <label data-t="label_tmin">Мин. температура, °C</label>
-            <input type="number" id="temp_min" placeholder="" data-placeholder="temp_placeholder">
+            <input type="number" id="temp_min" placeholder="" data-placeholder="temp_min_placeholder">
         </div>
         <div class="input-group">
             <label data-t="label_tmax">Макс. температура, °C</label>
-            <input type="number" id="temp_max" placeholder="" data-placeholder="temp_placeholder">
+            <input type="number" id="temp_max" placeholder="" data-placeholder="temp_max_placeholder">
         </div>
     </div>
 
@@ -291,15 +313,22 @@
     </div>
 
     <div class="result-card" id="resultArea">
-        <div class="result-label" data-t="result_voc_min">Напряжение при минимальной температуре</div>
+        <div class="result-label" data-t="result_voc_min">Напряжение одного модуля при минимальной температуре</div>
         <div class="result-value" id="voc_min_value">— <span class="result-unit">В</span></div>
         <div class="sub-result" id="delta_min_info">—</div>
         
         <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1);">
-            <div class="result-label" data-t="result_voc_max">Напряжение при максимальной температуре</div>
+            <div class="result-label" data-t="result_voc_max">Напряжение одного модуля при максимальной температуре</div>
             <div class="result-value" id="voc_max_value">— <span class="result-unit">В</span></div>
             <div class="sub-result" id="delta_max_info">—</div>
         </div>
+    </div>
+
+    <div class="string-result" id="stringResultArea">
+        <div class="result-label" data-t="result_string_min">Напряжение стринга при минимальной температуре</div>
+        <div class="result-value" id="string_min_value">— <span class="result-unit">В</span></div>
+        <div class="result-label" style="margin-top: 12px;" data-t="result_string_max">Напряжение стринга при максимальной температуре</div>
+        <div class="result-value" id="string_max_value">— <span class="result-unit">В</span></div>
     </div>
 
     <div class="info-box">
@@ -307,7 +336,7 @@
         <span data-t="formula">Voc(T) = Voc_STC × [1 + β × (T - 25°C)]</span><br>
         <span data-t="formula_note" style="font-size: 11px;">* β обычно отрицательный, поэтому при T < 25°C напряжение увеличивается</span><br><br>
         <strong data-t="note_title">⚠️ Важно:</strong><br>
-        <span data-t="note_text">При низких температурах напряжение модуля УВЕЛИЧИВАЕТСЯ! Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!</span>
+        <span data-t="note_text">При низких температурах напряжение модуля УВЕЛИЧИВАЕТСЯ! Убедитесь, что напряжение стринга при минимальной температуре не превышает максимальное входное напряжение инвертора!</span>
     </div>
 </div>
 
@@ -319,27 +348,32 @@ const translations = {
         subtitle: "Расчет Voc солнечного модуля при различных температурах",
         label_voc: "Voc при STC (25°C), В",
         label_coeff: "Температурный коэффициент Voc (β), %/°C",
+        label_modules: "Количество модулей в стринге, шт",
         coeff_hint: "💡 Для большинства модулей β отрицательный: от -0.25 до -0.35 %/°C",
         coeff_note: "* Указывается в даташите модуля. При низких температурах напряжение растет!",
         label_tmin: "Мин. температура, °C",
         label_tmax: "Макс. температура, °C",
         calc_btn: "Рассчитать",
         copy_btn: "📋 Копировать",
-        result_voc_min: "Напряжение при минимальной температуре",
-        result_voc_max: "Напряжение при максимальной температуре",
+        result_voc_min: "Напряжение одного модуля при минимальной температуре",
+        result_voc_max: "Напряжение одного модуля при максимальной температуре",
+        result_string_min: "Напряжение стринга при минимальной температуре",
+        result_string_max: "Напряжение стринга при максимальной температуре",
         formula_title: "📐 Формула расчета:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
         formula_note: "* β обычно отрицательный, поэтому при T < 25°C напряжение увеличивается",
         note_title: "⚠️ Важно:",
-        note_text: "При низких температурах напряжение модуля УВЕЛИЧИВАЕТСЯ! Убедитесь, что Voc при минимальной температуре не превышает максимальное входное напряжение инвертора!",
+        note_text: "При низких температурах напряжение модуля УВЕЛИЧИВАЕТСЯ! Убедитесь, что напряжение стринга при минимальной температуре не превышает максимальное входное напряжение инвертора!",
         delta_info_positive: "↑ Увеличение: {change} В (+{percent}%)",
         delta_info_negative: "↓ Уменьшение: {change} В ({percent}%)",
         error_empty: "Пожалуйста, заполните все поля",
         copied: "✅ Результаты скопированы!",
-        share_text: "📊 Расчет напряжения солнечного модуля от температуры:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\n\n❄️ При {t_min}°C: {voc_min} В ({delta_min})\n🔥 При {t_max}°C: {voc_max} В ({delta_max})\n\n⚠️ При низких температурах напряжение УВЕЛИЧИВАЕТСЯ!\n#SolarToolbox #СолнечнаяЭнергетика",
+        share_text: "📊 Расчет напряжения солнечного модуля от температуры:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКоличество модулей: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стринг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стринг: {string_max} В\n\n⚠️ При низких температурах напряжение УВЕЛИЧИВАЕТСЯ!\n#SolarToolbox #СолнечнаяЭнергетика",
         voc_placeholder: "Например: 49.8",
         coeff_placeholder: "Например: -0.27",
-        temp_placeholder: "Например: -25"
+        modules_placeholder: "Например: 12",
+        temp_min_placeholder: "Например: -25",
+        temp_max_placeholder: "Например: 40"
     },
     ua: {
         back: "Назад",
@@ -347,27 +381,32 @@ const translations = {
         subtitle: "Розрахунок Voc сонячного модуля при різних температурах",
         label_voc: "Voc при STC (25°C), В",
         label_coeff: "Температурний коефіцієнт Voc (β), %/°C",
+        label_modules: "Кількість модулів у стрингу, шт",
         coeff_hint: "💡 Для більшості модулів β від'ємний: від -0.25 до -0.35 %/°C",
         coeff_note: "* Вказується в даташиті модуля. При низьких температурах напруга зростає!",
         label_tmin: "Мін. температура, °C",
         label_tmax: "Макс. температура, °C",
         calc_btn: "Розрахувати",
         copy_btn: "📋 Копіювати",
-        result_voc_min: "Напруга при мінімальній температурі",
-        result_voc_max: "Напруга при максимальній температурі",
+        result_voc_min: "Напруга одного модуля при мінімальній температурі",
+        result_voc_max: "Напруга одного модуля при максимальній температурі",
+        result_string_min: "Напруга стринга при мінімальній температурі",
+        result_string_max: "Напруга стринга при максимальній температурі",
         formula_title: "📐 Формула розрахунку:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
         formula_note: "* β зазвичай від'ємний, тому при T < 25°C напруга збільшується",
         note_title: "⚠️ Важливо:",
-        note_text: "При низьких температурах напруга модуля ЗБІЛЬШУЄТЬСЯ! Переконайтеся, що Voc при мінімальній температурі не перевищує максимальну вхідну напругу інвертора!",
+        note_text: "При низьких температурах напруга модуля ЗБІЛЬШУЄТЬСЯ! Переконайтеся, що напруга стринга при мінімальній температурі не перевищує максимальну вхідну напругу інвертора!",
         delta_info_positive: "↑ Збільшення: {change} В (+{percent}%)",
         delta_info_negative: "↓ Зменшення: {change} В ({percent}%)",
         error_empty: "Будь ласка, заповніть всі поля",
         copied: "✅ Результати скопійовано!",
-        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\n\n❄️ При {t_min}°C: {voc_min} В ({delta_min})\n🔥 При {t_max}°C: {voc_max} В ({delta_max})\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!\n#SolarToolbox #СонячнаЕнергетика",
+        share_text: "📊 Розрахунок напруги сонячного модуля від температури:\n\nVoc(STC): {voc_stc} В\nβ: {coeff} %/°C\nКількість модулів: {modules} шт.\n\n❄️ При {t_min}°C:\n• Один модуль: {voc_min} В ({delta_min})\n• Стринг: {string_min} В\n\n🔥 При {t_max}°C:\n• Один модуль: {voc_max} В ({delta_max})\n• Стринг: {string_max} В\n\n⚠️ При низьких температурах напруга ЗБІЛЬШУЄТЬСЯ!\n#SolarToolbox #СонячнаЕнергетика",
         voc_placeholder: "Наприклад: 49.8",
         coeff_placeholder: "Наприклад: -0.27",
-        temp_placeholder: "Наприклад: -25"
+        modules_placeholder: "Наприклад: 12",
+        temp_min_placeholder: "Наприклад: -25",
+        temp_max_placeholder: "Наприклад: 40"
     },
     pl: {
         back: "Wstecz",
@@ -375,27 +414,32 @@ const translations = {
         subtitle: "Obliczanie Voc modułu słonecznego w różnych temperaturach",
         label_voc: "Voc w STC (25°C), V",
         label_coeff: "Współczynnik temperaturowy Voc (β), %/°C",
+        label_modules: "Liczba modułów w stringu, szt",
         coeff_hint: "💡 Dla większości modułów β jest ujemny: od -0.25 do -0.35 %/°C",
         coeff_note: "* Podawany w karcie katalogowej modułu. W niskich temperaturach napięcie rośnie!",
         label_tmin: "Min. temperatura, °C",
         label_tmax: "Maks. temperatura, °C",
         calc_btn: "Oblicz",
         copy_btn: "📋 Kopiuj",
-        result_voc_min: "Napięcie w minimalnej temperaturze",
-        result_voc_max: "Napięcie w maksymalnej temperaturze",
+        result_voc_min: "Napięcie pojedynczego modułu w minimalnej temperaturze",
+        result_voc_max: "Napięcie pojedynczego modułu w maksymalnej temperaturze",
+        result_string_min: "Napięcie stringa w minimalnej temperaturze",
+        result_string_max: "Napięcie stringa w maksymalnej temperaturze",
         formula_title: "📐 Wzór obliczeniowy:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
         formula_note: "* β jest zwykle ujemny, więc przy T < 25°C napięcie wzrasta",
         note_title: "⚠️ Ważne:",
-        note_text: "W niskich temperaturach napięcie modułu WZRASTA! Upewnij się, że Voc w minimalnej temperaturze nie przekracza maksymalnego napięcia wejściowego falownika!",
+        note_text: "W niskich temperaturach napięcie modułu WZRASTA! Upewnij się, że napięcie stringa w minimalnej temperaturze nie przekracza maksymalnego napięcia wejściowego falownika!",
         delta_info_positive: "↑ Wzrost: {change} V (+{percent}%)",
         delta_info_negative: "↓ Spadek: {change} V ({percent}%)",
         error_empty: "Proszę wypełnić wszystkie pola",
         copied: "✅ Wyniki skopiowane!",
-        share_text: "📊 Obliczanie napięcia modułu słonecznego od temperatury:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\n\n❄️ Przy {t_min}°C: {voc_min} V ({delta_min})\n🔥 Przy {t_max}°C: {voc_max} V ({delta_max})\n\n⚠️ W niskich temperaturach napięcie WZRASTA!\n#SolarToolbox #EnergiaSłoneczna",
+        share_text: "📊 Obliczanie napięcia modułu słonecznego od temperatury:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\nLiczba modułów: {modules} szt.\n\n❄️ Przy {t_min}°C:\n• Pojedynczy moduł: {voc_min} V ({delta_min})\n• String: {string_min} V\n\n🔥 Przy {t_max}°C:\n• Pojedynczy moduł: {voc_max} V ({delta_max})\n• String: {string_max} V\n\n⚠️ W niskich temperaturach napięcie WZRASTA!\n#SolarToolbox #EnergiaSłoneczna",
         voc_placeholder: "Np: 49.8",
         coeff_placeholder: "Np: -0.27",
-        temp_placeholder: "Np: -25"
+        modules_placeholder: "Np: 12",
+        temp_min_placeholder: "Np: -25",
+        temp_max_placeholder: "Np: 40"
     },
     en: {
         back: "Back",
@@ -403,27 +447,32 @@ const translations = {
         subtitle: "Solar module Voc calculation at different temperatures",
         label_voc: "Voc at STC (25°C), V",
         label_coeff: "Voc temperature coefficient (β), %/°C",
+        label_modules: "Number of modules in string, pcs",
         coeff_hint: "💡 For most modules β is negative: from -0.25 to -0.35 %/°C",
         coeff_note: "* Specified in module datasheet. Voltage increases at low temperatures!",
         label_tmin: "Min temperature, °C",
         label_tmax: "Max temperature, °C",
         calc_btn: "Calculate",
         copy_btn: "📋 Copy",
-        result_voc_min: "Voltage at minimum temperature",
-        result_voc_max: "Voltage at maximum temperature",
+        result_voc_min: "Single module voltage at minimum temperature",
+        result_voc_max: "Single module voltage at maximum temperature",
+        result_string_min: "String voltage at minimum temperature",
+        result_string_max: "String voltage at maximum temperature",
         formula_title: "📐 Formula:",
         formula: "Voc(T) = Voc_STC × [1 + β × (T - 25°C)]",
         formula_note: "* β is usually negative, so at T < 25°C voltage increases",
         note_title: "⚠️ Important:",
-        note_text: "At low temperatures, module voltage INCREASES! Make sure Voc at minimum temperature does not exceed inverter's maximum input voltage!",
+        note_text: "At low temperatures, module voltage INCREASES! Make sure string voltage at minimum temperature does not exceed inverter's maximum input voltage!",
         delta_info_positive: "↑ Increase: {change} V (+{percent}%)",
         delta_info_negative: "↓ Decrease: {change} V ({percent}%)",
         error_empty: "Please fill all fields",
         copied: "✅ Results copied!",
-        share_text: "📊 Solar module voltage temperature calculation:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\n\n❄️ At {t_min}°C: {voc_min} V ({delta_min})\n🔥 At {t_max}°C: {voc_max} V ({delta_max})\n\n⚠️ At low temperatures voltage INCREASES!\n#SolarToolbox #SolarEnergy",
+        share_text: "📊 Solar module voltage temperature calculation:\n\nVoc(STC): {voc_stc} V\nβ: {coeff} %/°C\nModules count: {modules} pcs\n\n❄️ At {t_min}°C:\n• Single module: {voc_min} V ({delta_min})\n• String: {string_min} V\n\n🔥 At {t_max}°C:\n• Single module: {voc_max} V ({delta_max})\n• String: {string_max} V\n\n⚠️ At low temperatures voltage INCREASES!\n#SolarToolbox #SolarEnergy",
         voc_placeholder: "Example: 49.8",
         coeff_placeholder: "Example: -0.27",
-        temp_placeholder: "Example: -25"
+        modules_placeholder: "Example: 12",
+        temp_min_placeholder: "Example: -25",
+        temp_max_placeholder: "Example: 40"
     }
 };
 
@@ -451,25 +500,11 @@ function updateTexts() {
 
 function updatePlaceholders() {
     const lang = currentLang;
-    // Обновляем placeholder для поля Voc
-    const vocInput = document.getElementById('voc_stc');
-    if (vocInput && translations[lang].voc_placeholder) {
-        vocInput.placeholder = translations[lang].voc_placeholder;
-    }
-    
-    // Обновляем placeholder для поля температурного коэффициента
-    const coeffInput = document.getElementById('temp_coeff');
-    if (coeffInput && translations[lang].coeff_placeholder) {
-        coeffInput.placeholder = translations[lang].coeff_placeholder;
-    }
-    
-    // Обновляем placeholder для полей температуры
-    const tempInputs = document.querySelectorAll('#temp_min, #temp_max');
-    tempInputs.forEach(input => {
-        if (input && translations[lang].temp_placeholder) {
-            input.placeholder = translations[lang].temp_placeholder;
-        }
-    });
+    document.getElementById('voc_stc').placeholder = translations[lang].voc_placeholder;
+    document.getElementById('temp_coeff').placeholder = translations[lang].coeff_placeholder;
+    document.getElementById('modules_count').placeholder = translations[lang].modules_placeholder;
+    document.getElementById('temp_min').placeholder = translations[lang].temp_min_placeholder;
+    document.getElementById('temp_max').placeholder = translations[lang].temp_max_placeholder;
 }
 
 function showToast(message) {
@@ -498,10 +533,11 @@ function showError(message) {
 function validateInputs() {
     const vocSTC = parseFloat(document.getElementById('voc_stc').value);
     const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const modulesCount = parseFloat(document.getElementById('modules_count').value);
     const tMin = parseFloat(document.getElementById('temp_min').value);
     const tMax = parseFloat(document.getElementById('temp_max').value);
     
-    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(tMin) || isNaN(tMax)) {
+    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(modulesCount) || isNaN(tMin) || isNaN(tMax)) {
         showError(translations[currentLang].error_empty);
         return false;
     }
@@ -510,9 +546,10 @@ function validateInputs() {
 
 function calculateVoltage() {
     if (!validateInputs()) {
-        // Если поля пустые, показываем прочерки
         document.getElementById('voc_min_value').innerHTML = '— <span class="result-unit">В</span>';
         document.getElementById('voc_max_value').innerHTML = '— <span class="result-unit">В</span>';
+        document.getElementById('string_min_value').innerHTML = '— <span class="result-unit">В</span>';
+        document.getElementById('string_max_value').innerHTML = '— <span class="result-unit">В</span>';
         document.getElementById('delta_min_info').innerHTML = '—';
         document.getElementById('delta_max_info').innerHTML = '—';
         return;
@@ -522,24 +559,30 @@ function calculateVoltage() {
     
     const vocSTC = parseFloat(document.getElementById('voc_stc').value);
     const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const modulesCount = parseFloat(document.getElementById('modules_count').value);
     const tMin = parseFloat(document.getElementById('temp_min').value);
     const tMax = parseFloat(document.getElementById('temp_max').value);
     
     const coeff = coeffPercent / 100;
     
-    // Расчет напряжения при мин температуре
+    // Расчет напряжения одного модуля
     const vocMin = vocSTC * (1 + coeff * (tMin - 25));
+    const vocMax = vocSTC * (1 + coeff * (tMax - 25));
+    
+    // Расчет напряжения стринга
+    const stringMin = vocMin * modulesCount;
+    const stringMax = vocMax * modulesCount;
+    
     const deltaMin = vocMin - vocSTC;
     const deltaMinPercent = (deltaMin / vocSTC) * 100;
-    
-    // Расчет напряжения при макс температуре
-    const vocMax = vocSTC * (1 + coeff * (tMax - 25));
     const deltaMax = vocMax - vocSTC;
     const deltaMaxPercent = (deltaMax / vocSTC) * 100;
     
     // Обновление UI
     document.getElementById('voc_min_value').innerHTML = vocMin.toFixed(1) + ' <span class="result-unit">В</span>';
     document.getElementById('voc_max_value').innerHTML = vocMax.toFixed(1) + ' <span class="result-unit">В</span>';
+    document.getElementById('string_min_value').innerHTML = stringMin.toFixed(1) + ' <span class="result-unit">В</span>';
+    document.getElementById('string_max_value').innerHTML = stringMax.toFixed(1) + ' <span class="result-unit">В</span>';
     
     // Форматирование информации об изменении
     const deltaMinFormatted = (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1);
@@ -578,15 +621,14 @@ function calculateVoltage() {
     minInfoElement.innerHTML = minInfo;
     maxInfoElement.innerHTML = maxInfo;
     
-    // Применяем классы для цвета
     minInfoElement.className = 'sub-result ' + (deltaMin > 0 ? 'positive' : 'negative');
     maxInfoElement.className = 'sub-result ' + (deltaMax > 0 ? 'positive' : 'negative');
     
-    // Добавляем предупреждение, если напряжение слишком высокое
+    // Предупреждение о превышении напряжения
     let existingWarning = document.querySelector('.warning-note');
     if (existingWarning) existingWarning.remove();
     
-    if (vocMin > 1000) {
+    if (stringMin > 1000) {
         const warning = document.createElement('div');
         warning.className = 'info-box warning-note';
         warning.style.background = '#fff0f0';
@@ -595,37 +637,43 @@ function calculateVoltage() {
         warning.innerHTML = '⚠️ <strong>' + (currentLang === 'ru' ? 'Внимание!' : 
                             currentLang === 'ua' ? 'Увага!' : 
                             currentLang === 'pl' ? 'Uwaga!' : 'Warning!') + '</strong> ' +
-                            (currentLang === 'ru' ? 'Voc превышает 1000В! Проверьте совместимость с инвертором.' :
-                             currentLang === 'ua' ? 'Voc перевищує 1000В! Перевірте сумісність з інвертором.' :
-                             currentLang === 'pl' ? 'Voc przekracza 1000V! Sprawdź kompatybilność z falownikiem.' :
-                             'Voc exceeds 1000V! Check inverter compatibility.');
-        document.getElementById('resultArea').after(warning);
+                            (currentLang === 'ru' ? 'Напряжение стринга превышает 1000В! Проверьте совместимость с инвертором.' :
+                             currentLang === 'ua' ? 'Напруга стринга перевищує 1000В! Перевірте сумісність з інвертором.' :
+                             currentLang === 'pl' ? 'Napięcie stringa przekracza 1000V! Sprawdź kompatybilność z falownikiem.' :
+                             'String voltage exceeds 1000V! Check inverter compatibility.');
+        document.getElementById('stringResultArea').after(warning);
     }
 }
 
 function getCurrentResults() {
     const vocSTC = parseFloat(document.getElementById('voc_stc').value);
     const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const modulesCount = parseFloat(document.getElementById('modules_count').value);
     const tMin = parseFloat(document.getElementById('temp_min').value);
     const tMax = parseFloat(document.getElementById('temp_max').value);
     
-    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(tMin) || isNaN(tMax)) {
+    if (isNaN(vocSTC) || isNaN(coeffPercent) || isNaN(modulesCount) || isNaN(tMin) || isNaN(tMax)) {
         return null;
     }
     
     const coeff = coeffPercent / 100;
     const vocMin = vocSTC * (1 + coeff * (tMin - 25));
     const vocMax = vocSTC * (1 + coeff * (tMax - 25));
+    const stringMin = vocMin * modulesCount;
+    const stringMax = vocMax * modulesCount;
     const deltaMin = vocMin - vocSTC;
     const deltaMax = vocMax - vocSTC;
     
     return {
         voc_stc: vocSTC.toFixed(1),
         coeff: coeffPercent.toFixed(2),
+        modules: modulesCount,
         t_min: tMin,
         t_max: tMax,
         voc_min: vocMin.toFixed(1),
         voc_max: vocMax.toFixed(1),
+        string_min: stringMin.toFixed(1),
+        string_max: stringMax.toFixed(1),
         delta_min: (deltaMin > 0 ? '+' : '') + deltaMin.toFixed(1),
         delta_max: (deltaMax > 0 ? '+' : '') + deltaMax.toFixed(1)
     };
@@ -641,10 +689,13 @@ function copyResults() {
     const text = translations[currentLang].share_text
         .replace('{voc_stc}', results.voc_stc)
         .replace('{coeff}', results.coeff)
+        .replace('{modules}', results.modules)
         .replace('{t_min}', results.t_min)
         .replace('{t_max}', results.t_max)
         .replace('{voc_min}', results.voc_min)
         .replace('{voc_max}', results.voc_max)
+        .replace('{string_min}', results.string_min)
+        .replace('{string_max}', results.string_max)
         .replace('{delta_min}', results.delta_min)
         .replace('{delta_max}', results.delta_max);
     
@@ -655,26 +706,24 @@ function copyResults() {
     });
 }
 
-// Инициализация языка
+// Инициализация
 const savedLang = localStorage.getItem('lang') || 'ru';
 currentLang = savedLang;
 updateTexts();
 updatePlaceholders();
 
-// Автоматический расчет при загрузке (если поля заполнены)
 window.addEventListener('load', () => {
-    // Проверяем, есть ли значения в полях
     const vocSTC = document.getElementById('voc_stc').value;
     const tempCoeff = document.getElementById('temp_coeff').value;
+    const modulesCount = document.getElementById('modules_count').value;
     const tempMin = document.getElementById('temp_min').value;
     const tempMax = document.getElementById('temp_max').value;
     
-    if (vocSTC || tempCoeff || tempMin || tempMax) {
+    if (vocSTC || tempCoeff || modulesCount || tempMin || tempMax) {
         calculateVoltage();
     }
 });
 
-// Добавляем расчет при изменении полей
 document.querySelectorAll('input').forEach(input => {
     input.addEventListener('input', () => calculateVoltage());
 });
