@@ -8,20 +8,24 @@
       gtag('js', new Date());
       gtag('config', 'G-0JQD4RVE06');
     </script>
-      
+    
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Solar Toolbox - String Range</title>
+    <title>Solar Toolbox - Калькулятор диапазона</title>
 
     <style>
         :root { 
             --bg: #f8f9fa; 
             --card-bg: #ffffff; 
             --accent: #2a8cff; 
+            --accent-light: #e6f2ff;
             --border: #eef0f2; 
             --radius: 16px; 
             --text-main: #1a1a1b;
             --text-muted: #70757a;
+            --danger: #ff6b6b;
+            --success: #51cf66;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,16 +43,27 @@
             border-radius: var(--radius); border: 1px solid var(--border);
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             height: fit-content;
+            animation: fadeIn 0.3s ease;
         }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .back-btn:active { background: #e0e0e0; transform: scale(0.97); }
         
-        .back-btn { 
-            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
-            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: 0.2s;
-        }
-        .back-btn:active { transform: scale(0.95); }
-
         .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
             padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
@@ -56,237 +71,565 @@
         }
         .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        h2 { font-size: 19px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.2; }
+        .page-title { margin-bottom: 20px; }
+        .page-title h1 { font-size: 22px; margin: 0; color: var(--text-main); }
+        .page-title p { font-size: 13px; color: var(--text-muted); margin: 5px 0 0; }
 
-        .input-group { margin-bottom: 12px; }
-        label { font-size: 12px; font-weight: 600; display: block; color: var(--text-muted); margin-bottom: 4px; }
-
-        input {
-            width: 100%; padding: 12px; border-radius: 10px;
-            border: 1px solid var(--border); font-size: 16px; background: #fafafa;
-            transition: 0.2s; outline: none;
+        .input-group {
+            margin-bottom: 20px;
         }
-        input:focus { border-color: var(--accent); background: #fff; }
-
-        .calc-btn {
-            width: 100%; margin-top: 10px; padding: 16px; 
-            background: var(--accent); color: white; border: none;
-            border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
         }
-        .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
-
-        .result {
-            margin-top: 20px; padding: 18px; border-radius: 14px;
-            background: #f0f7ff; border: 1px solid #cce3ff;
-            text-align: center; display: none;
-            animation: slideUp 0.3s ease;
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: 0.2s;
+            background: #fff;
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1);
+        }
+        .input-group input::placeholder {
+            color: #bbb;
+            font-size: 14px;
+        }
 
-        .res-line { display: block; font-size: 16px; color: var(--text-main); font-weight: 700; margin: 4px 0; }
-        .res-val { color: var(--accent); font-size: 18px; }
+        .result-card {
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .result-unit {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+        .result-row {
+            margin-bottom: 15px;
+        }
+        .result-row:last-child {
+            margin-bottom: 0;
+        }
+        .result-row .result-label {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .result-row .result-value {
+            font-size: 24px;
+        }
 
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent);
+        }
+        .info-box strong {
+            color: var(--text-main);
+        }
+
+        .note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:active {
+            transform: scale(0.98);
+            background: #1a6fd6;
+        }
+        
         .copy-btn {
-            width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px;
-            background: #28a745; color: white; border: none;
-            font-weight: 600; cursor: pointer; display: none; transition: 0.2s;
+            background: #28a745;
         }
-        .copy-btn.copied { background: #6c757d; }
+        .copy-btn:active {
+            background: #218838;
+        }
+        
+        .error-message {
+            background: #fff0f0;
+            border-left: 3px solid var(--danger);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d32f2f;
+            display: none;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: fadeOut 2s ease forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            .result-row .result-value { font-size: 20px; }
+            .button-group { flex-direction: column; }
+            button { padding: 12px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="top-nav">
-        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
+    <div class="header-top">
+        <a href="index.html" class="back-btn">← <span data-t="back">Назад</span></a>
         <div class="lang-switch">
-            <div class="lang-btn" data-lang="ru">RU</div>
-            <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="pl">PL</div>
-            <div class="lang-btn" data-lang="en">EN</div>
+            <button class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</button>
+            <button class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</button>
+            <button class="lang-btn" onclick="setLang('pl')" data-l="pl">PL</button>
+            <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
         </div>
     </div>
 
-    <h2 id="title">Оптимальное кол-во модулей</h2>
+    <div class="page-title">
+        <h1 data-t="title">Калькулятор диапазона</h1>
+        <p data-t="subtitle">Расчет оптимального количества модулей в стринге (Min/Max)</p>
+    </div>
+    
+    <div class="error-message" id="errorMessage"></div>
 
-    <div class="input-group"><label id="l1"></label><input type="number" id="v_voc" step="any"></div>
-    <div class="input-group"><label id="l2"></label><input type="number" id="v_vmp" step="any"></div>
-    <div class="input-group"><label id="l3"></label><input type="number" id="kv" step="any"></div>
-    <div class="input-group"><label id="l4"></label><input type="number" id="t_min" step="any"></div>
-    <div class="input-group"><label id="l5"></label><input type="number" id="t_max" step="any"></div>
-    <div class="input-group"><label id="l6"></label><input type="number" id="v_mppt_max" step="any"></div>
-    <div class="input-group"><label id="l7"></label><input type="number" id="v_mppt_min" step="any"></div>
+    <div class="input-group">
+        <label data-t="label_voc">Voc модуля (STC), В</label>
+        <input type="number" id="voc_module" placeholder="" data-placeholder="voc_placeholder">
+    </div>
 
-    <button onclick="calculate()" id="calcBtn" class="calc-btn">Рассчитать</button>
+    <div class="input-group">
+        <label data-t="label_vmp">Vmp модуля (STC), В</label>
+        <input type="number" id="vmp_module" placeholder="" data-placeholder="vmp_placeholder">
+    </div>
 
-    <div class="result" id="result"></div>
-    <button id="copyBtn" class="copy-btn"></button>
+    <div class="input-group">
+        <label data-t="label_coeff">Температурный коэффициент Voc, %/°C</label>
+        <input type="number" id="temp_coeff" placeholder="" data-placeholder="coeff_placeholder">
+        <div class="note" data-t="coeff_note">* Обычно отрицательный: от -0.25 до -0.35 %/°C</div>
+    </div>
+
+    <div class="input-group">
+        <label data-t="label_tmin">Мин. температура объекта, °C</label>
+        <input type="number" id="temp_min" placeholder="" data-placeholder="temp_placeholder">
+    </div>
+
+    <div class="input-group">
+        <label data-t="label_tmax">Макс. температура объекта, °C</label>
+        <input type="number" id="temp_max" placeholder="" data-placeholder="temp_max_placeholder">
+    </div>
+
+    <div class="input-group">
+        <label data-t="label_mppt_max">Макс. предел MPPT инвертора, В</label>
+        <input type="number" id="mppt_max" placeholder="" data-placeholder="mppt_max_placeholder">
+    </div>
+
+    <div class="input-group">
+        <label data-t="label_mppt_min">Мин. предел MPPT инвертора, В</label>
+        <input type="number" id="mppt_min" placeholder="" data-placeholder="mppt_min_placeholder">
+    </div>
+
+    <div class="button-group">
+        <button onclick="calculateRange(true)" data-t="calc_btn">Рассчитать</button>
+        <button onclick="copyResults()" class="copy-btn" data-t="copy_btn">📋 Копировать</button>
+    </div>
+
+    <div class="result-card" id="resultArea">
+        <div class="result-row">
+            <div class="result-label" data-t="result_min">Минимальное количество модулей в стринге</div>
+            <div class="result-value" id="min_value">— <span class="result-unit">шт</span></div>
+        </div>
+        <div class="result-row">
+            <div class="result-label" data-t="result_max">Максимальное количество модулей в стринге</div>
+            <div class="result-value" id="max_value">— <span class="result-unit">шт</span></div>
+        </div>
+        <div class="sub-result" id="result_detail">—</div>
+    </div>
+
+    <div class="info-box">
+        <strong data-t="formula_title">📐 Формула расчета:</strong><br>
+        <span data-t="formula">Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]</span><br>
+        <span data-t="formula2">Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]</span><br>
+        <span data-t="formula3">Min модулей = MPPT_min / Vmp_max</span><br>
+        <span data-t="formula4">Max модулей = MPPT_max / Voc_min</span><br><br>
+        <strong data-t="note_title">⚠️ Важно:</strong><br>
+        <span data-t="note_text">При низких температурах напряжение модуля увеличивается (расчет Max), при высоких - уменьшается (расчет Min). Диапазон должен быть корректным (Min ≤ Max).</span>
+    </div>
 </div>
 
 <script>
-const T = {
+const translations = {
     ru: {
-        back: "← Меню", title: "Диапазон модулей (Min/Max)",
-        l1: "Voc модуля (STC) (В)", l2: "Vmp модуля (STC) (В)",
-        l3: "Температурный коэффициент Voc (%)", l4: "Мин. температура объекта (°C)",
-        l5: "Макс. температура объекта (°C)", l6: "Макс. предел MPPT инвертора (В)",
-        l7: "Мин. предел MPPT инвертора (В)",
-        ph: "например: ", calc: "Рассчитать диапазон",
-        empty: "⚠️ Заполните все поля", copyBtn: "📋 Скопировать отчет",
-        copied: "✅ Скопировано!", res_min: "Минимум в стринге",
-        res_max: "Максимум в стринге", pcs: "шт."
+        back: "Назад",
+        title: "Калькулятор диапазона",
+        subtitle: "Расчет оптимального количества модулей в стринге (Min/Max)",
+        label_voc: "Voc модуля (STC), В",
+        label_vmp: "Vmp модуля (STC), В",
+        label_coeff: "Температурный коэффициент Voc, %/°C",
+        coeff_note: "* Обычно отрицательный: от -0.25 до -0.35 %/°C",
+        label_tmin: "Мин. температура объекта, °C",
+        label_tmax: "Макс. температура объекта, °C",
+        label_mppt_max: "Макс. предел MPPT инвертора, В",
+        label_mppt_min: "Мин. предел MPPT инвертора, В",
+        calc_btn: "Рассчитать",
+        copy_btn: "📋 Копировать",
+        result_min: "Минимальное количество модулей в стринге",
+        result_max: "Максимальное количество модулей в стринге",
+        formula_title: "📐 Формула расчета:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
+        formula3: "Min модулей = MPPT_min / Vmp_max",
+        formula4: "Max модулей = MPPT_max / Voc_min",
+        note_title: "⚠️ Важно:",
+        note_text: "При низких температурах напряжение модуля увеличивается (расчет Max), при высоких - уменьшается (расчет Min). Диапазон должен быть корректным (Min ≤ Max).",
+        error_empty: "Пожалуйста, заполните все поля",
+        error_range: "Ошибка: минимальное значение больше максимального. Проверьте введенные данные.",
+        copied: "✅ Результаты скопированы!",
+        share_text: "📊 Расчет оптимального количества модулей в стринге:\n\nVoc модуля (STC): {voc} В\nVmp модуля (STC): {vmp} В\nТемп. коэффициент Voc: {coeff} %/°C\nМин. температура: {t_min}°C\nМакс. температура: {t_max}°C\nМакс. предел MPPT: {mppt_max} В\nМин. предел MPPT: {mppt_min} В\n--------------------------\nНапряжение при мин. температуре: {voc_min} В\nНапряжение при макс. температуре: {vmp_max} В\nМинимальное количество модулей: {min_pcs} шт.\nМаксимальное количество модулей: {max_pcs} шт.",
+        voc_placeholder: "Например: 49.8",
+        vmp_placeholder: "Например: 41.2",
+        coeff_placeholder: "Например: -0.27",
+        temp_placeholder: "Например: -25",
+        temp_max_placeholder: "Например: 60",
+        mppt_max_placeholder: "Например: 1000",
+        mppt_min_placeholder: "Например: 160"
     },
     ua: {
-        back: "← Меню", title: "Діапазон модулів (Min/Max)",
-        l1: "Voc модуля (STC) (В)", l2: "Vmp модуля (STC) (В)",
-        l3: "Температурний коефіцієнт Voc (%)", l4: "Мін. температура об'єкта (°C)",
-        l5: "Макс. температура об'єкта (°C)", l6: "Макс. межа MPPT інвертора (В)",
-        l7: "Мін. межа MPPT інвертора (В)",
-        ph: "наприклад: ", calc: "Розрахувати діапазон",
-        empty: "⚠️ Заповніть всі поля", copyBtn: "📋 Копіювати звіт",
-        copied: "✅ Скопійовано!", res_min: "Мінімум у стрингу",
-        res_max: "Максимум у стрингу", pcs: "шт."
+        back: "Назад",
+        title: "Калькулятор діапазону",
+        subtitle: "Розрахунок оптимальної кількості модулів у стрінгу (Min/Max)",
+        label_voc: "Voc модуля (STC), В",
+        label_vmp: "Vmp модуля (STC), В",
+        label_coeff: "Температурний коефіцієнт Voc, %/°C",
+        coeff_note: "* Зазвичай від'ємний: від -0.25 до -0.35 %/°C",
+        label_tmin: "Мін. температура об'єкта, °C",
+        label_tmax: "Макс. температура об'єкта, °C",
+        label_mppt_max: "Макс. межа MPPT інвертора, В",
+        label_mppt_min: "Мін. межа MPPT інвертора, В",
+        calc_btn: "Розрахувати",
+        copy_btn: "📋 Копіювати",
+        result_min: "Мінімальна кількість модулів у стрінгу",
+        result_max: "Максимальна кількість модулів у стрінгу",
+        formula_title: "📐 Формула розрахунку:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
+        formula3: "Min модулів = MPPT_min / Vmp_max",
+        formula4: "Max модулів = MPPT_max / Voc_min",
+        note_title: "⚠️ Важливо:",
+        note_text: "При низьких температурах напруга модуля збільшується (розрахунок Max), при високих - зменшується (розрахунок Min). Діапазон має бути коректним (Min ≤ Max).",
+        error_empty: "Будь ласка, заповніть всі поля",
+        error_range: "Помилка: мінімальне значення більше максимального. Перевірте введені дані.",
+        copied: "✅ Результати скопійовано!",
+        share_text: "📊 Розрахунок оптимальної кількості модулів у стрінгу:\n\nVoc модуля (STC): {voc} В\nVmp модуля (STC): {vmp} В\nТемп. коефіцієнт Voc: {coeff} %/°C\nМін. температура: {t_min}°C\nМакс. температура: {t_max}°C\nМакс. межа MPPT: {mppt_max} В\nМін. межа MPPT: {mppt_min} В\n--------------------------\nНапруга при мін. температурі: {voc_min} В\nНапруга при макс. температурі: {vmp_max} В\nМінімальна кількість модулів: {min_pcs} шт.\nМаксимальна кількість модулів: {max_pcs} шт.",
+        voc_placeholder: "Наприклад: 49.8",
+        vmp_placeholder: "Наприклад: 41.2",
+        coeff_placeholder: "Наприклад: -0.27",
+        temp_placeholder: "Наприклад: -25",
+        temp_max_placeholder: "Наприклад: 60",
+        mppt_max_placeholder: "Наприклад: 1000",
+        mppt_min_placeholder: "Наприклад: 160"
     },
     pl: {
-        back: "← Menu", title: "Zakres modułów (Min/Max)",
-        l1: "Voc modułu (STC) (V)", l2: "Vmp modułu (STC) (V)",
-        l3: "Współczynnik temp. Voc (%)", l4: "Min. temperatura otoczenia (°C)",
-        l5: "Max. temperatura otoczenia (°C)", l6: "Max zakres MPPT falownika (V)",
-        l7: "Min zakres MPPT falownika (V)",
-        ph: "na przykład: ", calc: "Oblicz zakres",
-        empty: "⚠️ Uzupełnij pola", copyBtn: "📋 Skopiuj raport",
-        copied: "✅ Skopiowano!", res_min: "Minimum w stringu",
-        res_max: "Maksimum w stringu", pcs: "szt."
+        back: "Wstecz",
+        title: "Kalkulator zakresu",
+        subtitle: "Obliczanie optymalnej liczby modułów w stringu (Min/Max)",
+        label_voc: "Voc modułu (STC), V",
+        label_vmp: "Vmp modułu (STC), V",
+        label_coeff: "Współczynnik temperaturowy Voc, %/°C",
+        coeff_note: "* Zwykle ujemny: od -0.25 do -0.35 %/°C",
+        label_tmin: "Min. temperatura obiektu, °C",
+        label_tmax: "Maks. temperatura obiektu, °C",
+        label_mppt_max: "Maks. zakres MPPT falownika, V",
+        label_mppt_min: "Min. zakres MPPT falownika, V",
+        calc_btn: "Oblicz",
+        copy_btn: "📋 Kopiuj",
+        result_min: "Minimalna liczba modułów w stringu",
+        result_max: "Maksymalna liczba modułów w stringu",
+        formula_title: "📐 Wzór obliczeniowy:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
+        formula3: "Min modułów = MPPT_min / Vmp_max",
+        formula4: "Max modułów = MPPT_max / Voc_min",
+        note_title: "⚠️ Ważne:",
+        note_text: "W niskich temperaturach napięcie modułu wzrasta (obliczenia Max), w wysokich - maleje (obliczenia Min). Zakres powinien być poprawny (Min ≤ Max).",
+        error_empty: "Proszę wypełnić wszystkie pola",
+        error_range: "Błąd: wartość minimalna jest większa od maksymalnej. Sprawdź wprowadzone dane.",
+        copied: "✅ Wyniki skopiowane!",
+        share_text: "📊 Obliczanie optymalnej liczby modułów w stringu:\n\nVoc modułu (STC): {voc} V\nVmp modułu (STC): {vmp} V\nWspółczynnik temp. Voc: {coeff} %/°C\nMin. temperatura: {t_min}°C\nMaks. temperatura: {t_max}°C\nMaks. zakres MPPT: {mppt_max} V\nMin. zakres MPPT: {mppt_min} V\n--------------------------\nNapięcie w min. temperaturze: {voc_min} V\nNapięcie w maks. temperaturze: {vmp_max} V\nMinimalna liczba modułów: {min_pcs} szt.\nMaksymalna liczba modułów: {max_pcs} szt.",
+        voc_placeholder: "Np: 49.8",
+        vmp_placeholder: "Np: 41.2",
+        coeff_placeholder: "Np: -0.27",
+        temp_placeholder: "Np: -25",
+        temp_max_placeholder: "Np: 60",
+        mppt_max_placeholder: "Np: 1000",
+        mppt_min_placeholder: "Np: 160"
     },
     en: {
-        back: "← Menu", title: "Module Range (Min/Max)",
-        l1: "Module Voc (STC) (V)", l2: "Module Vmp (STC) (V)",
-        l3: "Temp. coefficient Voc (%)", l4: "Min ambient temperature (°C)",
-        l5: "Max ambient temperature (°C)", l6: "Max MPPT voltage (V)",
-        l7: "Min MPPT voltage (V)",
-        ph: "example: ", calc: "Calculate Range",
-        empty: "⚠️ Fill all fields", copyBtn: "📋 Copy report",
-        copied: "✅ Copied!", res_min: "Min modules in string",
-        res_max: "Max modules in string", pcs: "pcs."
+        back: "Back",
+        title: "Range Calculator",
+        subtitle: "Calculate optimal number of modules in a string (Min/Max)",
+        label_voc: "Module Voc (STC), V",
+        label_vmp: "Module Vmp (STC), V",
+        label_coeff: "Voc temperature coefficient, %/°C",
+        coeff_note: "* Usually negative: from -0.25 to -0.35 %/°C",
+        label_tmin: "Min. ambient temperature, °C",
+        label_tmax: "Max. ambient temperature, °C",
+        label_mppt_max: "Max MPPT voltage limit, V",
+        label_mppt_min: "Min MPPT voltage limit, V",
+        calc_btn: "Calculate",
+        copy_btn: "📋 Copy",
+        result_min: "Minimum number of modules in string",
+        result_max: "Maximum number of modules in string",
+        formula_title: "📐 Formula:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
+        formula3: "Min modules = MPPT_min / Vmp_max",
+        formula4: "Max modules = MPPT_max / Voc_min",
+        note_title: "⚠️ Important:",
+        note_text: "At low temperatures, module voltage increases (Max calculation), at high temperatures - decreases (Min calculation). Range must be valid (Min ≤ Max).",
+        error_empty: "Please fill all fields",
+        error_range: "Error: minimum value exceeds maximum value. Check your input data.",
+        copied: "✅ Results copied!",
+        share_text: "📊 Optimal number of modules in string calculation:\n\nModule Voc (STC): {voc} V\nModule Vmp (STC): {vmp} V\nVoc temp coefficient: {coeff} %/°C\nMin temperature: {t_min}°C\nMax temperature: {t_max}°C\nMax MPPT limit: {mppt_max} V\nMin MPPT limit: {mppt_min} V\n--------------------------\nVoltage at min temperature: {voc_min} V\nVoltage at max temperature: {vmp_max} V\nMinimum modules: {min_pcs} pcs\nMaximum modules: {max_pcs} pcs",
+        voc_placeholder: "Example: 49.8",
+        vmp_placeholder: "Example: 41.2",
+        coeff_placeholder: "Example: -0.27",
+        temp_placeholder: "Example: -25",
+        temp_max_placeholder: "Example: 60",
+        mppt_max_placeholder: "Example: 1000",
+        mppt_min_placeholder: "Example: 160"
     }
 };
 
-let lastCalcData = null;
+let currentLang = 'ru';
+let lastResult = null;
 
-function applyLang(lang) {
-    if (!T[lang]) lang = 'ru';
-    localStorage.setItem("lang", lang);
-    const t = T[lang];
-    
-    document.getElementById('backTxt').textContent = t.back;
-    document.getElementById('title').textContent = t.title;
-    document.getElementById('l1').textContent = t.l1;
-    document.getElementById('l2').textContent = t.l2;
-    document.getElementById('l3').textContent = t.l3;
-    document.getElementById('l4').textContent = t.l4;
-    document.getElementById('l5').textContent = t.l5;
-    document.getElementById('l6').textContent = t.l6;
-    document.getElementById('l7').textContent = t.l7;
-    
-    document.getElementById('v_voc').placeholder = t.ph + "41.5";
-    document.getElementById('v_vmp').placeholder = t.ph + "34.2";
-    document.getElementById('kv').placeholder = t.ph + "-0.29";
-    document.getElementById('t_min').placeholder = t.ph + "-25";
-    document.getElementById('t_max').placeholder = t.ph + "60";
-    document.getElementById('v_mppt_max').placeholder = t.ph + "1000";
-    document.getElementById('v_mppt_min').placeholder = t.ph + "160";
+function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    currentLang = lang;
+    updateTexts();
+    updatePlaceholders();
+    if (areInputsValid()) calculateRange();
+}
 
-    document.getElementById('calcBtn').textContent = t.calc;
-    document.getElementById('copyBtn').textContent = t.copyBtn;
-    
-    document.querySelectorAll(".lang-btn").forEach(btn => {
-        btn.classList.toggle("active", btn.dataset.lang === lang);
+function updateTexts() {
+    const lang = currentLang;
+    document.querySelectorAll('[data-t]').forEach(el => {
+        if(translations[lang][el.dataset.t]) {
+            el.textContent = translations[lang][el.dataset.t];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        if (b.dataset.l === lang) {
+            b.classList.add('active');
+        } else {
+            b.classList.remove('active');
+        }
     });
 }
 
-document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.onclick = () => applyLang(btn.dataset.lang);
-});
-
-applyLang(localStorage.getItem("lang") || "ru");
-
-function getNum(id) {
-    const val = document.getElementById(id).value.replace(',', '.').trim();
-    return val === "" ? NaN : parseFloat(val);
+function updatePlaceholders() {
+    const lang = currentLang;
+    document.getElementById('voc_module').placeholder = translations[lang].voc_placeholder;
+    document.getElementById('vmp_module').placeholder = translations[lang].vmp_placeholder;
+    document.getElementById('temp_coeff').placeholder = translations[lang].coeff_placeholder;
+    document.getElementById('temp_min').placeholder = translations[lang].temp_placeholder;
+    document.getElementById('temp_max').placeholder = translations[lang].temp_max_placeholder;
+    document.getElementById('mppt_max').placeholder = translations[lang].mppt_max_placeholder;
+    document.getElementById('mppt_min').placeholder = translations[lang].mppt_min_placeholder;
 }
 
-function calculate() {
-    const lang = localStorage.getItem("lang") || "ru";
-    const t = T[lang];
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 2000);
+}
+
+function hideError() {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) errorDiv.style.display = 'none';
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+}
+
+function areInputsValid() {
+    const voc = parseFloat(document.getElementById('voc_module').value);
+    const vmp = parseFloat(document.getElementById('vmp_module').value);
+    const coeff = parseFloat(document.getElementById('temp_coeff').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const tMax = parseFloat(document.getElementById('temp_max').value);
+    const mpptMax = parseFloat(document.getElementById('mppt_max').value);
+    const mpptMin = parseFloat(document.getElementById('mppt_min').value);
     
-    const v_voc = getNum('v_voc');
-    const v_vmp = getNum('v_vmp');
-    const kv = getNum('kv');
-    const t_min = getNum('t_min');
-    const t_max = getNum('t_max');
-    const mppt_max = getNum('v_mppt_max');
-    const mppt_min = getNum('v_mppt_min');
+    return !(isNaN(voc) || isNaN(vmp) || isNaN(coeff) || isNaN(tMin) || isNaN(tMax) || isNaN(mpptMax) || isNaN(mpptMin));
+}
 
-    const resDiv = document.getElementById('result');
-    const copyBtn = document.getElementById('copyBtn');
-
-    if (isNaN(v_voc) || isNaN(v_vmp) || isNaN(kv) || isNaN(t_min) || isNaN(t_max) || isNaN(mppt_max) || isNaN(mppt_min)) {
-        resDiv.innerHTML = `<span style="color:red">${t.empty}</span>`;
-        resDiv.style.display = "block";
-        copyBtn.style.display = "none";
+function calculateRange(showErrorOnEmpty = false) {
+    if (!areInputsValid()) {
+        if (showErrorOnEmpty) {
+            showError(translations[currentLang].error_empty);
+        }
+        document.getElementById('min_value').innerHTML = '— <span class="result-unit">шт</span>';
+        document.getElementById('max_value').innerHTML = '— <span class="result-unit">шт</span>';
+        document.getElementById('result_detail').innerHTML = '—';
         return;
     }
-
-    // Расчет коррекции напряжений по температуре
-    const voc_min_t = v_voc * (1 + (t_min - 25) * (kv / 100));
-    const vmp_max_t = v_vmp * (1 + (t_max - 25) * (kv / 100));
-
-    const min_pcs = Math.ceil(mppt_min / vmp_max_t);
-    const max_pcs = Math.floor(mppt_max / voc_min_t);
-
-    lastCalcData = {
-        title: t.title,
-        inputs: [
-            { label: t.l1, val: v_voc, unit: "V" },
-            { label: t.l2, val: v_vmp, unit: "V" },
-            { label: t.l3, val: kv, unit: "%" },
-            { label: t.l4, val: t_min, unit: "°C" },
-            { label: t.l5, val: t_max, unit: "°C" },
-            { label: t.l6, val: mppt_max, unit: "V" },
-            { label: t.l7, val: mppt_min, unit: "V" }
-        ],
-        result: `${t.res_min}: ${min_pcs} ${t.pcs} / ${t.res_max}: ${max_pcs} ${t.pcs}`
-    };
-
-    resDiv.innerHTML = `
-        <span class="res-line">${t.res_min}: <span class="res-val">${min_pcs} ${t.pcs}</span></span>
-        <span class="res-line">${t.res_max}: <span class="res-val">${max_pcs} ${t.pcs}</span></span>
-    `;
-    resDiv.style.display = "block";
-    resDiv.classList.add("show");
-    copyBtn.style.display = "block";
+    
+    hideError();
+    
+    const voc = parseFloat(document.getElementById('voc_module').value);
+    const vmp = parseFloat(document.getElementById('vmp_module').value);
+    const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const tMax = parseFloat(document.getElementById('temp_max').value);
+    const mpptMax = parseFloat(document.getElementById('mppt_max').value);
+    const mpptMin = parseFloat(document.getElementById('mppt_min').value);
+    
+    const coeff = coeffPercent / 100;
+    
+    const vocMin = voc * (1 + coeff * (tMin - 25));
+    const vmpMax = vmp * (1 + coeff * (tMax - 25));
+    
+    const minPcs = Math.ceil(mpptMin / vmpMax);
+    const maxPcs = Math.floor(mpptMax / vocMin);
+    
+    lastResult = { voc, vmp, coeffPercent, tMin, tMax, mpptMax, mpptMin, vocMin, vmpMax, minPcs, maxPcs };
+    
+    document.getElementById('min_value').innerHTML = minPcs + ' <span class="result-unit">шт</span>';
+    document.getElementById('max_value').innerHTML = maxPcs + ' <span class="result-unit">шт</span>';
+    
+    let detailText = '';
+    if (minPcs > maxPcs) {
+        detailText = '⚠️ ' + translations[currentLang].error_range;
+        document.getElementById('result_detail').style.color = '#d32f2f';
+    } else {
+        detailText = `Voc при ${tMin}°C: ${vocMin.toFixed(1)} В | Vmp при ${tMax}°C: ${vmpMax.toFixed(1)} В`;
+        document.getElementById('result_detail').style.color = 'var(--text-muted)';
+    }
+    document.getElementById('result_detail').innerHTML = detailText;
 }
 
-document.getElementById('copyBtn').onclick = function() {
-    if (!lastCalcData) return;
-    const t = T[localStorage.getItem("lang") || "ru"];
-    
-    let text = `⚡ ${lastCalcData.title}\n\n`;
-    lastCalcData.inputs.forEach(item => {
-        text += `🔹 ${item.label}: ${item.val} ${item.unit}\n`;
-    });
-    text += `\n📊 РЕЗУЛЬТАТ:\n${lastCalcData.result}`;
+function getCurrentResults() {
+    if (!lastResult) return null;
+    return lastResult;
+}
 
+function copyResults() {
+    const results = getCurrentResults();
+    if (!results) {
+        showError(translations[currentLang].error_empty);
+        return;
+    }
+    
+    let text = translations[currentLang].share_text;
+    text = text.replace('{voc}', results.voc)
+               .replace('{vmp}', results.vmp)
+               .replace('{coeff}', results.coeffPercent)
+               .replace('{t_min}', results.tMin)
+               .replace('{t_max}', results.tMax)
+               .replace('{mppt_max}', results.mpptMax)
+               .replace('{mppt_min}', results.mpptMin)
+               .replace('{voc_min}', results.vocMin.toFixed(1))
+               .replace('{vmp_max}', results.vmpMax.toFixed(1))
+               .replace('{min_pcs}', results.minPcs)
+               .replace('{max_pcs}', results.maxPcs);
+    
     navigator.clipboard.writeText(text).then(() => {
-        const originalText = t.copyBtn;
-        this.textContent = t.copied;
-        this.classList.add("copied");
-        setTimeout(() => {
-            this.textContent = originalText;
-            this.classList.remove("copied");
-        }, 2000);
+        showToast(translations[currentLang].copied);
+    }).catch(() => {
+        showError('Failed to copy');
     });
-};
+}
+
+// Инициализация
+const savedLang = localStorage.getItem('lang') || 'ru';
+currentLang = savedLang;
+updateTexts();
+updatePlaceholders();
+
+// Автоматический расчет при вводе данных
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => {
+        if (areInputsValid()) {
+            calculateRange();
+        } else {
+            document.getElementById('min_value').innerHTML = '— <span class="result-unit">шт</span>';
+            document.getElementById('max_value').innerHTML = '— <span class="result-unit">шт</span>';
+            document.getElementById('result_detail').innerHTML = '—';
+        }
+    });
+});
 </script>
 </body>
 </html>
