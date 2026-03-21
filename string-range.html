@@ -141,6 +141,18 @@
         .result-row .result-value {
             font-size: 24px;
         }
+        .voltage-detail {
+            background: rgba(255,255,255,0.5);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        .voltage-detail span {
+            font-weight: 600;
+            color: var(--accent);
+        }
 
         .info-box {
             background: #f8f9fa;
@@ -301,7 +313,10 @@
             <div class="result-label" data-t="result_max">Максимальное количество модулей в стринге</div>
             <div class="result-value" id="max_value">— <span class="result-unit">шт</span></div>
         </div>
-        <div class="sub-result" id="result_detail">—</div>
+        <div class="voltage-detail" id="voltage_detail">
+            <div data-t="voltage_info">Напряжение стринга:</div>
+            <div id="string_voltages">—</div>
+        </div>
     </div>
 
     <div class="info-box">
@@ -333,6 +348,7 @@ const translations = {
         copy_btn: "📋 Копировать",
         result_min: "Минимальное количество модулей в стринге",
         result_max: "Максимальное количество модулей в стринге",
+        voltage_info: "Напряжение стринга:",
         formula_title: "📐 Формула расчета:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -343,7 +359,7 @@ const translations = {
         error_empty: "Пожалуйста, заполните все поля",
         error_range: "Ошибка: минимальное значение больше максимального. Проверьте введенные данные.",
         copied: "✅ Результаты скопированы!",
-        share_text: "📊 Расчет оптимального количества модулей в стринге:\n\nVoc модуля (STC): {voc} В\nVmp модуля (STC): {vmp} В\nТемп. коэффициент Voc: {coeff} %/°C\nМин. температура: {t_min}°C\nМакс. температура: {t_max}°C\nМакс. предел MPPT: {mppt_max} В\nМин. предел MPPT: {mppt_min} В\n--------------------------\nНапряжение при мин. температуре: {voc_min} В\nНапряжение при макс. температуре: {vmp_max} В\nМинимальное количество модулей: {min_pcs} шт.\nМаксимальное количество модулей: {max_pcs} шт.",
+        share_text: "📊 Расчет оптимального количества модулей в стринге:\n\nVoc модуля (STC): {voc} В\nVmp модуля (STC): {vmp} В\nТемп. коэффициент Voc: {coeff} %/°C\nМин. температура: {t_min}°C\nМакс. температура: {t_max}°C\nМакс. предел MPPT: {mppt_max} В\nМин. предел MPPT: {mppt_min} В\n--------------------------\nРекомендуемый диапазон: от {min_pcs} до {max_pcs} модулей\n\nНапряжение стринга:\n• При {t_min}°C: {string_voc_min} В (Voc)\n• При {t_max}°C: {string_vmp_max} В (Vmp)\n\nНапряжение одного модуля:\n• Voc при {t_min}°C: {voc_min} В\n• Vmp при {t_max}°C: {vmp_max} В",
         voc_placeholder: "Например: 49.8",
         vmp_placeholder: "Например: 41.2",
         coeff_placeholder: "Например: -0.27",
@@ -368,6 +384,7 @@ const translations = {
         copy_btn: "📋 Копіювати",
         result_min: "Мінімальна кількість модулів у стрінгу",
         result_max: "Максимальна кількість модулів у стрінгу",
+        voltage_info: "Напруга стрінга:",
         formula_title: "📐 Формула розрахунку:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -378,7 +395,7 @@ const translations = {
         error_empty: "Будь ласка, заповніть всі поля",
         error_range: "Помилка: мінімальне значення більше максимального. Перевірте введені дані.",
         copied: "✅ Результати скопійовано!",
-        share_text: "📊 Розрахунок оптимальної кількості модулів у стрінгу:\n\nVoc модуля (STC): {voc} В\nVmp модуля (STC): {vmp} В\nТемп. коефіцієнт Voc: {coeff} %/°C\nМін. температура: {t_min}°C\nМакс. температура: {t_max}°C\nМакс. межа MPPT: {mppt_max} В\nМін. межа MPPT: {mppt_min} В\n--------------------------\nНапруга при мін. температурі: {voc_min} В\nНапруга при макс. температурі: {vmp_max} В\nМінімальна кількість модулів: {min_pcs} шт.\nМаксимальна кількість модулів: {max_pcs} шт.",
+        share_text: "📊 Розрахунок оптимальної кількості модулів у стрінгу:\n\nVoc модуля (STC): {voc} В\nVmp модуля (STC): {vmp} В\nТемп. коефіцієнт Voc: {coeff} %/°C\nМін. температура: {t_min}°C\nМакс. температура: {t_max}°C\nМакс. межа MPPT: {mppt_max} В\nМін. межа MPPT: {mppt_min} В\n--------------------------\nРекомендований діапазон: від {min_pcs} до {max_pcs} модулів\n\nНапруга стрінга:\n• При {t_min}°C: {string_voc_min} В (Voc)\n• При {t_max}°C: {string_vmp_max} В (Vmp)\n\nНапруга одного модуля:\n• Voc при {t_min}°C: {voc_min} В\n• Vmp при {t_max}°C: {vmp_max} В",
         voc_placeholder: "Наприклад: 49.8",
         vmp_placeholder: "Наприклад: 41.2",
         coeff_placeholder: "Наприклад: -0.27",
@@ -403,6 +420,7 @@ const translations = {
         copy_btn: "📋 Kopiuj",
         result_min: "Minimalna liczba modułów w stringu",
         result_max: "Maksymalna liczba modułów w stringu",
+        voltage_info: "Napięcie stringa:",
         formula_title: "📐 Wzór obliczeniowy:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -413,7 +431,7 @@ const translations = {
         error_empty: "Proszę wypełnić wszystkie pola",
         error_range: "Błąd: wartość minimalna jest większa od maksymalnej. Sprawdź wprowadzone dane.",
         copied: "✅ Wyniki skopiowane!",
-        share_text: "📊 Obliczanie optymalnej liczby modułów w stringu:\n\nVoc modułu (STC): {voc} V\nVmp modułu (STC): {vmp} V\nWspółczynnik temp. Voc: {coeff} %/°C\nMin. temperatura: {t_min}°C\nMaks. temperatura: {t_max}°C\nMaks. zakres MPPT: {mppt_max} V\nMin. zakres MPPT: {mppt_min} V\n--------------------------\nNapięcie w min. temperaturze: {voc_min} V\nNapięcie w maks. temperaturze: {vmp_max} V\nMinimalna liczba modułów: {min_pcs} szt.\nMaksymalna liczba modułów: {max_pcs} szt.",
+        share_text: "📊 Obliczanie optymalnej liczby modułów w stringu:\n\nVoc modułu (STC): {voc} V\nVmp modułu (STC): {vmp} V\nWspółczynnik temp. Voc: {coeff} %/°C\nMin. temperatura: {t_min}°C\nMaks. temperatura: {t_max}°C\nMaks. zakres MPPT: {mppt_max} V\nMin. zakres MPPT: {mppt_min} V\n--------------------------\nZalecany zakres: od {min_pcs} do {max_pcs} modułów\n\nNapięcie stringa:\n• Przy {t_min}°C: {string_voc_min} V (Voc)\n• Przy {t_max}°C: {string_vmp_max} V (Vmp)\n\nNapięcie pojedynczego modułu:\n• Voc przy {t_min}°C: {voc_min} V\n• Vmp przy {t_max}°C: {vmp_max} V",
         voc_placeholder: "Np: 49.8",
         vmp_placeholder: "Np: 41.2",
         coeff_placeholder: "Np: -0.27",
@@ -438,6 +456,7 @@ const translations = {
         copy_btn: "📋 Copy",
         result_min: "Minimum number of modules in string",
         result_max: "Maximum number of modules in string",
+        voltage_info: "String voltage:",
         formula_title: "📐 Formula:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -448,7 +467,7 @@ const translations = {
         error_empty: "Please fill all fields",
         error_range: "Error: minimum value exceeds maximum value. Check your input data.",
         copied: "✅ Results copied!",
-        share_text: "📊 Optimal number of modules in string calculation:\n\nModule Voc (STC): {voc} V\nModule Vmp (STC): {vmp} V\nVoc temp coefficient: {coeff} %/°C\nMin temperature: {t_min}°C\nMax temperature: {t_max}°C\nMax MPPT limit: {mppt_max} V\nMin MPPT limit: {mppt_min} V\n--------------------------\nVoltage at min temperature: {voc_min} V\nVoltage at max temperature: {vmp_max} V\nMinimum modules: {min_pcs} pcs\nMaximum modules: {max_pcs} pcs",
+        share_text: "📊 Optimal number of modules in string calculation:\n\nModule Voc (STC): {voc} V\nModule Vmp (STC): {vmp} V\nVoc temp coefficient: {coeff} %/°C\nMin temperature: {t_min}°C\nMax temperature: {t_max}°C\nMax MPPT limit: {mppt_max} V\nMin MPPT limit: {mppt_min} V\n--------------------------\nRecommended range: from {min_pcs} to {max_pcs} modules\n\nString voltage:\n• At {t_min}°C: {string_voc_min} V (Voc)\n• At {t_max}°C: {string_vmp_max} V (Vmp)\n\nSingle module voltage:\n• Voc at {t_min}°C: {voc_min} V\n• Vmp at {t_max}°C: {vmp_max} V",
         voc_placeholder: "Example: 49.8",
         vmp_placeholder: "Example: 41.2",
         coeff_placeholder: "Example: -0.27",
@@ -542,7 +561,7 @@ function calculateRange(showErrorOnEmpty = false) {
         }
         document.getElementById('min_value').innerHTML = '— <span class="result-unit">шт</span>';
         document.getElementById('max_value').innerHTML = '— <span class="result-unit">шт</span>';
-        document.getElementById('result_detail').innerHTML = '—';
+        document.getElementById('string_voltages').innerHTML = '—';
         return;
     }
     
@@ -564,7 +583,15 @@ function calculateRange(showErrorOnEmpty = false) {
     const minPcs = Math.ceil(mpptMin / vmpMax);
     const maxPcs = Math.floor(mpptMax / vocMin);
     
-    lastResult = { voc, vmp, coeffPercent, tMin, tMax, mpptMax, mpptMin, vocMin, vmpMax, minPcs, maxPcs };
+    // Расчет напряжения стринга для всего диапазона
+    const stringVocMin = vocMin * maxPcs;
+    const stringVmpMax = vmpMax * minPcs;
+    
+    lastResult = { 
+        voc, vmp, coeffPercent, tMin, tMax, mpptMax, mpptMin, 
+        vocMin, vmpMax, minPcs, maxPcs,
+        stringVocMin, stringVmpMax
+    };
     
     document.getElementById('min_value').innerHTML = minPcs + ' <span class="result-unit">шт</span>';
     document.getElementById('max_value').innerHTML = maxPcs + ' <span class="result-unit">шт</span>';
@@ -572,12 +599,13 @@ function calculateRange(showErrorOnEmpty = false) {
     let detailText = '';
     if (minPcs > maxPcs) {
         detailText = '⚠️ ' + translations[currentLang].error_range;
-        document.getElementById('result_detail').style.color = '#d32f2f';
+        document.getElementById('string_voltages').innerHTML = detailText;
+        document.getElementById('string_voltages').style.color = '#d32f2f';
     } else {
-        detailText = `Voc при ${tMin}°C: ${vocMin.toFixed(1)} В | Vmp при ${tMax}°C: ${vmpMax.toFixed(1)} В`;
-        document.getElementById('result_detail').style.color = 'var(--text-muted)';
+        detailText = `❄️ ${tMin}°C: ${stringVocMin.toFixed(0)} В (Voc) | 🔥 ${tMax}°C: ${stringVmpMax.toFixed(0)} В (Vmp)`;
+        document.getElementById('string_voltages').innerHTML = detailText;
+        document.getElementById('string_voltages').style.color = 'var(--text-muted)';
     }
-    document.getElementById('result_detail').innerHTML = detailText;
 }
 
 function getCurrentResults() {
@@ -603,7 +631,9 @@ function copyResults() {
                .replace('{voc_min}', results.vocMin.toFixed(1))
                .replace('{vmp_max}', results.vmpMax.toFixed(1))
                .replace('{min_pcs}', results.minPcs)
-               .replace('{max_pcs}', results.maxPcs);
+               .replace('{max_pcs}', results.maxPcs)
+               .replace('{string_voc_min}', results.stringVocMin.toFixed(0))
+               .replace('{string_vmp_max}', results.stringVmpMax.toFixed(0));
     
     navigator.clipboard.writeText(text).then(() => {
         showToast(translations[currentLang].copied);
@@ -626,7 +656,7 @@ document.querySelectorAll('input').forEach(input => {
         } else {
             document.getElementById('min_value').innerHTML = '— <span class="result-unit">шт</span>';
             document.getElementById('max_value').innerHTML = '— <span class="result-unit">шт</span>';
-            document.getElementById('result_detail').innerHTML = '—';
+            document.getElementById('string_voltages').innerHTML = '—';
         }
     });
 });
