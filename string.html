@@ -8,20 +8,24 @@
       gtag('js', new Date());
       gtag('config', 'G-0JQD4RVE06');
     </script>
-      
+    
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Solar Toolbox - String Calculator</title>
+    <title>Solar Toolbox - Макс. длина стринга</title>
 
     <style>
         :root { 
             --bg: #f8f9fa; 
             --card-bg: #ffffff; 
             --accent: #2a8cff; 
+            --accent-light: #e6f2ff;
             --border: #eef0f2; 
             --radius: 16px; 
             --text-main: #1a1a1b;
             --text-muted: #70757a;
+            --danger: #ff6b6b;
+            --success: #51cf66;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -39,16 +43,27 @@
             border-radius: var(--radius); border: 1px solid var(--border);
             box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
             height: fit-content;
+            animation: fadeIn 0.3s ease;
         }
 
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .back-btn:active { background: #e0e0e0; transform: scale(0.97); }
         
-        .back-btn { 
-            background: #f1f3f4; border: none; padding: 10px 16px; border-radius: 10px; 
-            font-size: 14px; font-weight: 600; cursor: pointer; color: #444; transition: 0.2s;
-        }
-        .back-btn:active { transform: scale(0.95); }
-
         .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
             padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
@@ -56,220 +71,463 @@
         }
         .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
 
-        h2 { font-size: 20px; margin: 0 0 20px 0; color: var(--text-main); letter-spacing: -0.5px; line-height: 1.2; }
+        .page-title { margin-bottom: 20px; }
+        .page-title h1 { font-size: 22px; margin: 0; color: var(--text-main); }
+        .page-title p { font-size: 13px; color: var(--text-muted); margin: 5px 0 0; }
 
-        .input-group { margin-bottom: 16px; }
-        label { font-size: 13px; font-weight: 600; display: block; color: var(--text-muted); margin-bottom: 6px; }
-
-        input {
-            width: 100%; padding: 14px; border-radius: 12px;
-            border: 1px solid var(--border); font-size: 16px; background: #fafafa;
-            transition: 0.2s; outline: none;
+        .input-group {
+            margin-bottom: 20px;
         }
-        input:focus { border-color: var(--accent); background: #fff; }
-
-        .calc-btn {
-            width: 100%; margin-top: 10px; padding: 16px; 
-            background: var(--accent); color: white; border: none;
-            border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: 0.2s;
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
         }
-        .calc-btn:active { transform: scale(0.98); opacity: 0.9; }
-
-        .result {
-            margin-top: 20px; padding: 18px; border-radius: 14px;
-            background: #f0f7ff; border: 1px solid #cce3ff;
-            text-align: center; display: none;
-            animation: slideUp 0.3s ease;
+        .input-group input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: 0.2s;
+            background: #fff;
         }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1);
+        }
+        .input-group input::placeholder {
+            color: #bbb;
+            font-size: 14px;
+        }
 
-        .res-main { display: block; font-size: 18px; color: var(--accent); font-weight: 800; margin-bottom: 4px; }
-        .res-sub { font-size: 13px; color: var(--text-muted); font-weight: 400; }
+        .result-card {
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .result-unit {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+        .sub-result {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(0,0,0,0.1);
+            font-size: 13px;
+            color: var(--text-muted);
+        }
 
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent);
+        }
+        .info-box strong {
+            color: var(--text-main);
+        }
+
+        .note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:active {
+            transform: scale(0.98);
+            background: #1a6fd6;
+        }
+        
         .copy-btn {
-            width: 100%; margin-top: 12px; padding: 12px; border-radius: 12px;
-            background: #28a745; color: white; border: none;
-            font-weight: 600; cursor: pointer; display: none; transition: 0.2s;
+            background: #28a745;
         }
-        .copy-btn.copied { background: #6c757d; }
+        .copy-btn:active {
+            background: #218838;
+        }
+        
+        .error-message {
+            background: #fff0f0;
+            border-left: 3px solid var(--danger);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d32f2f;
+            display: none;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: fadeOut 2s ease forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            .result-value { font-size: 24px; }
+            .button-group { flex-direction: column; }
+            button { padding: 12px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <div class="top-nav">
-        <button class="back-btn" onclick="location.href='index.html'" id="backTxt">← Назад</button>
+    <div class="header-top">
+        <a href="index.html" class="back-btn">← <span data-t="back">Назад</span></a>
         <div class="lang-switch">
-            <div class="lang-btn" data-lang="ru">RU</div>
-            <div class="lang-btn" data-lang="ua">UA</div>
-            <div class="lang-btn" data-lang="pl">PL</div>
-            <div class="lang-btn" data-lang="en">EN</div>
+            <button class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</button>
+            <button class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</button>
+            <button class="lang-btn" onclick="setLang('pl')" data-l="pl">PL</button>
+            <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
         </div>
     </div>
 
-    <h2 id="title">Максимальная длина стринга</h2>
+    <div class="page-title">
+        <h1 data-t="title">Максимальная длина стринга</h1>
+        <p data-t="subtitle">Расчет максимального количества модулей в стринге по напряжению</p>
+    </div>
+    
+    <div class="error-message" id="errorMessage"></div>
 
     <div class="input-group">
-        <label id="l1"></label>
-        <input type="number" id="E13" step="any">
+        <label data-t="label_vmax">Макс. напряжение DC инвертора, В</label>
+        <input type="number" id="vmax_inverter" placeholder="" data-placeholder="vmax_placeholder">
     </div>
 
     <div class="input-group">
-        <label id="l2"></label>
-        <input type="number" id="E14" step="any">
+        <label data-t="label_voc">Напряжение Voc модуля, В</label>
+        <input type="number" id="voc_module" placeholder="" data-placeholder="voc_placeholder">
     </div>
 
     <div class="input-group">
-        <label id="l3"></label>
-        <input type="number" id="E15" step="any">
+        <label data-t="label_tmin">Мин. температура воздуха, °C</label>
+        <input type="number" id="temp_min" placeholder="" data-placeholder="temp_placeholder">
     </div>
 
     <div class="input-group">
-        <label id="l4"></label>
-        <input type="number" id="E16" step="any">
+        <label data-t="label_coeff">Темп. коэффициент Voc, %/°C</label>
+        <input type="number" id="temp_coeff" placeholder="" data-placeholder="coeff_placeholder">
+        <div class="note" data-t="coeff_note">* Обычно отрицательный: от -0.25 до -0.35 %/°C</div>
     </div>
 
-    <button onclick="calculate()" id="calcBtn" class="calc-btn">Рассчитать</button>
+    <div class="button-group">
+        <button onclick="calculateString()" data-t="calc_btn">Рассчитать</button>
+        <button onclick="copyResults()" class="copy-btn" data-t="copy_btn">📋 Копировать</button>
+    </div>
 
-    <div class="result" id="result"></div>
-    <button id="copyBtn" class="copy-btn"></button>
+    <div class="result-card" id="resultArea">
+        <div class="result-label" data-t="result_label">Максимальное количество модулей в стринге</div>
+        <div class="result-value" id="result_value">— <span class="result-unit">шт</span></div>
+        <div class="sub-result" id="result_detail">—</div>
+    </div>
+
+    <div class="info-box">
+        <strong data-t="formula_title">📐 Формула расчета:</strong><br>
+        <span data-t="formula">Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]</span><br>
+        <span data-t="formula2">Макс. модулей = Vmax_инвертора / Voc_min</span><br><br>
+        <strong data-t="note_title">⚠️ Важно:</strong><br>
+        <span data-t="note_text">При низких температурах напряжение модуля увеличивается. Расчет учитывает максимальное напряжение при минимальной температуре.</span>
+    </div>
 </div>
 
 <script>
-const T = {
+const translations = {
     ru: {
-        back: "← Меню", title: "Максимальная длина стринга",
-        l1: "Макс. напряжение DC инвертора (В)",
-        l2: "Напряжение Voc модуля (В)",
-        l3: "Мин. температура воздуха (°C)",
-        l4: "Темп. коэффициент Voc (%/°C)",
-        ph: "например: ",
-        calc: "Рассчитать", empty: "⚠️ Заполните все поля",
-        result: "Макс. модулей в стринге:", copyBtn: "📋 Скопировать отчет",
-        copied: "✅ Отчет скопирован!", calculatedVoc: "Расчетный Voc при мин. темп.", explanation: "вольт"
+        back: "Назад",
+        title: "Максимальная длина стринга",
+        subtitle: "Расчет максимального количества модулей в стринге по напряжению",
+        label_vmax: "Макс. напряжение DC инвертора, В",
+        label_voc: "Напряжение Voc модуля, В",
+        label_tmin: "Мин. температура воздуха, °C",
+        label_coeff: "Темп. коэффициент Voc, %/°C",
+        coeff_note: "* Обычно отрицательный: от -0.25 до -0.35 %/°C",
+        calc_btn: "Рассчитать",
+        copy_btn: "📋 Копировать",
+        result_label: "Максимальное количество модулей в стринге",
+        formula_title: "📐 Формула расчета:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Макс. модулей = Vmax_инвертора / Voc_min",
+        note_title: "⚠️ Важно:",
+        note_text: "При низких температурах напряжение модуля увеличивается. Расчет учитывает максимальное напряжение при минимальной температуре.",
+        error_empty: "Пожалуйста, заполните все поля",
+        copied: "✅ Результаты скопированы!",
+        share_text: "📊 Расчет максимальной длины стринга:\n\nМакс. напряжение DC инвертора: {vmax} В\nНапряжение Voc модуля: {voc} В\nМин. температура воздуха: {t_min}°C\nТемп. коэффициент Voc: {coeff} %/°C\n--------------------------\nРасчетный Voc при мин. температуре: {voc_min} В\nМаксимальное количество модулей: {max_modules} шт.",
+        voc_placeholder: "Например: 49.8",
+        vmax_placeholder: "Например: 1000",
+        temp_placeholder: "Например: -25",
+        coeff_placeholder: "Например: -0.27"
     },
     ua: {
-        back: "← Меню", title: "Максимальна довжина стринга",
-        l1: "Макс. напруга DC інвертора (В)",
-        l2: "Напруга Voc модуля (В)",
-        l3: "Мін. температура повітря (°C)",
-        l4: "Темп. коефіцієнт Voc (%/°C)",
-        ph: "наприклад: ",
-        calc: "Розрахувати", empty: "⚠️ Заповніть всі поля",
-        result: "Макс. модулів у ланцюгу:", copyBtn: "📋 Скопіювати звіт",
-        copied: "✅ Звіт скопійовано!", calculatedVoc: "Розрахунковий Voc при мін. темп.", explanation: "вольт"
+        back: "Назад",
+        title: "Максимальна довжина стринга",
+        subtitle: "Розрахунок максимальної кількості модулів у стрингу за напругою",
+        label_vmax: "Макс. напруга DC інвертора, В",
+        label_voc: "Напруга Voc модуля, В",
+        label_tmin: "Мін. температура повітря, °C",
+        label_coeff: "Темп. коефіцієнт Voc, %/°C",
+        coeff_note: "* Зазвичай від'ємний: від -0.25 до -0.35 %/°C",
+        calc_btn: "Розрахувати",
+        copy_btn: "📋 Копіювати",
+        result_label: "Максимальна кількість модулів у стрингу",
+        formula_title: "📐 Формула розрахунку:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Макс. модулів = Vmax_інвертора / Voc_min",
+        note_title: "⚠️ Важливо:",
+        note_text: "При низьких температурах напруга модуля збільшується. Розрахунок враховує максимальну напругу при мінімальній температурі.",
+        error_empty: "Будь ласка, заповніть всі поля",
+        copied: "✅ Результати скопійовано!",
+        share_text: "📊 Розрахунок максимальної довжини стринга:\n\nМакс. напруга DC інвертора: {vmax} В\nНапруга Voc модуля: {voc} В\nМін. температура повітря: {t_min}°C\nТемп. коефіцієнт Voc: {coeff} %/°C\n--------------------------\nРозрахунковий Voc при мін. температурі: {voc_min} В\nМаксимальна кількість модулів: {max_modules} шт.",
+        voc_placeholder: "Наприклад: 49.8",
+        vmax_placeholder: "Наприклад: 1000",
+        temp_placeholder: "Наприклад: -25",
+        coeff_placeholder: "Наприклад: -0.27"
     },
     pl: {
-        back: "← Menu", title: "Maksymalna długość stringu",
-        l1: "Max napięcie DC falownika (V)",
-        l2: "Napięcie Voc modułu (V)",
-        l3: "Min. temperatura otoczenia (°C)",
-        l4: "Współczynnik temp. Voc (%/°C)",
-        ph: "na przykład: ",
-        calc: "Oblicz", empty: "⚠️ Wypełnij wszystkie pola",
-        result: "Maks. liczba modułów:", copyBtn: "📋 Skopiuj raport",
-        copied: "✅ Skopiowano!", calculatedVoc: "Obliczone Voc w min. temp.", explanation: "V"
+        back: "Wstecz",
+        title: "Maksymalna długość stringa",
+        subtitle: "Obliczanie maksymalnej liczby modułów w stringu według napięcia",
+        label_vmax: "Max napięcie DC falownika, V",
+        label_voc: "Napięcie Voc modułu, V",
+        label_tmin: "Min. temperatura powietrza, °C",
+        label_coeff: "Współczynnik temp. Voc, %/°C",
+        coeff_note: "* Zwykle ujemny: od -0.25 do -0.35 %/°C",
+        calc_btn: "Oblicz",
+        copy_btn: "📋 Kopiuj",
+        result_label: "Maksymalna liczba modułów w stringu",
+        formula_title: "📐 Wzór obliczeniowy:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Maks. modułów = Vmax_falownika / Voc_min",
+        note_title: "⚠️ Ważne:",
+        note_text: "W niskich temperaturach napięcie modułu wzrasta. Obliczenia uwzględniają maksymalne napięcie w minimalnej temperaturze.",
+        error_empty: "Proszę wypełnić wszystkie pola",
+        copied: "✅ Wyniki skopiowane!",
+        share_text: "📊 Obliczanie maksymalnej długości stringa:\n\nMax napięcie DC falownika: {vmax} V\nNapięcie Voc modułu: {voc} V\nMin. temperatura powietrza: {t_min}°C\nWspółczynnik temp. Voc: {coeff} %/°C\n--------------------------\nObliczone Voc w min. temperaturze: {voc_min} V\nMaksymalna liczba modułów: {max_modules} szt.",
+        voc_placeholder: "Np: 49.8",
+        vmax_placeholder: "Np: 1000",
+        temp_placeholder: "Np: -25",
+        coeff_placeholder: "Np: -0.27"
     },
     en: {
-        back: "← Menu", title: "Maximum String Length",
-        l1: "Max DC Inverter Voltage (V)",
-        l2: "Module Voc (V)",
-        l3: "Min. Ambient Temperature (°C)",
-        l4: "Temp. Coefficient Voc (%/°C)",
-        ph: "example: ",
-        calc: "Calculate", empty: "⚠️ Fill all fields",
-        result: "Max modules per string:", copyBtn: "📋 Copy Report",
-        copied: "✅ Copied!", calculatedVoc: "Calculated Voc at min temp", explanation: "V"
+        back: "Back",
+        title: "Maximum String Length",
+        subtitle: "Calculate maximum number of modules in a string by voltage",
+        label_vmax: "Max DC Inverter Voltage, V",
+        label_voc: "Module Voc Voltage, V",
+        label_tmin: "Min. Ambient Temperature, °C",
+        label_coeff: "Temp. Coefficient Voc, %/°C",
+        coeff_note: "* Usually negative: from -0.25 to -0.35 %/°C",
+        calc_btn: "Calculate",
+        copy_btn: "📋 Copy",
+        result_label: "Maximum number of modules in string",
+        formula_title: "📐 Formula:",
+        formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
+        formula2: "Max modules = Vmax_inverter / Voc_min",
+        note_title: "⚠️ Important:",
+        note_text: "At low temperatures, module voltage increases. The calculation takes into account the maximum voltage at minimum temperature.",
+        error_empty: "Please fill all fields",
+        copied: "✅ Results copied!",
+        share_text: "📊 Maximum string length calculation:\n\nMax DC Inverter Voltage: {vmax} V\nModule Voc Voltage: {voc} V\nMin. Ambient Temperature: {t_min}°C\nTemp. Coefficient Voc: {coeff} %/°C\n--------------------------\nCalculated Voc at min temperature: {voc_min} V\nMaximum number of modules: {max_modules} pcs",
+        voc_placeholder: "Example: 49.8",
+        vmax_placeholder: "Example: 1000",
+        temp_placeholder: "Example: -25",
+        coeff_placeholder: "Example: -0.27"
     }
 };
 
-let lastCalc = null;
+let currentLang = 'ru';
+let lastResult = null;
 
-function applyLang(lang) {
-    if (!T[lang]) lang = 'ru';
-    localStorage.setItem("lang", lang);
-    const t = T[lang];
-    
-    document.getElementById('backTxt').textContent = t.back;
-    document.getElementById('title').textContent = t.title;
-    document.getElementById('l1').textContent = t.l1;
-    document.getElementById('l2').textContent = t.l2;
-    document.getElementById('l3').textContent = t.l3;
-    document.getElementById('l4').textContent = t.l4;
-    document.getElementById('calcBtn').textContent = t.calc;
-    document.getElementById('copyBtn').textContent = t.copyBtn;
-
-    // Обновление плейсхолдеров
-    document.getElementById('E13').placeholder = t.ph + "1000";
-    document.getElementById('E14').placeholder = t.ph + "41.5";
-    document.getElementById('E15').placeholder = t.ph + "-20";
-    document.getElementById('E16').placeholder = t.ph + "-0.29";
-
-    document.querySelectorAll(".lang-btn").forEach(btn =>
-        btn.classList.toggle("active", btn.dataset.lang === lang)
-    );
+function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    currentLang = lang;
+    updateTexts();
+    updatePlaceholders();
+    if (areInputsValid()) calculateString();
 }
 
-document.querySelectorAll(".lang-btn").forEach(btn => {
-    btn.onclick = () => applyLang(btn.dataset.lang);
-});
+function updateTexts() {
+    const lang = currentLang;
+    document.querySelectorAll('[data-t]').forEach(el => {
+        if(translations[lang][el.dataset.t]) {
+            el.textContent = translations[lang][el.dataset.t];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        if (b.dataset.l === lang) {
+            b.classList.add('active');
+        } else {
+            b.classList.remove('active');
+        }
+    });
+}
 
-applyLang(localStorage.getItem("lang") || "ru");
+function updatePlaceholders() {
+    const lang = currentLang;
+    document.getElementById('vmax_inverter').placeholder = translations[lang].vmax_placeholder;
+    document.getElementById('voc_module').placeholder = translations[lang].voc_placeholder;
+    document.getElementById('temp_min').placeholder = translations[lang].temp_placeholder;
+    document.getElementById('temp_coeff').placeholder = translations[lang].coeff_placeholder;
+}
 
-function calculate() {
-    const lang = localStorage.getItem("lang") || "ru";
-    const t = T[lang];
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 2000);
+}
+
+function hideError() {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) errorDiv.style.display = 'none';
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 3000);
+    }
+}
+
+function areInputsValid() {
+    const vmax = parseFloat(document.getElementById('vmax_inverter').value);
+    const voc = parseFloat(document.getElementById('voc_module').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const coeff = parseFloat(document.getElementById('temp_coeff').value);
     
-    const v_inv = parseFloat(document.getElementById('E13').value);
-    const v_voc = parseFloat(document.getElementById('E14').value);
-    const t_min = parseFloat(document.getElementById('E15').value);
-    const t_coeff = parseFloat(document.getElementById('E16').value);
-    
-    const resDiv = document.getElementById('result');
-    const copyBtn = document.getElementById('copyBtn');
+    return !(isNaN(vmax) || isNaN(voc) || isNaN(tMin) || isNaN(coeff));
+}
 
-    if (isNaN(v_inv) || isNaN(v_voc) || isNaN(t_min) || isNaN(t_coeff)) {
-        resDiv.innerHTML = `<span style="color:red">${t.empty}</span>`;
-        resDiv.style.display = "block";
+function calculateString() {
+    if (!areInputsValid()) {
+        showError(translations[currentLang].error_empty);
+        document.getElementById('result_value').innerHTML = '— <span class="result-unit">шт</span>';
+        document.getElementById('result_detail').innerHTML = '—';
         return;
     }
-
-    const vocCorr = v_voc * (1 + (t_min - 25) * (t_coeff / 100));
-    const count = Math.floor(v_inv / vocCorr);
-
-    lastCalc = { count, vocCorr, v_inv, v_voc, t_min, t_coeff, t };
-
-    resDiv.innerHTML = `
-        <span class="res-main">${t.result} ${count}</span>
-        <span class="res-sub">${t.calculatedVoc}: <b>${vocCorr.toFixed(2)} ${t.explanation}</b></span>
-    `;
-    resDiv.style.display = "block";
-    copyBtn.style.display = "block";
+    
+    hideError();
+    
+    const vmax = parseFloat(document.getElementById('vmax_inverter').value);
+    const voc = parseFloat(document.getElementById('voc_module').value);
+    const tMin = parseFloat(document.getElementById('temp_min').value);
+    const coeffPercent = parseFloat(document.getElementById('temp_coeff').value);
+    
+    const coeff = coeffPercent / 100;
+    const vocMin = voc * (1 + coeff * (tMin - 25));
+    const maxModules = Math.floor(vmax / vocMin);
+    
+    lastResult = { vmax, voc, tMin, coeffPercent, vocMin, maxModules };
+    
+    document.getElementById('result_value').innerHTML = maxModules + ' <span class="result-unit">шт</span>';
+    document.getElementById('result_detail').innerHTML = `Voc при ${tMin}°C: ${vocMin.toFixed(1)} В`;
 }
 
-document.getElementById('copyBtn').onclick = function() {
-    if(!lastCalc) return;
-    const { count, vocCorr, v_inv, v_voc, t_min, t_coeff, t } = lastCalc;
+function getCurrentResults() {
+    if (!lastResult) return null;
+    return lastResult;
+}
+
+function copyResults() {
+    const results = getCurrentResults();
+    if (!results) {
+        showError(translations[currentLang].error_empty);
+        return;
+    }
     
-    let text = `--- ${t.title} ---\n`;
-    text += `${t.l1}: ${v_inv} V\n`;
-    text += `${t.l2}: ${v_voc} V\n`;
-    text += `${t.l3}: ${t_min} °C\n`;
-    text += `${t.l4}: ${t_coeff} %/°C\n`;
-    text += `--------------------------\n`;
-    text += `${t.calculatedVoc}: ${vocCorr.toFixed(2)} V\n`;
-    text += `${t.result} ${count}`;
+    let text = translations[currentLang].share_text;
+    text = text.replace('{vmax}', results.vmax)
+               .replace('{voc}', results.voc)
+               .replace('{t_min}', results.tMin)
+               .replace('{coeff}', results.coeffPercent)
+               .replace('{voc_min}', results.vocMin.toFixed(1))
+               .replace('{max_modules}', results.maxModules);
     
     navigator.clipboard.writeText(text).then(() => {
-        const originalText = t.copyBtn;
-        this.textContent = t.copied;
-        this.classList.add("copied");
-        setTimeout(() => {
-            this.textContent = originalText;
-            this.classList.remove("copied");
-        }, 2000);
+        showToast(translations[currentLang].copied);
+    }).catch(() => {
+        showError('Failed to copy');
     });
-};
+}
+
+// Инициализация
+const savedLang = localStorage.getItem('lang') || 'ru';
+currentLang = savedLang;
+updateTexts();
+updatePlaceholders();
+
+// Автоматический расчет при вводе данных
+document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => {
+        if (areInputsValid()) {
+            calculateString();
+        } else {
+            document.getElementById('result_value').innerHTML = '— <span class="result-unit">шт</span>';
+            document.getElementById('result_detail').innerHTML = '—';
+        }
+    });
+});
 </script>
 </body>
 </html>
