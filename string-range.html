@@ -603,8 +603,9 @@ function calculateRange(showErrorOnEmpty = false) {
         if (showErrorOnEmpty) {
             showError(translations[currentLang].error_empty);
         }
-        document.getElementById('min_value').innerHTML = '— <span class="result-unit">' + translations[currentLang].pcs_unit + '</span>';
-        document.getElementById('max_value').innerHTML = '— <span class="result-unit">' + translations[currentLang].pcs_unit + '</span>';
+        const pcsUnit = translations[currentLang].pcs_unit;
+        document.getElementById('min_value').innerHTML = '— <span class="result-unit">' + pcsUnit + '</span>';
+        document.getElementById('max_value').innerHTML = '— <span class="result-unit">' + pcsUnit + '</span>';
         document.getElementById('min_voltage_cold').innerHTML = '— В';
         document.getElementById('min_voltage_hot').innerHTML = '— В';
         document.getElementById('max_voltage_cold').innerHTML = '— В';
@@ -625,19 +626,22 @@ function calculateRange(showErrorOnEmpty = false) {
     
     const coeff = coeffPercent / 100;
     
-    const vocMin = voc * (1 + coeff * (tMin - 25));
-    const vmpMax = vmp * (1 + coeff * (tMax - 25));
+    // Расчет напряжений при экстремальных температурах
+    const vocMin = voc * (1 + coeff * (tMin - 25));      // Voc при мин. температуре (максимальное)
+    const vocMax = voc * (1 + coeff * (tMax - 25));      // Voc при макс. температуре (минимальное)
+    const vmpMin = vmp * (1 + coeff * (tMin - 25));      // Vmp при мин. температуре (максимальное)
+    const vmpMax = vmp * (1 + coeff * (tMax - 25));      // Vmp при макс. температуре (минимальное)
     
-    const minPcs = Math.ceil(mpptMin / vmpMax);
-    const maxPcs = Math.floor(mpptMax / vocMin);
+    const minPcs = Math.ceil(mpptMin / vmpMax);          // Используем минимальный Vmp (при макс. температуре)
+    const maxPcs = Math.floor(mpptMax / vocMin);         // Используем максимальный Voc (при мин. температуре)
     
-    // Расчет напряжений для минимального количества (используем Vmp)
-    const minVoltageCold = vmpMax * minPcs;
-    const minVoltageHot = vmpMax * minPcs;
+    // Расчет напряжений для минимального количества (Vmp)
+    const minVoltageCold = vmpMin * minPcs;               // Vmp стринга при мин. температуре
+    const minVoltageHot = vmpMax * minPcs;                // Vmp стринга при макс. температуре
     
-    // Расчет напряжений для максимального количества (используем Voc)
-    const maxVoltageCold = vocMin * maxPcs;
-    const maxVoltageHot = vocMin * maxPcs;
+    // Расчет напряжений для максимального количества (Voc)
+    const maxVoltageCold = vocMin * maxPcs;               // Voc стринга при мин. температуре
+    const maxVoltageHot = vocMax * maxPcs;                // Voc стринга при макс. температуре
     
     lastResult = { 
         voc, vmp, coeffPercent, tMin, tMax, mpptMax, mpptMin,
