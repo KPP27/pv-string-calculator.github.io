@@ -9,221 +9,633 @@
       gtag('config', 'G-0JQD4RVE06');
     </script>
 
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>BMS Pinout Master</title>
+    <title>Solar Toolbox - Распиновки BMS</title>
     <style>
-        :root { --bg: #f5f5f5; --card-bg: #ffffff; --accent: #2a8cff; --border: #ddd; --radius: 14px; }
+        :root { 
+            --bg: #f8f9fa; 
+            --card-bg: #ffffff; 
+            --accent: #2a8cff; 
+            --accent-light: #e6f2ff;
+            --border: #eef0f2; 
+            --radius: 16px; 
+            --text-main: #1a1a1b;
+            --text-muted: #70757a;
+            --danger: #ff6b6b;
+            --success: #51cf66;
+        }
+
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body { 
-            font-family: system-ui, -apple-system, sans-serif; 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
             background: var(--bg); 
             margin: 0; padding: 15px; 
             display: flex; justify-content: center; min-height: 100vh;
         }
+
         .container { 
             width: 100%; max-width: 480px; 
-            background: var(--card-bg); padding: 20px; 
+            background: var(--card-bg); padding: 24px; 
             border-radius: var(--radius); border: 1px solid var(--border);
-            box-shadow: 0 4px 20px rgba(0,0,0,0.08); height: fit-content;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            height: fit-content;
+            animation: fadeIn 0.3s ease;
         }
-        .top-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .back-btn { 
-            background: #eee; border: none; padding: 8px 14px; border-radius: 10px; 
-            font-size: 14px; font-weight: 600; cursor: pointer; color: #333; text-decoration: none;
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
         }
-        .lang-switch { display: flex; gap: 4px; background: #eee; padding: 3px; border-radius: 10px; }
+        .back-btn:active { background: #e0e0e0; transform: scale(0.97); }
+        
+        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
         .lang-btn {
-            padding: 5px 8px; font-size: 11px; font-weight: bold; border-radius: 7px;
-            cursor: pointer; border: none; background: transparent; color: #666;
+            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
         }
         .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        
-        h2 { margin: 0 0 20px 0; font-size: 1.2rem; text-align: left; color: #222; padding-left: 5px; }
 
-        .acc-item { border: 1px solid var(--border); border-radius: 12px; margin-bottom: 10px; overflow: hidden; background: #fff; }
-        /* Выравнивание названия аккордеона по левой стороне */
-        .acc-header { 
-            padding: 14px 16px; cursor: pointer; background: #fafafa; 
-            font-size: 14px; font-weight: 600; display: flex; align-items: center; gap: 10px; 
-            transition: 0.2s; user-select: none; text-align: left; justify-content: flex-start;
+        .page-title { margin-bottom: 20px; }
+        .page-title h1 { font-size: 22px; margin: 0; color: var(--text-main); }
+        .page-title p { font-size: 13px; color: var(--text-muted); margin: 5px 0 0; }
+
+        .search-box {
+            margin-bottom: 20px;
         }
-        .acc-item.open { border-color: var(--accent); }
-        .acc-item.open .acc-header { background: #fff; color: var(--accent); }
-        .acc-content { display: none; padding: 10px; text-align: center; border-top: 1px solid #eee; }
-        .acc-item.open .acc-content { display: block; }
+        .search-box input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: 0.2s;
+            background: #fff;
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1);
+        }
+        .search-box input::placeholder {
+            color: #bbb;
+            font-size: 14px;
+        }
+
+        .manufacturer-group {
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            overflow: hidden;
+        }
+        .manufacturer-header {
+            background: var(--accent-light);
+            padding: 14px 16px;
+            font-weight: 700;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: 0.2s;
+            color: var(--text-main);
+        }
+        .manufacturer-header:active {
+            background: #d4e4ff;
+        }
+        .manufacturer-header .logo {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: white;
+            border-radius: 8px;
+            padding: 4px;
+        }
+        .manufacturer-header .name {
+            flex: 1;
+        }
+        .manufacturer-header .count {
+            font-size: 12px;
+            font-weight: normal;
+            color: var(--text-muted);
+            background: rgba(0,0,0,0.05);
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+        .manufacturer-header .arrow {
+            font-size: 18px;
+            color: var(--text-muted);
+            transition: transform 0.2s;
+        }
+        .manufacturer-group.open .manufacturer-header .arrow {
+            transform: rotate(180deg);
+        }
+        .manufacturer-content {
+            display: none;
+            padding: 12px;
+            background: white;
+        }
+        .manufacturer-group.open .manufacturer-content {
+            display: block;
+        }
+
+        .pinout-item {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            background: #fff;
+        }
+        .pinout-item:last-child {
+            margin-bottom: 0;
+        }
+        .pinout-header {
+            padding: 14px 16px;
+            cursor: pointer;
+            background: #fafafa;
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: 0.2s;
+            user-select: none;
+            text-align: left;
+            justify-content: flex-start;
+            color: var(--text-main);
+        }
+        .pinout-item.open {
+            border-color: var(--accent);
+        }
+        .pinout-item.open .pinout-header {
+            background: #fff;
+            color: var(--accent);
+        }
+        .pinout-content {
+            display: none;
+            padding: 12px;
+            border-top: 1px solid #eee;
+        }
+        .pinout-item.open .pinout-content {
+            display: block;
+        }
         
-        .svg-wrap { position: relative; width: 100%; background: white; border-radius: 8px; overflow: hidden; border: 1px solid #eee; cursor: zoom-in; }
-        .img-overlay { width: 100%; height: auto; display: block; image-rendering: -webkit-optimize-contrast; }
-        .hint-text { font-size: 12px; color: #8e8e93; margin-top: 10px; font-style: italic; }
+        .svg-wrap {
+            position: relative;
+            width: 100%;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #eee;
+            cursor: zoom-in;
+        }
+        .img-overlay {
+            width: 100%;
+            height: auto;
+            display: block;
+            image-rendering: -webkit-optimize-contrast;
+        }
+        .hint-text {
+            font-size: 12px;
+            color: #8e8e93;
+            margin-top: 10px;
+            text-align: center;
+        }
 
         .modal {
-            display: none; position: fixed; z-index: 10000; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); touch-action: none; overflow: hidden; justify-content: center; align-items: center;
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            touch-action: none;
+            overflow: hidden;
+            justify-content: center;
+            align-items: center;
         }
-        #modalImg { max-width: 100%; max-height: 100%; will-change: transform; cursor: move; }
+        #modalImg {
+            max-width: 100%;
+            max-height: 100%;
+            will-change: transform;
+            cursor: move;
+        }
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 10001;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            .manufacturer-header { padding: 12px 14px; }
+            .pinout-header { padding: 12px 14px; }
+            .manufacturer-header .logo { width: 28px; height: 28px; font-size: 20px; }
+        }
     </style>
 </head>
 <body>
 
 <div id="zoomModal" class="modal">
-    <div style="position:absolute; top:20px; right:20px; color:white; z-index:10001; font-size:35px; font-weight:bold; cursor:pointer" onclick="closeModal()">×</div>
+    <div class="modal-close" onclick="closeModal()">×</div>
     <img id="modalImg" src="">
 </div>
     
 <div class="container">
-    <div class="top-nav">
-        <a href="index.html" class="back-btn" id="backBtn">←</a>
+    <div class="header-top">
+        <a href="index.html" class="back-btn">← <span data-t="back">Назад</span></a>
         <div class="lang-switch">
-            <button class="lang-btn" data-l="ru">RU</button>
-            <button class="lang-btn" data-l="ua">UA</button>
-            <button class="lang-btn" data-l="pl">PL</button>
-            <button class="lang-btn" data-l="en">EN</button>
+            <button class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</button>
+            <button class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</button>
+            <button class="lang-btn" onclick="setLang('pl')" data-l="pl">PL</button>
+            <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
         </div>
     </div>
-    <h2 id="mainTitle">BMS Connector Guide</h2>
-    <div id="accordion"></div>
+
+    <div class="page-title">
+        <h1 data-t="title">Распиновки BMS</h1>
+        <p data-t="subtitle">Схемы подключения CAN / RS485 / RJ45</p>
+    </div>
+
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="" data-placeholder="search_placeholder">
+    </div>
+
+    <div id="manufacturersContainer"></div>
 </div>
 
 <script>
-const T = {
-    ru: { back: "← Меню", title: "Распиновки BMS", hint: "Нажмите на схему для увеличения", straigth: "Прямая витая пара (T568B)", redDips: "Красные дипы" },
-    ua: { back: "← Меню", title: "Розпіновки BMS", hint: "Натисніть на схему для збільшення", straigth: "Пряма вита пара (T568B)", redDips: "Червоні діпи" },
-    pl: { back: "← Menu", title: "Schematy BMS", hint: "Kliknij schemat, aby powiększyć", straigth: "Klasyczna metoda (T568B)", redDips: "Czerwone przełączniki DIP" },
-    en: { back: "← Menu", title: "BMS Pinouts", hint: "Tap on diagram to enlarge", straigth: "Straight-through (T568B)", redDips: "Red DIP switches" }
+const translations = {
+    ru: {
+        back: "Назад",
+        title: "Распиновки BMS",
+        subtitle: "Схемы подключения CAN / RS485 / RJ45",
+        search_placeholder: "🔍 Поиск по названию...",
+        hint: "Нажмите на схему для увеличения"
+    },
+    ua: {
+        back: "Назад",
+        title: "Розпіновки BMS",
+        subtitle: "Схеми підключення CAN / RS485 / RJ45",
+        search_placeholder: "🔍 Пошук за назвою...",
+        hint: "Натисніть на схему для збільшення"
+    },
+    pl: {
+        back: "Wstecz",
+        title: "Schematy BMS",
+        subtitle: "Schematy podłączenia CAN / RS485 / RJ45",
+        search_placeholder: "🔍 Szukaj według nazwy...",
+        hint: "Kliknij schemat, aby powiększyć"
+    },
+    en: {
+        back: "Back",
+        title: "BMS Pinouts",
+        subtitle: "CAN / RS485 / RJ45 connection diagrams",
+        search_placeholder: "🔍 Search by name...",
+        hint: "Tap on diagram to enlarge"
+    }
 };
 
-const getPinouts = (lang) => {
-    const t = T[lang];
-    return [
-        { id: 1, title: t.straigth, m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] },
-        { id: 2, title: "LuxPower/Deye/Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
-        { id: 3, title: "LuxPower/Deye/Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
-        { id: 4, title: "LuxPower/Deye/Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
-        { id: 5, title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
-        { id: 6, title: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
-        { id: 7, title: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
-        { id: 8, title: `LuxPower (${t.redDips}) ↔ Pylontech NEW`, m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-        { id: 9, title: `LuxPower (${t.redDips}) ↔ Pylontech US2000/3000`, m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-        { id: 10, title: `LuxPower (${t.redDips}) ↔ Dyness`, m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-        { id: 11, title: "Sungrow (RJ45) ↔ Sungrow", m: "Sungrow Inv", s: "Sungrow Bat", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-        { id: 12, title: "Sungrow (COM Terminal) ↔ Sungrow", m: "Sungrow (10-pin)", s: "Sungrow (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} },
-        { id: 13, title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
-        { id: 14, title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
-    ];
+// Структура данных для распиновок
+const pinoutsDatabase = {
+    deye: {
+        name: "Deye",
+        logo: "🔌",
+        items: [
+            { title: "Deye ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+            { title: "Deye ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+            { title: "Deye ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] }
+        ]
+    },
+    luxpower: {
+        name: "LuxPower",
+        logo: "⚡",
+        items: [
+            { title: "LuxPower ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+            { title: "LuxPower ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+            { title: "LuxPower ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
+            { title: "LuxPower (красные дипы) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+            { title: "LuxPower (красные дипы) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+            { title: "LuxPower (красные дипы) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} }
+        ]
+    },
+    solis: {
+        name: "Solis",
+        logo: "🌞",
+        items: [
+            { title: "Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+            { title: "Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+            { title: "Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] }
+        ]
+    },
+    victron: {
+        name: "Victron GX",
+        logo: "⚡",
+        items: [
+            { title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
+            { title: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
+            { title: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} }
+        ]
+    },
+    sungrow: {
+        name: "Sungrow",
+        logo: "☀️",
+        items: [
+            { title: "Sungrow (RJ45) ↔ Sungrow Battery", m: "Sungrow Inv (RJ45)", s: "Sungrow Bat (RJ45)", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+            { title: "Sungrow (COM Terminal) ↔ Sungrow Battery", m: "Sungrow (10-pin COM)", s: "Sungrow Bat (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} }
+        ]
+    },
+    sofar: {
+        name: "Sofar",
+        logo: "🔧",
+        items: [
+            { title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
+            { title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
+        ]
+    },
+    standard: {
+        name: "Стандартные схемы",
+        logo: "📐",
+        items: [
+            { title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] }
+        ]
+    }
 };
+
+let currentLang = 'ru';
+let drawnItems = new Set();
+let currentOpenGroup = null;
 
 const stdCols = ["", "#FF8C00", "#FF8C00", "#32CD32", "#0056b3", "#0056b3", "#32CD32", "#8B4513", "#8B4513"];
 const stdStriped = [false, true, false, true, false, true, false, true, false];
 
 function setLang(lang) {
     localStorage.setItem('pinout_lang', lang);
-    const t = T[lang];
-    document.getElementById('backBtn').innerText = t.back;
-    document.getElementById('mainTitle').innerText = t.title;
+    currentLang = lang;
+    updateTexts();
+    updatePlaceholders();
+    initPage();
+}
+
+function updateTexts() {
+    const lang = currentLang;
+    document.querySelectorAll('[data-t]').forEach(el => {
+        if(translations[lang][el.dataset.t]) {
+            el.textContent = translations[lang][el.dataset.t];
+        }
+    });
     document.querySelectorAll('.lang-btn').forEach(b => {
-        b.classList.toggle('active', b.dataset.l === lang);
+        if (b.dataset.l === lang) {
+            b.classList.add('active');
+        } else {
+            b.classList.remove('active');
+        }
     });
-    initAccordion();
 }
 
-function initAccordion() {
-    const lang = localStorage.getItem('pinout_lang') || 'ru';
-    const t = T[lang];
-    const acc = document.getElementById('accordion');
-    acc.innerHTML = "";
+function updatePlaceholders() {
+    const lang = currentLang;
+    const searchInput = document.getElementById('searchInput');
+    if (searchInput) {
+        searchInput.placeholder = translations[lang].search_placeholder;
+    }
+}
+
+function getRedDipsText(lang) {
+    if (lang === 'ru') return "красные дипы";
+    if (lang === 'ua') return "червоні діпи";
+    if (lang === 'pl') return "czerwone przełączniki DIP";
+    return "red DIP switches";
+}
+
+function initPage() {
+    renderManufacturers();
+}
+
+function renderManufacturers() {
+    const searchTerm = document.getElementById('searchInput')?.value.toLowerCase() || '';
+    const container = document.getElementById('manufacturersContainer');
+    container.innerHTML = '';
+    currentOpenGroup = null;
     
-    getPinouts(lang).forEach(p => {
-        const item = document.createElement('div');
-        item.className = 'acc-item';
-        item.innerHTML = `
-            <div class="acc-header" onclick="toggle(${p.id})">${p.id}. ${p.title}</div>
-            <div class="acc-content" id="c-${p.id}">
-                <div class="svg-wrap" onclick="zoomIn(document.getElementById('img-${p.id}').src)">
-                    <img class="img-overlay" id="img-${p.id}">
-                    <div id="svg-${p.id}" style="display:none"></div>
+    let hasResults = false;
+    
+    for (const [key, manufacturer] of Object.entries(pinoutsDatabase)) {
+        const filteredItems = manufacturer.items.filter(item => {
+            const itemTitle = item.title.toLowerCase();
+            return !searchTerm || itemTitle.includes(searchTerm);
+        });
+        
+        if (filteredItems.length > 0) {
+            hasResults = true;
+            
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'manufacturer-group';
+            groupDiv.id = `group-${key}`;
+            groupDiv.innerHTML = `
+                <div class="manufacturer-header" onclick="toggleManufacturer('${key}')">
+                    <div class="logo">${manufacturer.logo}</div>
+                    <div class="name">${manufacturer.name}</div>
+                    <div class="count">${filteredItems.length}</div>
+                    <div class="arrow">▼</div>
                 </div>
-                <div class="hint-text">${t.hint}</div>
-            </div>`;
-        acc.appendChild(item);
-    });
-}
-
-function toggle(id) {
-    const item = document.getElementById(`c-${id}`).parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.acc-item').forEach(i => i.classList.remove('open'));
-    if(!isOpen) { item.classList.add('open'); draw(id); }
-}
-
-function draw(id) {
-    const lang = localStorage.getItem('pinout_lang') || 'ru';
-    const data = getPinouts(lang).find(x => x.id === id);
-    const target = document.getElementById(`svg-${id}`);
-    if(target.innerHTML !== "") return;
+                <div class="manufacturer-content" id="group-content-${key}"></div>
+            `;
+            container.appendChild(groupDiv);
+            
+            const contentDiv = document.getElementById(`group-content-${key}`);
+            filteredItems.forEach((item, index) => {
+                let itemTitle = item.title;
+                if (key === 'luxpower' && itemTitle.includes('красные дипы')) {
+                    itemTitle = itemTitle.replace('красные дипы', getRedDipsText(currentLang));
+                }
+                
+                const pinoutItem = document.createElement('div');
+                pinoutItem.className = 'pinout-item';
+                pinoutItem.id = `pinout-${key}-${index}`;
+                pinoutItem.innerHTML = `
+                    <div class="pinout-header" onclick="togglePinout('${key}', ${index})">
+                        <span>${itemTitle}</span>
+                    </div>
+                    <div class="pinout-content" id="content-${key}-${index}">
+                        <div class="svg-wrap" onclick="zoomIn(document.getElementById('img-${key}-${index}').src)">
+                            <img class="img-overlay" id="img-${key}-${index}">
+                            <div id="svg-${key}-${index}" style="display:none"></div>
+                        </div>
+                        <div class="hint-text">${translations[currentLang].hint}</div>
+                    </div>
+                `;
+                contentDiv.appendChild(pinoutItem);
+                
+                pinoutItem.pinoutData = item;
+                pinoutItem.manufacturerKey = key;
+                pinoutItem.itemIndex = index;
+            });
+        }
+    }
     
-    const mP = data.m_pins || 8;
-    const sP = data.s_pins || 8;
-    const vH = 150 + (Math.max(mP, sP) * 36);
+    if (!hasResults) {
+        container.innerHTML = `<div class="no-results">🔍 ${currentLang === 'ru' ? 'Ничего не найдено' : currentLang === 'ua' ? 'Нічого не знайдено' : currentLang === 'pl' ? 'Nic nie znaleziono' : 'Nothing found'}</div>`;
+    }
+}
 
-    target.innerHTML = `<svg id="raw-${id}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
-        <defs><clipPath id="cp-${id}"><rect width="110" height="26" rx="3"/></clipPath></defs>
+function toggleManufacturer(manufacturerKey) {
+    const group = document.getElementById(`group-${manufacturerKey}`);
+    const isOpen = group.classList.contains('open');
+    
+    if (currentOpenGroup && currentOpenGroup !== manufacturerKey) {
+        const prevGroup = document.getElementById(`group-${currentOpenGroup}`);
+        if (prevGroup) {
+            prevGroup.classList.remove('open');
+        }
+    }
+    
+    if (!isOpen) {
+        group.classList.add('open');
+        currentOpenGroup = manufacturerKey;
+    } else {
+        group.classList.remove('open');
+        currentOpenGroup = null;
+    }
+}
+
+function togglePinout(manufacturerKey, index) {
+    const item = document.getElementById(`pinout-${manufacturerKey}-${index}`);
+    const isOpen = item.classList.contains('open');
+    
+    const contentDiv = document.getElementById(`group-content-${manufacturerKey}`);
+    if (contentDiv) {
+        contentDiv.querySelectorAll('.pinout-item').forEach(i => i.classList.remove('open'));
+    }
+    
+    if (!isOpen) {
+        item.classList.add('open');
+        drawPinout(manufacturerKey, index);
+    }
+}
+
+function drawPinout(manufacturerKey, index) {
+    const itemId = `${manufacturerKey}-${index}`;
+    if (drawnItems.has(itemId)) return;
+    
+    const item = document.getElementById(`pinout-${itemId}`);
+    if (!item || !item.pinoutData) return;
+    
+    const pinout = item.pinoutData;
+    const target = document.getElementById(`svg-${itemId}`);
+    if (target.innerHTML !== "") return;
+    
+    const mP = pinout.m_pins || 8;
+    const sP = pinout.s_pins || 8;
+    const vH = 150 + (Math.max(mP, sP) * 36);
+    
+    target.innerHTML = `<svg id="raw-${itemId}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
+        <defs><clipPath id="cp-${itemId}"><rect width="110" height="26" rx="3"/></clipPath></defs>
         <rect width="800" height="${vH}" fill="white"/>
         <rect width="800" height="50" fill="#2a8cff"/>
-        <text x="400" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${data.title}</text>
-        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.m}</text>
-        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${data.s}</text>
-        <g id="lines-${id}"></g>
-        <g transform="translate(130, 105)">${drawConn(id, 'm', data)}</g>
-        <g transform="translate(550, 105)">${drawConn(id, 's', data)}</g>
+        <text x="400" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${pinout.title}</text>
+        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${pinout.m}</text>
+        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${pinout.s}</text>
+        <g id="lines-${itemId}"></g>
+        <g transform="translate(130, 105)">${drawConnector(itemId, 'm', pinout)}</g>
+        <g transform="translate(550, 105)">${drawConnector(itemId, 's', pinout)}</g>
     </svg>`;
-
-    data.links.forEach(l => {
+    
+    pinout.links.forEach(l => {
         const y1 = 126 + (l[0]-1)*36, y2 = 126 + (l[1]-1)*36;
-        const color = (data.m_colors && data.m_colors[l[0]]) || stdCols[l[0]] || '#0056b3';
-        const p = document.createElementNS("http://www.w3.org/2000/svg", "path");
-        p.setAttribute("d", `M 240 ${y1} C 390 ${y1}, 410 ${y2}, 550 ${y2}`);
-        p.setAttribute("stroke", color); p.setAttribute("stroke-width", "6"); p.setAttribute("fill", "none");
-        if(l[2]?.includes('CAN-L') || (l[2] === undefined && stdStriped[l[0]])) p.setAttribute("stroke-dasharray", "12,6");
-        document.getElementById(`lines-${id}`).appendChild(p);
-        if(l[2]) { addLbl(id, l[0], l[2], 'm'); addLbl(id, l[1], l[2], 's'); }
+        const color = (pinout.m_colors && pinout.m_colors[l[0]]) || stdCols[l[0]] || '#0056b3';
+        const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+        path.setAttribute("d", `M 240 ${y1} C 390 ${y1}, 410 ${y2}, 550 ${y2}`);
+        path.setAttribute("stroke", color);
+        path.setAttribute("stroke-width", "6");
+        path.setAttribute("fill", "none");
+        if(l[2]?.includes('CAN-L') || (l[2] === undefined && stdStriped[l[0]])) {
+            path.setAttribute("stroke-dasharray", "12,6");
+        }
+        document.getElementById(`lines-${itemId}`).appendChild(path);
+        if(l[2]) {
+            addLabel(itemId, l[0], l[2], 'm');
+            addLabel(itemId, l[1], l[2], 's');
+        }
     });
-    render(id);
+    
+    renderToImage(itemId);
+    drawnItems.add(itemId);
 }
 
-function drawConn(id, side, data) {
-    const pins = (side === 'm' ? data.m_pins : data.s_pins) || 8;
-    let h = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
-    const nulls = (side === 'm' ? data.m_null : data.s_null) || [];
-    const customs = (side === 'm' ? data.m_colors : data.s_colors) || {};
-    for(let i=1; i<=pins; i++) {
+function drawConnector(itemId, side, pinout) {
+    const pins = (side === 'm' ? pinout.m_pins : pinout.s_pins) || 8;
+    let html = `<rect width="130" height="${8 + pins*36}" fill="#f8f9fa" stroke="#ccc" rx="5"/>`;
+    const nulls = (side === 'm' ? pinout.m_null : pinout.s_null) || [];
+    const customs = (side === 'm' ? pinout.m_colors : pinout.s_colors) || {};
+    
+    for(let i = 1; i <= pins; i++) {
         const y = 8 + (i-1)*36;
-        const isL = data.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
-        h += `<g transform="translate(10, ${y})">`;
+        const isL = pinout.links.find(l => (side === 'm' ? l[0] : l[1]) === i && l[2] === 'CAN-L');
+        html += `<g transform="translate(10, ${y})">`;
         if(nulls.includes(i)) {
-            h += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
+            html += `<rect width="110" height="26" fill="none" stroke="#ddd" stroke-dasharray="2,2" rx="3"/><text x="55" y="14" font-family="Arial" font-size="10" fill="#bbb" text-anchor="middle" dominant-baseline="middle">NULL</text>`;
         } else {
-            h += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
+            html += `<rect width="110" height="26" fill="${customs[i] || stdCols[i] || '#eee'}" rx="3"/>`;
             if(isL || (customs[i] === undefined && stdStriped[i])) {
-                h += `<g clip-path="url(#cp-${id})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
+                html += `<g clip-path="url(#cp-${itemId})"><path d="M-10 30 L10 -10 M10 30 L30 -10 M30 30 L50 -10 M50 30 L70 -10 M70 30 L90 -10 M90 30 L110 -10 M110 30 L130 -10" stroke="white" stroke-width="6" opacity="0.7"/></g>`;
             }
         }
-        h += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
+        html += `<text x="${side==='m'?-25:135}" y="14" font-family="Arial" font-size="12" font-weight="bold" fill="#666" text-anchor="middle" dominant-baseline="middle">${i}</text></g>`;
     }
-    return h;
+    return html;
 }
 
-function addLbl(id, idx, txt, side) {
+function addLabel(itemId, idx, txt, side) {
     const t = document.createElementNS("http://www.w3.org/2000/svg", "text");
-    t.setAttribute("x", side === 'm' ? 85 : 715); t.setAttribute("y", 126 + (idx-1)*36);
-    t.setAttribute("font-family", "Arial"); t.setAttribute("font-size", "12"); t.setAttribute("font-weight", "bold");
-    t.setAttribute("text-anchor", side === 'm' ? "end" : "start"); t.setAttribute("fill", "#d9534f");
-    t.setAttribute("dominant-baseline", "middle"); t.textContent = txt;
-    document.getElementById(`raw-${id}`).appendChild(t);
+    t.setAttribute("x", side === 'm' ? 85 : 715);
+    t.setAttribute("y", 126 + (idx-1)*36);
+    t.setAttribute("font-family", "Arial");
+    t.setAttribute("font-size", "12");
+    t.setAttribute("font-weight", "bold");
+    t.setAttribute("text-anchor", side === 'm' ? "end" : "start");
+    t.setAttribute("fill", "#d9534f");
+    t.setAttribute("dominant-baseline", "middle");
+    t.textContent = txt;
+    document.getElementById(`raw-${itemId}`).appendChild(t);
 }
 
-function render(id) {
-    const svg = document.getElementById(`raw-${id}`);
+function renderToImage(itemId) {
+    const svg = document.getElementById(`raw-${itemId}`);
+    if (!svg) return;
+    
     const vBox = svg.viewBox.baseVal;
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
@@ -231,47 +643,90 @@ function render(id) {
     const url = URL.createObjectURL(new Blob([xml], {type:'image/svg+xml;charset=utf-8'}));
     const img = new Image();
     img.onload = function() {
-        canvas.width = vBox.width; canvas.height = vBox.height;
-        ctx.fillStyle = "white"; ctx.fillRect(0,0,vBox.width,vBox.height);
+        canvas.width = vBox.width;
+        canvas.height = vBox.height;
+        ctx.fillStyle = "white";
+        ctx.fillRect(0, 0, vBox.width, vBox.height);
         ctx.drawImage(img, 0, 0);
-        document.getElementById(`img-${id}`).src = canvas.toDataURL("image/png");
+        const imgElement = document.getElementById(`img-${itemId}`);
+        if (imgElement) {
+            imgElement.src = canvas.toDataURL("image/png");
+        }
         URL.revokeObjectURL(url);
     };
     img.src = url;
 }
 
-// ZOOM LOGIC
+// Zoom logic
 let scale = 1, moveX = 0, moveY = 0, lastDist = 0, lastX = 0, lastY = 0, isDragging = false;
-const modalImg = document.getElementById('modalImg'), zoomModal = document.getElementById('zoomModal');
+const modalImg = document.getElementById('modalImg');
+const zoomModal = document.getElementById('zoomModal');
 
 function zoomIn(src) {
-    modalImg.src = src; scale = 1; moveX = 0; moveY = 0;
+    modalImg.src = src;
+    scale = 1;
+    moveX = 0;
+    moveY = 0;
     updateTransform();
     zoomModal.style.display = 'flex';
     document.body.style.overflow = 'hidden';
 }
-function closeModal() { zoomModal.style.display = 'none'; document.body.style.overflow = ''; }
-function updateTransform() { modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`; }
+
+function closeModal() {
+    zoomModal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function updateTransform() {
+    modalImg.style.transform = `translate(${moveX}px, ${moveY}px) scale(${scale})`;
+}
 
 modalImg.addEventListener('touchstart', e => {
-    if (e.touches.length === 1) { isDragging = true; lastX = e.touches[0].clientX - moveX; lastY = e.touches[0].clientY - moveY; }
-    else if (e.touches.length === 2) lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    if (e.touches.length === 1) {
+        isDragging = true;
+        lastX = e.touches[0].clientX - moveX;
+        lastY = e.touches[0].clientY - moveY;
+    } else if (e.touches.length === 2) {
+        lastDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    }
 }, {passive: false});
 
 modalImg.addEventListener('touchmove', e => {
     e.preventDefault();
-    if (e.touches.length === 1 && isDragging) { moveX = e.touches[0].clientX - lastX; moveY = e.touches[0].clientY - lastY; }
-    else if (e.touches.length === 2) {
+    if (e.touches.length === 1 && isDragging) {
+        moveX = e.touches[0].clientX - lastX;
+        moveY = e.touches[0].clientY - lastY;
+    } else if (e.touches.length === 2) {
         const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-        scale = Math.min(Math.max(1, scale * (dist/lastDist)), 5); lastDist = dist;
+        scale = Math.min(Math.max(1, scale * (dist / lastDist)), 5);
+        lastDist = dist;
     }
     updateTransform();
 }, {passive: false});
 
-modalImg.addEventListener('touchend', () => { isDragging = false; });
+modalImg.addEventListener('touchend', () => {
+    isDragging = false;
+});
 
-document.querySelectorAll('.lang-btn').forEach(btn => btn.onclick = () => setLang(btn.dataset.l));
-setLang(localStorage.getItem('pinout_lang') || 'ru');
+// Search handler
+document.getElementById('searchInput')?.addEventListener('input', () => {
+    initPage();
+    drawnItems.clear();
+});
+
+// Initialize
+const savedLang = localStorage.getItem('pinout_lang') || 'ru';
+currentLang = savedLang;
+updateTexts();
+updatePlaceholders();
+initPage();
+
+// Make functions global
+window.toggleManufacturer = toggleManufacturer;
+window.togglePinout = togglePinout;
+window.zoomIn = zoomIn;
+window.closeModal = closeModal;
+window.setLang = setLang;
 </script>
 </body>
 </html>
