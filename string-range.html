@@ -328,7 +328,7 @@
     <div class="result-card" id="resultArea">
         <div class="result-section" id="minSection">
             <div class="result-title" data-t="min_title">Минимальное количество фотомодулей</div>
-            <div class="result-value" id="min_value">— <span class="result-unit" data-t="pcs_unit">штук</span></div>
+            <div class="result-value" id="min_value">— <span class="result-unit" data-t="pcs_unit">шт</span></div>
             <div class="voltage-row">
                 <span class="voltage-label" data-t="voltage_at_min">Напряжение при мин. температуре:</span>
                 <span class="voltage-value" id="min_voltage_cold">— В</span>
@@ -341,7 +341,7 @@
         
         <div class="result-section" id="maxSection">
             <div class="result-title" data-t="max_title">Максимальное количество фотомодулей</div>
-            <div class="result-value" id="max_value">— <span class="result-unit" data-t="pcs_unit">штук</span></div>
+            <div class="result-value" id="max_value">— <span class="result-unit" data-t="pcs_unit">шт</span></div>
             <div class="voltage-row">
                 <span class="voltage-label" data-t="voltage_at_min">Напряжение при мин. температуре:</span>
                 <span class="voltage-value" id="max_voltage_cold">— В</span>
@@ -386,7 +386,7 @@ const translations = {
         max_title: "Максимальное количество фотомодулей",
         voltage_at_min: "Напряжение при мин. температуре:",
         voltage_at_max: "Напряжение при макс. температуре:",
-        pcs_unit: "штук",
+        pcs_unit: "шт",
         formula_title: "📐 Формула расчета:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -397,7 +397,7 @@ const translations = {
         error_empty: "Пожалуйста, заполните все поля",
         error_range: "Ошибка: минимальное значение больше максимального. Уменьшите количество модулей или проверьте параметры инвертора.",
         copied: "✅ Результаты скопированы!",
-        share_text: "📊 Расчет оптимального количества модулей в стринге:\n\nИсходные данные:\n• Voc модуля (STC): {voc} В\n• Vmp модуля (STC): {vmp} В\n• Темп. коэффициент Voc: {coeff} %/°C\n• Мин. температура: {t_min}°C\n• Макс. температура: {t_max}°C\n• Макс. предел MPPT: {mppt_max} В\n• Мин. предел MPPT: {mppt_min} В\n\nРезультаты:\n\nМинимальное количество фотомодулей: {min_pcs} штук\n• Напряжение при {t_min}°C: {min_voltage_cold} В (Vmp)\n• Напряжение при {t_max}°C: {min_voltage_hot} В (Vmp)\n\nМаксимальное количество фотомодулей: {max_pcs} штук\n• Напряжение при {t_min}°C: {max_voltage_cold} В (Voc)\n• Напряжение при {t_max}°C: {max_voltage_hot} В (Voc)",
+        share_text: "📊 Расчет оптимального количества модулей в стринге:\n\nИсходные данные:\n• Voc модуля (STC): {voc} В\n• Vmp модуля (STC): {vmp} В\n• Темп. коэффициент Voc: {coeff} %/°C\n• Мин. температура: {t_min}°C\n• Макс. температура: {t_max}°C\n• Макс. предел MPPT: {mppt_max} В\n• Мин. предел MPPT: {mppt_min} В\n\nРезультаты:\n\nМинимальное количество фотомодулей: {min_pcs} шт\n• Напряжение при {t_min}°C: {min_voltage_cold} В (Vmp)\n• Напряжение при {t_max}°C: {min_voltage_hot} В (Vmp)\n\nМаксимальное количество фотомодулей: {max_pcs} шт\n• Напряжение при {t_min}°C: {max_voltage_cold} В (Voc)\n• Напряжение при {t_max}°C: {max_voltage_hot} В (Voc)",
         voc_placeholder: "Например: 49.8",
         vmp_placeholder: "Например: 41.2",
         coeff_placeholder: "Например: -0.27",
@@ -424,7 +424,7 @@ const translations = {
         max_title: "Максимальна кількість фотомодулів",
         voltage_at_min: "Напруга при мін. температурі:",
         voltage_at_max: "Напруга при макс. температурі:",
-        pcs_unit: "штук",
+        pcs_unit: "шт",
         formula_title: "📐 Формула розрахунку:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -435,7 +435,7 @@ const translations = {
         error_empty: "Будь ласка, заповніть всі поля",
         error_range: "Помилка: мінімальне значення більше максимального. Зменшіть кількість модулів або перевірте параметри інвертора.",
         copied: "✅ Результати скопійовано!",
-        share_text: "📊 Розрахунок оптимальної кількості модулів у стрінгу:\n\nВихідні дані:\n• Voc модуля (STC): {voc} В\n• Vmp модуля (STC): {vmp} В\n• Темп. коефіцієнт Voc: {coeff} %/°C\n• Мін. температура: {t_min}°C\n• Макс. температура: {t_max}°C\n• Макс. межа MPPT: {mppt_max} В\n• Мін. межа MPPT: {mppt_min} В\n\nРезультати:\n\nМінімальна кількість фотомодулів: {min_pcs} штук\n• Напруга при {t_min}°C: {min_voltage_cold} В (Vmp)\n• Напруга при {t_max}°C: {min_voltage_hot} В (Vmp)\n\nМаксимальна кількість фотомодулів: {max_pcs} штук\n• Напруга при {t_min}°C: {max_voltage_cold} В (Voc)\n• Напруга при {t_max}°C: {max_voltage_hot} В (Voc)",
+        share_text: "📊 Розрахунок оптимальної кількості модулів у стрінгу:\n\nВихідні дані:\n• Voc модуля (STC): {voc} В\n• Vmp модуля (STC): {vmp} В\n• Темп. коефіцієнт Voc: {coeff} %/°C\n• Мін. температура: {t_min}°C\n• Макс. температура: {t_max}°C\n• Макс. межа MPPT: {mppt_max} В\n• Мін. межа MPPT: {mppt_min} В\n\nРезультати:\n\nМінімальна кількість фотомодулів: {min_pcs} шт\n• Напруга при {t_min}°C: {min_voltage_cold} В (Vmp)\n• Напруга при {t_max}°C: {min_voltage_hot} В (Vmp)\n\nМаксимальна кількість фотомодулів: {max_pcs} шт\n• Напруга при {t_min}°C: {max_voltage_cold} В (Voc)\n• Напруга при {t_max}°C: {max_voltage_hot} В (Voc)",
         voc_placeholder: "Наприклад: 49.8",
         vmp_placeholder: "Наприклад: 41.2",
         coeff_placeholder: "Наприклад: -0.27",
@@ -462,7 +462,7 @@ const translations = {
         max_title: "Maksymalna liczba modułów fotowoltaicznych",
         voltage_at_min: "Napięcie w min. temperaturze:",
         voltage_at_max: "Napięcie w maks. temperaturze:",
-        pcs_unit: "sztuk",
+        pcs_unit: "szt",
         formula_title: "📐 Wzór obliczeniowy:",
         formula: "Voc_min = Voc_STC × [1 + β × (T_min - 25°C)]",
         formula2: "Vmp_max = Vmp_STC × [1 + β × (T_max - 25°C)]",
@@ -473,7 +473,7 @@ const translations = {
         error_empty: "Proszę wypełnić wszystkie pola",
         error_range: "Błąd: wartość minimalna jest większa od maksymalnej. Zmniejsz liczbę modułów lub sprawdź parametry falownika.",
         copied: "✅ Wyniki skopiowane!",
-        share_text: "📊 Obliczanie optymalnej liczby modułów w stringu:\n\nDane wejściowe:\n• Voc modułu (STC): {voc} V\n• Vmp modułu (STC): {vmp} V\n• Współczynnik temp. Voc: {coeff} %/°C\n• Min. temperatura: {t_min}°C\n• Maks. temperatura: {t_max}°C\n• Maks. zakres MPPT: {mppt_max} V\n• Min. zakres MPPT: {mppt_min} V\n\nWyniki:\n\nMinimalna liczba modułów: {min_pcs} sztuk\n• Napięcie przy {t_min}°C: {min_voltage_cold} V (Vmp)\n• Napięcie przy {t_max}°C: {min_voltage_hot} V (Vmp)\n\nMaksymalna liczba modułów: {max_pcs} sztuk\n• Napięcie przy {t_min}°C: {max_voltage_cold} V (Voc)\n• Napięcie przy {t_max}°C: {max_voltage_hot} V (Voc)",
+        share_text: "📊 Obliczanie optymalnej liczby modułów w stringu:\n\nDane wejściowe:\n• Voc modułu (STC): {voc} V\n• Vmp modułu (STC): {vmp} V\n• Współczynnik temp. Voc: {coeff} %/°C\n• Min. temperatura: {t_min}°C\n• Maks. temperatura: {t_max}°C\n• Maks. zakres MPPT: {mppt_max} V\n• Min. zakres MPPT: {mppt_min} V\n\nWyniki:\n\nMinimalna liczba modułów: {min_pcs} szt\n• Napięcie przy {t_min}°C: {min_voltage_cold} V (Vmp)\n• Napięcie przy {t_max}°C: {min_voltage_hot} V (Vmp)\n\nMaksymalna liczba modułów: {max_pcs} szt\n• Napięcie przy {t_min}°C: {max_voltage_cold} V (Voc)\n• Napięcie przy {t_max}°C: {max_voltage_hot} V (Voc)",
         voc_placeholder: "Np: 49.8",
         vmp_placeholder: "Np: 41.2",
         coeff_placeholder: "Np: -0.27",
