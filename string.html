@@ -246,22 +246,22 @@
 
     <div class="input-group">
         <label data-t="label_vmax">Макс. напряжение DC инвертора, В</label>
-        <input type="number" id="vmax_inverter" placeholder="" data-placeholder="vmax_placeholder">
+        <input type="number" id="vmax_inverter" placeholder="">
     </div>
 
     <div class="input-group">
         <label data-t="label_voc">Напряжение Voc модуля, В</label>
-        <input type="number" id="voc_module" placeholder="" data-placeholder="voc_placeholder">
+        <input type="number" id="voc_module" placeholder="">
     </div>
 
     <div class="input-group">
         <label data-t="label_tmin">Мин. температура воздуха, °C</label>
-        <input type="number" id="temp_min" placeholder="" data-placeholder="temp_placeholder">
+        <input type="number" id="temp_min" placeholder="">
     </div>
 
     <div class="input-group">
         <label data-t="label_coeff">Темп. коэффициент Voc, %/°C</label>
-        <input type="number" id="temp_coeff" placeholder="" data-placeholder="coeff_placeholder">
+        <input type="number" id="temp_coeff" placeholder="">
         <div class="note" data-t="coeff_note">* Обычно отрицательный: от -0.25 до -0.35 %/°C</div>
     </div>
 
@@ -272,7 +272,7 @@
 
     <div class="result-card" id="resultArea">
         <div class="result-label" data-t="result_label">Максимальное количество модулей в стринге</div>
-        <div class="result-value" id="result_value">— <span class="result-unit">шт</span></div>
+        <div class="result-value" id="result_value">— <span class="result-unit" data-t="pcs">шт</span></div>
         <div class="sub-result" id="result_detail">—</div>
     </div>
 
@@ -310,7 +310,8 @@ const translations = {
         voc_placeholder: "Например: 49.8",
         vmax_placeholder: "Например: 1000",
         temp_placeholder: "Например: -25",
-        coeff_placeholder: "Например: -0.27"
+        coeff_placeholder: "Например: -0.27",
+        pcs: "шт"
     },
     ua: {
         back: "Назад",
@@ -335,7 +336,8 @@ const translations = {
         voc_placeholder: "Наприклад: 49.8",
         vmax_placeholder: "Наприклад: 1000",
         temp_placeholder: "Наприклад: -25",
-        coeff_placeholder: "Наприклад: -0.27"
+        coeff_placeholder: "Наприклад: -0.27",
+        pcs: "шт"
     },
     pl: {
         back: "Wstecz",
@@ -360,7 +362,8 @@ const translations = {
         voc_placeholder: "Np: 49.8",
         vmax_placeholder: "Np: 1000",
         temp_placeholder: "Np: -25",
-        coeff_placeholder: "Np: -0.27"
+        coeff_placeholder: "Np: -0.27",
+        pcs: "szt"
     },
     en: {
         back: "Back",
@@ -385,7 +388,8 @@ const translations = {
         voc_placeholder: "Example: 49.8",
         vmax_placeholder: "Example: 1000",
         temp_placeholder: "Example: -25",
-        coeff_placeholder: "Example: -0.27"
+        coeff_placeholder: "Example: -0.27",
+        pcs: "pcs"
     }
 };
 
@@ -462,7 +466,7 @@ function areInputsValid() {
 function calculateString() {
     if (!areInputsValid()) {
         showError(translations[currentLang].error_empty);
-        document.getElementById('result_value').innerHTML = '— <span class="result-unit">шт</span>';
+        document.getElementById('result_value').innerHTML = '— <span class="result-unit" data-t="pcs">' + translations[currentLang].pcs + '</span>';
         document.getElementById('result_detail').innerHTML = '—';
         return;
     }
@@ -480,7 +484,9 @@ function calculateString() {
     
     lastResult = { vmax, voc, tMin, coeffPercent, vocMin, maxModules };
     
-    document.getElementById('result_value').innerHTML = maxModules + ' <span class="result-unit">шт</span>';
+    const resultValueElement = document.getElementById('result_value');
+    resultValueElement.innerHTML = maxModules + ' <span class="result-unit" data-t="pcs">' + translations[currentLang].pcs + '</span>';
+    
     document.getElementById('result_detail').innerHTML = `Voc при ${tMin}°C: ${vocMin.toFixed(1)} В`;
 }
 
@@ -523,7 +529,7 @@ document.querySelectorAll('input').forEach(input => {
         if (areInputsValid()) {
             calculateString();
         } else {
-            document.getElementById('result_value').innerHTML = '— <span class="result-unit">шт</span>';
+            document.getElementById('result_value').innerHTML = '— <span class="result-unit" data-t="pcs">' + translations[currentLang].pcs + '</span>';
             document.getElementById('result_detail').innerHTML = '—';
         }
     });
