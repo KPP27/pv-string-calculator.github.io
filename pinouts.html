@@ -303,93 +303,113 @@ const translations = {
         title: "Распиновки BMS",
         subtitle: "Схемы подключения CAN / RS485 / RJ45",
         search_placeholder: "🔍 Поиск по названию...",
-        hint: "Нажмите на схему для увеличения"
+        hint: "Нажмите на схему для увеличения",
+        standard_schemes: "Стандартные схемы",
+        straight_cable: "Прямая витая пара (T568B)",
+        master: "MASTER",
+        slave: "SLAVE",
+        not_found: "Ничего не найдено"
     },
     ua: {
         back: "Назад",
         title: "Розпіновки BMS",
         subtitle: "Схеми підключення CAN / RS485 / RJ45",
         search_placeholder: "🔍 Пошук за назвою...",
-        hint: "Натисніть на схему для збільшення"
+        hint: "Натисніть на схему для збільшення",
+        standard_schemes: "Стандартні схеми",
+        straight_cable: "Пряма вита пара (T568B)",
+        master: "МАЙСТЕР",
+        slave: "СЛЕЙВ",
+        not_found: "Нічого не знайдено"
     },
     pl: {
         back: "Wstecz",
         title: "Schematy BMS",
         subtitle: "Schematy podłączenia CAN / RS485 / RJ45",
         search_placeholder: "🔍 Szukaj według nazwy...",
-        hint: "Kliknij schemat, aby powiększyć"
+        hint: "Kliknij schemat, aby powiększyć",
+        standard_schemes: "Schematy standardowe",
+        straight_cable: "Skrętka prosta (T568B)",
+        master: "MASTER",
+        slave: "SLAVE",
+        not_found: "Nic nie znaleziono"
     },
     en: {
         back: "Back",
         title: "BMS Pinouts",
         subtitle: "CAN / RS485 / RJ45 connection diagrams",
         search_placeholder: "🔍 Search by name...",
-        hint: "Tap on diagram to enlarge"
+        hint: "Tap on diagram to enlarge",
+        standard_schemes: "Standard schemes",
+        straight_cable: "Straight twisted pair (T568B)",
+        master: "MASTER",
+        slave: "SLAVE",
+        not_found: "Nothing found"
     }
 };
 
-// Структура данных для распиновок
+// Структура данных для распиновок (теперь с ключами для перевода)
 const pinoutsDatabase = {
     deye: {
-        name: "Deye",
+        nameKey: "Deye",  // Статическое название, не требует перевода
         logo: "🔌",
         items: [
-            { title: "Deye ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
-            { title: "Deye ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
-            { title: "Deye ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] }
+            { titleKey: "Deye ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+            { titleKey: "Deye ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+            { titleKey: "Deye ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] }
         ]
     },
     luxpower: {
-        name: "LuxPower",
+        nameKey: "LuxPower",
         logo: "⚡",
         items: [
-            { title: "LuxPower ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
-            { title: "LuxPower ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
-            { title: "LuxPower ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
-            { title: "LuxPower (красные дипы) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-            { title: "LuxPower (красные дипы) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-            { title: "LuxPower (красные дипы) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} }
+            { titleKey: "LuxPower ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+            { titleKey: "LuxPower ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+            { titleKey: "LuxPower ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] },
+            { titleKey: "LuxPower (red DIP) ↔ Pylontech NEW", m: "LuxPower", s: "Pylontech NEW", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], s_null:[1,2,3], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+            { titleKey: "LuxPower (red DIP) ↔ Pylontech US2000/3000", m: "LuxPower", s: "Pylontech", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+            { titleKey: "LuxPower (red DIP) ↔ Dyness", m: "LuxPower", s: "Dyness", links: [[3,5,'CAN-L'],[4,4,'CAN-H']], m_null:[1,2,5,6,7,8], m_colors:{3:'#0056b3', 4:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} }
         ]
     },
     solis: {
-        name: "Solis",
+        nameKey: "Solis",
         logo: "🌞",
         items: [
-            { title: "Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
-            { title: "Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
-            { title: "Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] }
+            { titleKey: "Solis ↔ Dyness", m: "Inverter", s: "Dyness", links: [[1,1],[2,2],[3,3],[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]] },
+            { titleKey: "Solis ↔ Pylontech NEW", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L'],[6,6],[7,7],[8,8]], s_null: [1,2,3] },
+            { titleKey: "Solis ↔ Pylontech US2000/3000", m: "Inverter", s: "Pylontech", links: [[4,4,'CAN-H'],[5,5,'CAN-L']] }
         ]
     },
     victron: {
-        name: "Victron GX",
+        nameKey: "Victron GX",
         logo: "⚡",
         items: [
-            { title: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
-            { title: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
-            { title: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} }
+            { titleKey: "Victron GX ↔ Pylontech NEW", m: "Victron GX", s: "Pylontech", links: [[3,6,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], s_null:[1,2,3], m_colors:{3:'#32CD32', 7:'#0056b3', 8:'#0056b3'}, s_colors:{6:'#32CD32', 4:'#0056b3', 5:'#0056b3'} },
+            { titleKey: "Victron GX ↔ Pylontech US2000/3000", m: "Victron GX", s: "Pylontech", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} },
+            { titleKey: "Victron GX ↔ Dyness", m: "Victron GX", s: "Dyness", links: [[3,2,'GND'],[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,4,5,6], m_colors:{3:'#FF8C00', 7:'#0056b3', 8:'#0056b3'}, s_colors:{2:'#FF8C00', 4:'#0056b3', 5:'#0056b3'} }
         ]
     },
     sungrow: {
-        name: "Sungrow",
+        nameKey: "Sungrow",
         logo: "☀️",
         items: [
-            { title: "Sungrow (RJ45) ↔ Sungrow Battery", m: "Sungrow Inv (RJ45)", s: "Sungrow Bat (RJ45)", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
-            { title: "Sungrow (COM Terminal) ↔ Sungrow Battery", m: "Sungrow (10-pin COM)", s: "Sungrow Bat (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} }
+            { titleKey: "Sungrow (RJ45) ↔ Sungrow Battery", m: "Sungrow Inv (RJ45)", s: "Sungrow Bat (RJ45)", links: [[4,4,'CAN-H'],[5,5,'CAN-L']], m_colors:{4:'#0056b3', 5:'#0056b3'}, s_colors:{4:'#0056b3', 5:'#0056b3'} },
+            { titleKey: "Sungrow (COM Terminal) ↔ Sungrow Battery", m: "Sungrow (10-pin COM)", s: "Sungrow Bat (RJ45)", m_pins: 10, links: [[6,4,'CAN-H'],[7,5,'CAN-L']], m_null:[1,2,3,4,5,8,9,10], m_colors:{6:'#0056b3', 7:'#0056b3'} }
         ]
     },
     sofar: {
-        name: "Sofar",
+        nameKey: "Sofar",
         logo: "🔧",
         items: [
-            { title: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
-            { title: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
+            { titleKey: "Sofar Inverter ↔ Sofar BTS Battery", m: "Sofar (16-pin)", s: "Sofar BTS (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L']], m_null:[1,2,3,4,5,6,9,10,11,12,13,14,15,16], m_colors:{7:'#0056b3', 8:'#0056b3'} },
+            { titleKey: "Sofar Inverter ↔ Pylontech", m: "Sofar (16-pin)", s: "Pylontech (RJ45)", m_pins: 16, links: [[7,4,'CAN-H'],[8,5,'CAN-L'],[9,6,'GND']], m_null:[1,2,3,4,5,6,10,11,12,13,14,15,16], s_null:[1,2,3], m_colors:{7:'#0056b3', 8:'#0056b3', 9:'#32CD32'}, s_colors:{4:'#0056b3', 5:'#0056b3', 6:'#32CD32'} }
         ]
     },
     standard: {
-        name: "Стандартные схемы",
+        nameKey: "standard_schemes",  // Ключ для перевода
         logo: "📐",
         items: [
-            { title: "Прямая витая пара (T568B)", m: "MASTER", s: "SLAVE", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] }
+            { titleKey: "straight_cable", m: "master", s: "slave", links: [[1,1],[2,2],[3,3],[4,4],[5,5],[6,6],[7,7],[8,8]] }  // Используем ключи
         ]
     }
 };
@@ -433,11 +453,42 @@ function updatePlaceholders() {
     }
 }
 
-function getRedDipsText(lang) {
-    if (lang === 'ru') return "красные дипы";
-    if (lang === 'ua') return "червоні діпи";
-    if (lang === 'pl') return "czerwone przełączniki DIP";
-    return "red DIP switches";
+function getTranslatedTitle(item, manufacturerKey) {
+    const lang = currentLang;
+    
+    // Для стандартных схем используем перевод
+    if (manufacturerKey === 'standard') {
+        if (item.titleKey === 'straight_cable') {
+            return translations[lang].straight_cable;
+        }
+    }
+    
+    // Для остальных - возвращаем titleKey как есть (они на английском, не требуют перевода)
+    return item.titleKey;
+}
+
+function getTranslatedName(manufacturer) {
+    const lang = currentLang;
+    if (manufacturer.nameKey === 'standard_schemes') {
+        return translations[lang].standard_schemes;
+    }
+    return manufacturer.nameKey;
+}
+
+function getTranslatedM(item) {
+    const lang = currentLang;
+    if (item.m === 'master') {
+        return translations[lang].master;
+    }
+    return item.m;
+}
+
+function getTranslatedS(item) {
+    const lang = currentLang;
+    if (item.s === 'slave') {
+        return translations[lang].slave;
+    }
+    return item.s;
 }
 
 function initPage() {
@@ -454,7 +505,7 @@ function renderManufacturers() {
     
     for (const [key, manufacturer] of Object.entries(pinoutsDatabase)) {
         const filteredItems = manufacturer.items.filter(item => {
-            const itemTitle = item.title.toLowerCase();
+            const itemTitle = getTranslatedTitle(item, key).toLowerCase();
             return !searchTerm || itemTitle.includes(searchTerm);
         });
         
@@ -467,7 +518,7 @@ function renderManufacturers() {
             groupDiv.innerHTML = `
                 <div class="manufacturer-header" onclick="toggleManufacturer('${key}')">
                     <div class="logo">${manufacturer.logo}</div>
-                    <div class="name">${manufacturer.name}</div>
+                    <div class="name">${getTranslatedName(manufacturer)}</div>
                     <div class="count">${filteredItems.length}</div>
                     <div class="arrow">▼</div>
                 </div>
@@ -477,10 +528,7 @@ function renderManufacturers() {
             
             const contentDiv = document.getElementById(`group-content-${key}`);
             filteredItems.forEach((item, index) => {
-                let itemTitle = item.title;
-                if (key === 'luxpower' && itemTitle.includes('красные дипы')) {
-                    itemTitle = itemTitle.replace('красные дипы', getRedDipsText(currentLang));
-                }
+                const itemTitle = getTranslatedTitle(item, key);
                 
                 const pinoutItem = document.createElement('div');
                 pinoutItem.className = 'pinout-item';
@@ -507,7 +555,7 @@ function renderManufacturers() {
     }
     
     if (!hasResults) {
-        container.innerHTML = `<div class="no-results">🔍 ${currentLang === 'ru' ? 'Ничего не найдено' : currentLang === 'ua' ? 'Нічого не знайдено' : currentLang === 'pl' ? 'Nic nie znaleziono' : 'Nothing found'}</div>`;
+        container.innerHTML = `<div class="no-results">🔍 ${translations[currentLang].not_found}</div>`;
     }
 }
 
@@ -561,13 +609,17 @@ function drawPinout(manufacturerKey, index) {
     const sP = pinout.s_pins || 8;
     const vH = 150 + (Math.max(mP, sP) * 36);
     
+    const mText = getTranslatedM(pinout);
+    const sText = getTranslatedS(pinout);
+    const titleText = getTranslatedTitle(pinout, manufacturerKey);
+    
     target.innerHTML = `<svg id="raw-${itemId}" viewBox="0 0 800 ${vH}" xmlns="http://www.w3.org/2000/svg">
         <defs><clipPath id="cp-${itemId}"><rect width="110" height="26" rx="3"/></clipPath></defs>
         <rect width="800" height="${vH}" fill="white"/>
         <rect width="800" height="50" fill="#2a8cff"/>
-        <text x="400" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${pinout.title}</text>
-        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${pinout.m}</text>
-        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${pinout.s}</text>
+        <text x="400" y="32" font-family="Arial" font-size="20" font-weight="bold" fill="white" text-anchor="middle">${titleText}</text>
+        <text x="185" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${mText}</text>
+        <text x="615" y="85" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#2a8cff">${sText}</text>
         <g id="lines-${itemId}"></g>
         <g transform="translate(130, 105)">${drawConnector(itemId, 'm', pinout)}</g>
         <g transform="translate(550, 105)">${drawConnector(itemId, 's', pinout)}</g>
