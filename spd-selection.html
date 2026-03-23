@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0JQD4RVE06"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0JQD4RVE06');
+    </script>
+    
+    <link rel="icon" type="image/jpg" href="favicon.jpg">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solar Toolbox - Подбор SPD для стороны DC</title>
+
+    <style>
+        :root { 
+            --bg: #f8f9fa; 
+            --card-bg: #ffffff; 
+            --accent: #2a8cff; 
+            --accent-light: #e6f2ff;
+            --border: #eef0f2; 
+            --radius: 16px; 
+            --text-main: #1a1a1b;
+            --text-muted: #70757a;
+            --danger: #ff6b6b;
+            --warning: #ffc107;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body { 
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; 
+            background: var(--bg); 
+            margin: 0; padding: 15px; 
+            display: flex; justify-content: center; min-height: 100vh;
+        }
+
+        .container { 
+            width: 100%; max-width: 480px; 
+            background: var(--card-bg); padding: 24px; 
+            border-radius: var(--radius); border: 1px solid var(--border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+            height: fit-content;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; gap: 10px; flex-wrap: wrap; }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #f0f0f0;
+            padding: 8px 12px;
+            border-radius: 30px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.2s;
+        }
+        .back-btn:active { background: #e0e0e0; transform: scale(0.97); }
+        
+        .lang-switch { display: flex; gap: 2px; background: #eee; padding: 2px; border-radius: 10px; }
+        .lang-btn {
+            padding: 6px 8px; font-size: 10px; font-weight: bold; border-radius: 8px;
+            cursor: pointer; border: none; background: transparent; color: #666; transition: 0.2s;
+        }
+        .lang-btn.active { background: white; color: var(--accent); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+
+        .page-title { margin-bottom: 20px; }
+        .page-title h1 { font-size: 22px; margin: 0; color: var(--text-main); }
+        .page-title p { font-size: 13px; color: var(--text-muted); margin: 5px 0 0; }
+
+        .input-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .input-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            font-size: 16px;
+            font-family: inherit;
+            transition: 0.2s;
+            background: #fff;
+        }
+        .input-group input:focus, .input-group select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(42, 140, 255, 0.1);
+        }
+        .input-group input::placeholder {
+            color: #bbb;
+            font-size: 14px;
+        }
+
+        .label-with-tooltip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+        .label-with-tooltip label {
+            margin-bottom: 0;
+        }
+        
+        .tooltip-icon {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 18px;
+            height: 18px;
+            background: var(--accent-light);
+            border-radius: 50%;
+            font-size: 11px;
+            cursor: help;
+            color: var(--accent);
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+        .tooltip-icon:hover {
+            background: var(--accent);
+            color: white;
+            transform: scale(1.05);
+        }
+        
+        .tooltip-message {
+            position: fixed;
+            background: var(--card-bg);
+            color: var(--text-main);
+            padding: 10px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            max-width: 260px;
+            z-index: 1000;
+            pointer-events: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border: 1px solid var(--border);
+            line-height: 1.4;
+            animation: tooltipFade 0.2s ease;
+        }
+        
+        @keyframes tooltipFade {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            margin-top: 8px;
+        }
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: normal;
+            font-size: 14px;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+        .radio-group input[type="radio"] {
+            width: auto;
+            cursor: pointer;
+        }
+
+        .conditional-fields {
+            margin-top: 15px;
+            padding: 15px;
+            background: var(--bg);
+            border-radius: 12px;
+            border-left: 3px solid var(--accent);
+            display: none;
+        }
+        .conditional-fields.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-card {
+            background: var(--accent-light);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .result-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        .result-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+        .result-unit {
+            font-size: 14px;
+            font-weight: normal;
+            color: var(--text-muted);
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, var(--accent) 0%, #1a6fd6 100%);
+            border-radius: var(--radius);
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+            color: white;
+        }
+        .recommendation-label {
+            font-size: 12px;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+        .recommendation-value {
+            font-size: 18px;
+            font-weight: 800;
+            word-break: break-word;
+            line-height: 1.4;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border-left: 4px solid var(--warning);
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 12px;
+            font-size: 13px;
+            color: #856404;
+        }
+
+        .error-message {
+            background: #fff0f0;
+            border-left: 3px solid var(--danger);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-size: 13px;
+            color: #d32f2f;
+            display: none;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            animation: fadeOut 2s ease forwards;
+            pointer-events: none;
+        }
+        
+        @keyframes fadeOut {
+            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            70% { opacity: 1; }
+            100% { opacity: 0; transform: translateX(-50%) translateY(20px); visibility: hidden; }
+        }
+
+        .button-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            flex: 1;
+            padding: 14px;
+            background: var(--accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        button:active {
+            transform: scale(0.98);
+            background: #1a6fd6;
+        }
+        
+        .copy-btn {
+            background: #28a745;
+        }
+        .copy-btn:active {
+            background: #218838;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 14px;
+            margin-top: 20px;
+            font-size: 12px;
+            color: var(--text-muted);
+            border-left: 3px solid var(--accent);
+        }
+        .info-box strong {
+            color: var(--text-main);
+        }
+
+        .note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        @media (max-width: 480px) {
+            .container { padding: 20px; }
+            .result-value { font-size: 24px; }
+            .recommendation-value { font-size: 14px; }
+            .button-group { flex-direction: column; }
+            button { padding: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-top">
+        <a href="index.html" class="back-btn">← <span>Назад</span></a>
+        <div class="lang-switch">
+            <button class="lang-btn" onclick="setLang('ru')" data-l="ru">RU</button>
+            <button class="lang-btn" onclick="setLang('ua')" data-l="ua">UA</button>
+            <button class="lang-btn" onclick="setLang('pl')" data-l="pl">PL</button>
+            <button class="lang-btn" onclick="setLang('en')" data-l="en">EN</button>
+        </div>
+    </div>
+
+    <div class="page-title">
+        <h1 data-t="title">Подбор SPD для стороны DC</h1>
+        <p data-t="subtitle">Подбор ограничителя перенапряжений</p>
+    </div>
+    
+    <div class="error-message" id="errorMessage"></div>
+
+    <div class="input-group">
+        <div class="label-with-tooltip">
+            <label data-t="label_uoc">Напряжение Voc модуля, В</label>
+            <span class="tooltip-icon" data-tooltip-ru="Напряжение холостого хода при STC (1000 Вт/м², 25°C). Указывается в даташите модуля." data-tooltip-ua="Напруга холостого ходу при STC (1000 Вт/м², 25°C). Вказується в даташиті модуля." data-tooltip-pl="Napięcie jałowe w warunkach STC (1000 W/m², 25°C). Podane w karcie katalogowej modułu." data-tooltip-en="Open circuit voltage at STC (1000 W/m², 25°C). Specified in the module datasheet.">?</span>
+        </div>
+        <input type="number" id="uoc_stc" step="0.1" placeholder="" data-placeholder="uoc_placeholder">
+    </div>
+
+    <div class="input-group">
+        <div class="label-with-tooltip">
+            <label data-t="label_alpha">Темп. коэффициент Voc, %/°C</label>
+            <span class="tooltip-icon" data-tooltip-ru="Температурный коэффициент напряжения. Обычно отрицательный: -0.25...-0.35 %/°C. Указывается в даташите." data-tooltip-ua="Температурний коефіцієнт напруги. Зазвичай від'ємний: -0.25...-0.35 %/°C. Вказується в даташиті." data-tooltip-pl="Współczynnik temperaturowy napięcia. Zazwyczaj ujemny: -0.25...-0.35 %/°C. Podany w karcie katalogowej." data-tooltip-en="Temperature coefficient of voltage. Usually negative: -0.25...-0.35 %/°C. Specified in the datasheet.">?</span>
+        </div>
+        <input type="number" id="alpha_uoc" step="0.01" placeholder="" data-placeholder="alpha_placeholder">
+        <div class="note" data-t="alpha_note">* Обычно отрицательный: от -0.25 до -0.35 %/°C</div>
+    </div>
+
+    <div class="input-group">
+        <div class="label-with-tooltip">
+            <label data-t="label_count">Количество модулей в стринге</label>
+            <span class="tooltip-icon" data-tooltip-ru="Общее количество модулей, соединенных последовательно в одном стринге." data-tooltip-ua="Загальна кількість модулів, з'єднаних послідовно в одному стрінгу." data-tooltip-pl="Całkowita liczba modułów połączonych szeregowo w jednym stringu." data-tooltip-en="Total number of modules connected in series in one string.">?</span>
+        </div>
+        <input type="number" id="modules_count" placeholder="" data-placeholder="count_placeholder">
+    </div>
+
+    <div class="input-group">
+        <div class="label-with-tooltip">
+            <label data-t="label_tmin">Мин. температура, °C</label>
+            <span class="tooltip-icon" data-tooltip-ru="Минимальная температура воздуха в месте установки." data-tooltip-ua="Мінімальна температура повітря в місці встановлення." data-tooltip-pl="Minimalna temperatura powietrza w miejscu instalacji." data-tooltip-en="Minimum ambient temperature at the installation site.">?</span>
+        </div>
+        <input type="number" id="t_min" placeholder="" data-placeholder="temp_placeholder">
+    </div>
+
+    <div class="input-group">
+        <div class="label-with-tooltip">
+            <label data-t="label_lps">Наличие внешней молниезащиты (LPS)</label>
+            <span class="tooltip-icon" data-tooltip-ru="External Lightning Protection System - наличие системы внешней молниезащиты на здании." data-tooltip-ua="External Lightning Protection System - наявність системи зовнішнього блискавкозахисту на будівлі." data-tooltip-pl="External Lightning Protection System - obecność systemu ochrony odgromowej na budynku." data-tooltip-en="External Lightning Protection System - presence of lightning protection system on the building.">?</span>
+        </div>
+        <div class="radio-group">
+            <label>
+                <input type="radio" name="lps" value="yes" onchange="toggleSeparationField(true)"> <span data-t="lps_yes">Да</span>
+            </label>
+            <label>
+                <input type="radio" name="lps" value="no" checked onchange="toggleSeparationField(false)"> <span data-t="lps_no">Нет</span>
+            </label>
+        </div>
+    </div>
+
+    <div id="separation_field" class="conditional-fields">
+        <div class="input-group">
+            <div class="label-with-tooltip">
+                <label data-t="label_separation">Разделяющие расстояния соблюдены</label>
+                <span class="tooltip-icon" data-tooltip-ru="Соблюдены ли разделяющие расстояния между молниезащитой и фотоэлектрической системой согласно IEC 62305." data-tooltip-ua="Чи дотримані розділові відстані між блискавкозахистом та фотоелектричною системою згідно IEC 62305." data-tooltip-pl="Czy zachowane są odległości separacyjne między ochroną odgromową a systemem fotowoltaicznym zgodnie z IEC 62305." data-tooltip-en="Are separation distances maintained between lightning protection and PV system according to IEC 62305.">?</span>
+            </div>
+            <div class="radio-group">
+                <label>
+                    <input type="radio" name="separation" value="yes"> <span data-t="separation_yes">Да</span>
+                </label>
+                <label>
+                    <input type="radio" name="separation" value="no" checked> <span data-t="separation_no">Нет</span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="button-group">
+        <button onclick="calculateSPD()" data-t="calc_btn">Рассчитать</button>
+        <button onclick="copyResults()" class="copy-btn" data-t="copy_btn">📋 Копировать</button>
+    </div>
+
+    <div id="results" style="display: none;">
+        <div class="result-card">
+            <div class="result-label" data-t="result_label1">Напряжение строки Uoc_STC</div>
+            <div class="result-value" id="uoc_string_value">— <span class="result-unit">В</span></div>
+            <div class="result-label" data-t="result_label2" style="margin-top: 12px;">Температурный коэффициент KU</div>
+            <div class="result-value" id="ku_value">—</div>
+            <div class="result-label" data-t="result_label3" style="margin-top: 12px;">Максимальное напряжение Uoc_max</div>
+            <div class="result-value" id="uoc_max_value">— <span class="result-unit">В</span></div>
+        </div>
+
+        <div id="warningContainer"></div>
+
+        <div class="recommendation-card">
+            <div class="recommendation-label" data-t="rec_label">Рекомендуемый SPD</div>
+            <div class="recommendation-value" id="spd_recommendation">—</div>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <strong data-t="formula_title">📐 Формула расчета:</strong><br>
+        <span data-t="formula1">Uoc_строки = Voc × количество_модулей</span><br>
+        <span data-t="formula2">KU = 1 + (α_UOC / 100) × (T_min - 25°C)</span><br>
+        <span data-t="formula3">Uoc_max = Uoc_строки × KU</span><br><br>
+        <strong data-t="spd_logic">⚡ Логика подбора SPD:</strong><br>
+        <span data-t="spd_logic_text">• LPS нет → Тип 2<br>• LPS есть и разделяющие расстояния соблюдены → Тип 2<br>• LPS есть и разделяющие расстояния НЕ соблюдены → Тип 1+2</span><br><br>
+        <strong data-t="std_title">📊 Стандартные номиналы SPD:</strong><br>
+        <span data-t="std_text">600 В, 1000 В, 1100 В, 1500 В</span>
+    </div>
+</div>
+
+<script>
+const translations = {
+    ru: {
+        title: "Подбор SPD для стороны DC",
+        subtitle: "Подбор ограничителя перенапряжений",
+        label_uoc: "Напряжение Voc модуля, В",
+        label_alpha: "Темп. коэффициент Voc, %/°C",
+        alpha_note: "* Обычно отрицательный: от -0.25 до -0.35 %/°C",
+        label_count: "Количество модулей в стринге",
+        label_tmin: "Мин. температура, °C",
+        label_lps: "Наличие внешней молниезащиты (LPS)",
+        lps_yes: "Да",
+        lps_no: "Нет",
+        label_separation: "Разделяющие расстояния соблюдены",
+        separation_yes: "Да",
+        separation_no: "Нет",
+        calc_btn: "Рассчитать",
+        copy_btn: "📋 Копировать",
+        result_label1: "Напряжение строки Uoc_STC",
+        result_label2: "Температурный коэффициент KU",
+        result_label3: "Максимальное напряжение Uoc_max",
+        rec_label: "Рекомендуемый SPD",
+        formula_title: "📐 Формула расчета:",
+        formula1: "Uoc_строки = Voc × количество_модулей",
+        formula2: "KU = 1 + (α_UOC / 100) × (T_min - 25°C)",
+        formula3: "Uoc_max = Uoc_строки × KU",
+        spd_logic: "⚡ Логика подбора SPD:",
+        spd_logic_text: "• LPS нет → Тип 2\n• LPS есть и разделяющие расстояния соблюдены → Тип 2\n• LPS есть и разделяющие расстояния НЕ соблюдены → Тип 1+2",
+        std_title: "📊 Стандартные номиналы SPD:",
+        std_text: "600 В, 1000 В, 1100 В, 1500 В",
+        error_empty: "Пожалуйста, заполните все поля",
+        error_negative_modules: "Количество модулей должно быть положительным числом",
+        error_positive_alpha: "Температурный коэффициент Voc обычно отрицательный. Пожалуйста, проверьте значение",
+        error_high_temp: "Минимальная температура не может быть выше 25°C",
+        copied: "✅ Результаты скопированы!",
+        warning_over_1500: "⚠️ Внимание! Расчётное напряжение {uoc_max} В превышает 1500 В. Пожалуйста, проверьте входные данные: количество модулей в стринге, Uoc_STC модуля, минимальную температуру.",
+        warning_over_1000: "⚠️ Внимание! Расчетное напряжение {uoc_max} В превышает 1000 В. Рекомендуемый SPD на {spd_voltage} В. Убедитесь, что инвертор и другие компоненты системы поддерживают данное напряжение.",
+        warning_invalid_params: "⚠️ Внимание! Обнаружены некорректные параметры. Пожалуйста, проверьте входные данные. Возможно, количество модулей слишком велико или температурный коэффициент указан неверно.",
+        spd_type_2: "Тип 2",
+        spd_type_1_2: "Тип 1+2",
+        share_text: "📊 Подбор SPD для стороны DC:\n\nVoc модуля: {uoc_stc} В\nα_UOC: {alpha} %/°C\nКоличество модулей: {count} шт\nT_min: {t_min}°C\nLPS: {lps}\n{separation}\n--------------------------\nUoc_строки STC: {uoc_string} В\nKU: {ku}\nUoc_max: {uoc_max} В\n--------------------------\n✅ Рекомендуемый SPD: {spd}",
+        uoc_placeholder: "Например: 49.8",
+        alpha_placeholder: "Например: -0.27",
+        count_placeholder: "Например: 18",
+        temp_placeholder: "Например: -25",
+        lps_yes_text: "Есть",
+        lps_no_text: "Нет",
+        separation_text: "Разделяющие расстояния соблюдены: "
+    },
+    ua: {
+        title: "Підбір SPD для сторони DC",
+        subtitle: "Підбір обмежувача перенапруг",
+        label_uoc: "Напруга Voc модуля, В",
+        label_alpha: "Темп. коефіцієнт Voc, %/°C",
+        alpha_note: "* Зазвичай від'ємний: від -0.25 до -0.35 %/°C",
+        label_count: "Кількість модулів у стрінгу",
+        label_tmin: "Мін. температура, °C",
+        label_lps: "Наявність зовнішнього блискавкозахисту (LPS)",
+        lps_yes: "Так",
+        lps_no: "Ні",
+        label_separation: "Розділові відстані дотримані",
+        separation_yes: "Так",
+        separation_no: "Ні",
+        calc_btn: "Розрахувати",
+        copy_btn: "📋 Копіювати",
+        result_label1: "Напруга рядка Uoc_STC",
+        result_label2: "Температурний коефіцієнт KU",
+        result_label3: "Максимальна напруга Uoc_max",
+        rec_label: "Рекомендований SPD",
+        formula_title: "📐 Формула розрахунку:",
+        formula1: "Uoc_рядка = Voc × кількість_модулів",
+        formula2: "KU = 1 + (α_UOC / 100) × (T_min - 25°C)",
+        formula3: "Uoc_max = Uoc_рядка × KU",
+        spd_logic: "⚡ Логіка підбору SPD:",
+        spd_logic_text: "• LPS немає → Тип 2\n• LPS є і розділові відстані дотримані → Тип 2\n• LPS є і розділові відстані НЕ дотримані → Тип 1+2",
+        std_title: "📊 Стандартні номінали SPD:",
+        std_text: "600 В, 1000 В, 1100 В, 1500 В",
+        error_empty: "Будь ласка, заповніть всі поля",
+        error_negative_modules: "Кількість модулів має бути додатним числом",
+        error_positive_alpha: "Температурний коефіцієнт Voc зазвичай від'ємний. Будь ласка, перевірте значення",
+        error_high_temp: "Мінімальна температура не може бути вище 25°C",
+        copied: "✅ Результати скопійовано!",
+        warning_over_1500: "⚠️ Увага! Розрахункова напруга {uoc_max} В перевищує 1500 В. Будь ласка, перевірте вхідні дані: кількість модулів у стрінгу, Uoc_STC модуля, мінімальну температуру.",
+        warning_over_1000: "⚠️ Увага! Розрахункова напруга {uoc_max} В перевищує 1000 В. Рекомендований SPD на {spd_voltage} В. Переконайтеся, що інвертор та інші компоненти системи підтримують дану напругу.",
+        warning_invalid_params: "⚠️ Увага! Виявлено некоректні параметри. Будь ласка, перевірте вхідні дані. Можливо, кількість модулів занадто велика або температурний коефіцієнт вказано невірно.",
+        spd_type_2: "Тип 2",
+        spd_type_1_2: "Тип 1+2",
+        share_text: "📊 Підбір SPD для сторони DC:\n\nVoc модуля: {uoc_stc} В\nα_UOC: {alpha} %/°C\nКількість модулів: {count} шт\nT_min: {t_min}°C\nLPS: {lps}\n{separation}\n--------------------------\nUoc_рядка STC: {uoc_string} В\nKU: {ku}\nUoc_max: {uoc_max} В\n--------------------------\n✅ Рекомендований SPD: {spd}",
+        uoc_placeholder: "Наприклад: 49.8",
+        alpha_placeholder: "Наприклад: -0.27",
+        count_placeholder: "Наприклад: 18",
+        temp_placeholder: "Наприклад: -25",
+        lps_yes_text: "Є",
+        lps_no_text: "Немає",
+        separation_text: "Розділові відстані дотримані: "
+    },
+    pl: {
+        title: "Dobór SPD dla strony DC",
+        subtitle: "Dobór ogranicznika przepięć",
+        label_uoc: "Napięcie Voc modułu, V",
+        label_alpha: "Współcz. temp. Voc, %/°C",
+        alpha_note: "* Zwykle ujemny: od -0.25 do -0.35 %/°C",
+        label_count: "Liczba modułów w stringu",
+        label_tmin: "Min. temperatura, °C",
+        label_lps: "Obecność zewnętrznej LPS",
+        lps_yes: "Tak",
+        lps_no: "Nie",
+        label_separation: "Zachowane odległości separacyjne",
+        separation_yes: "Tak",
+        separation_no: "Nie",
+        calc_btn: "Oblicz",
+        copy_btn: "📋 Kopiuj",
+        result_label1: "Napięcie stringa Uoc_STC",
+        result_label2: "Współczynnik temperaturowy KU",
+        result_label3: "Maksymalne napięcie Uoc_max",
+        rec_label: "Zalecany SPD",
+        formula_title: "📐 Wzór obliczeniowy:",
+        formula1: "Uoc_stringa = Voc × liczba_modułów",
+        formula2: "KU = 1 + (α_UOC / 100) × (T_min - 25°C)",
+        formula3: "Uoc_max = Uoc_stringa × KU",
+        spd_logic: "⚡ Logika doboru SPD:",
+        spd_logic_text: "• Brak LPS → Typ 2\n• LPS jest i zachowane odległości → Typ 2\n• LPS jest i NIE zachowane odległości → Typ 1+2",
+        std_title: "📊 Standardowe napięcia SPD:",
+        std_text: "600 V, 1000 V, 1100 V, 1500 V",
+        error_empty: "Proszę wypełnić wszystkie pola",
+        error_negative_modules: "Liczba modułów musi być liczbą dodatnią",
+        error_positive_alpha: "Współczynnik temperaturowy Voc jest zwykle ujemny. Proszę sprawdzić wartość",
+        error_high_temp: "Minimalna temperatura nie może być wyższa niż 25°C",
+        copied: "✅ Wyniki skopiowane!",
+        warning_over_1500: "⚠️ Uwaga! Obliczone napięcie {uoc_max} V przekracza 1500 V. Proszę sprawdzić dane wejściowe: liczbę modułów w stringu, Uoc_STC modułu, minimalną temperaturę.",
+        warning_over_1000: "⚠️ Uwaga! Obliczone napięcie {uoc_max} V przekracza 1000 V. Zalecany SPD na {spd_voltage} V. Upewnij się, że falownik i inne komponenty systemu obsługują to napięcie.",
+        warning_invalid_params: "⚠️ Uwaga! Wykryto nieprawidłowe parametry. Proszę sprawdzić dane wejściowe. Możliwe, że liczba modułów jest zbyt duża lub współczynnik temperaturowy jest nieprawidłowy.",
+        spd_type_2: "Typ 2",
+        spd_type_1_2: "Typ 1+2",
+        share_text: "📊 Dobór SPD dla strony DC:\n\nVoc modułu: {uoc_stc} V\nα_UOC: {alpha} %/°C\nLiczba modułów: {count} szt\nT_min: {t_min}°C\nLPS: {lps}\n{separation}\n--------------------------\nUoc_stringa STC: {uoc_string} V\nKU: {ku}\nUoc_max: {uoc_max} V\n--------------------------\n✅ Zalecany SPD: {spd}",
+        uoc_placeholder: "Np: 49.8",
+        alpha_placeholder: "Np: -0.27",
+        count_placeholder: "Np: 18",
+        temp_placeholder: "Np: -25",
+        lps_yes_text: "Jest",
+        lps_no_text: "Brak",
+        separation_text: "Odległości separacyjne zachowane: "
+    },
+    en: {
+        title: "SPD Selection for DC Side",
+        subtitle: "Surge Protection Device Selection",
+        label_uoc: "Module Voc Voltage, V",
+        label_alpha: "Temp. Coefficient Voc, %/°C",
+        alpha_note: "* Usually negative: from -0.25 to -0.35 %/°C",
+        label_count: "Number of modules in string",
+        label_tmin: "Min. Temperature, °C",
+        label_lps: "External Lightning Protection (LPS)",
+        lps_yes: "Yes",
+        lps_no: "No",
+        label_separation: "Separation distances maintained",
+        separation_yes: "Yes",
+        separation_no: "No",
+        calc_btn: "Calculate",
+        copy_btn: "📋 Copy",
+        result_label1: "String Voltage Uoc_STC",
+        result_label2: "Temperature Coefficient KU",
+        result_label3: "Maximum Voltage Uoc_max",
+        rec_label: "Recommended SPD",
+        formula_title: "📐 Formula:",
+        formula1: "Uoc_string = Voc × number_of_modules",
+        formula2: "KU = 1 + (α_UOC / 100) × (T_min - 25°C)",
+        formula3: "Uoc_max = Uoc_string × KU",
+        spd_logic: "⚡ SPD Selection Logic:",
+        spd_logic_text: "• No LPS → Type 2\n• LPS with separation distances maintained → Type 2\n• LPS with separation distances NOT maintained → Type 1+2",
+        std_title: "📊 Standard SPD Voltages:",
+        std_text: "600 V, 1000 V, 1100 V, 1500 V",
+        error_empty: "Please fill all fields",
+        error_negative_modules: "Number of modules must be a positive number",
+        error_positive_alpha: "Temperature coefficient Voc is usually negative. Please check the value",
+        error_high_temp: "Minimum temperature cannot be higher than 25°C",
+        copied: "✅ Results copied!",
+        warning_over_1500: "⚠️ Warning! Calculated voltage {uoc_max} V exceeds 1500 V. Please check input data: number of modules in string, module Uoc_STC, minimum temperature.",
+        warning_over_1000: "⚠️ Warning! Calculated voltage {uoc_max} V exceeds 1000 V. Recommended SPD rated {spd_voltage} V. Ensure that the inverter and other system components support this voltage.",
+        warning_invalid_params: "⚠️ Warning! Invalid parameters detected. Please check your input data. The number of modules may be too high or the temperature coefficient may be incorrect.",
+        spd_type_2: "Type 2",
+        spd_type_1_2: "Type 1+2",
+        share_text: "📊 SPD Selection for DC Side:\n\nModule Voc: {uoc_stc} V\nα_UOC: {alpha} %/°C\nNumber of modules: {count} pcs\nT_min: {t_min}°C\nLPS: {lps}\n{separation}\n--------------------------\nString Uoc_STC: {uoc_string} V\nKU: {ku}\nUoc_max: {uoc_max} V\n--------------------------\n✅ Recommended SPD: {spd}",
+        uoc_placeholder: "Example: 49.8",
+        alpha_placeholder: "Example: -0.27",
+        count_placeholder: "Example: 18",
+        temp_placeholder: "Example: -25",
+        lps_yes_text: "Yes",
+        lps_no_text: "No",
+        separation_text: "Separation distances maintained: "
+    }
+};
+
+let currentLang = 'ru';
+let lastResult = null;
+
+function setLang(lang) {
+    localStorage.setItem('lang', lang);
+    currentLang = lang;
+    updateTexts();
+    updatePlaceholders();
+    updateTooltips();
+    if (areInputsValid()) calculateSPD();
+}
+
+function updateTexts() {
+    const lang = currentLang;
+    document.querySelectorAll('[data-t]').forEach(el => {
+        if(translations[lang][el.dataset.t]) {
+            el.textContent = translations[lang][el.dataset.t];
+        }
+    });
+    document.querySelectorAll('.lang-btn').forEach(b => {
+        if (b.dataset.l === lang) {
+            b.classList.add('active');
+        } else {
+            b.classList.remove('active');
+        }
+    });
+}
+
+function updatePlaceholders() {
+    const lang = currentLang;
+    document.getElementById('uoc_stc').placeholder = translations[lang].uoc_placeholder;
+    document.getElementById('alpha_uoc').placeholder = translations[lang].alpha_placeholder;
+    document.getElementById('modules_count').placeholder = translations[lang].count_placeholder;
+    document.getElementById('t_min').placeholder = translations[lang].temp_placeholder;
+}
+
+function updateTooltips() {
+    const tooltipIcons = document.querySelectorAll('.tooltip-icon');
+    tooltipIcons.forEach(icon => {
+        const tooltipText = icon.getAttribute(`data-tooltip-${currentLang}`);
+        if (tooltipText) {
+            icon.setAttribute('data-tooltip', tooltipText);
+        }
+    });
+}
+
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => {
+        toast.remove();
+    }, 2000);
+}
+
+function hideError() {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) errorDiv.style.display = 'none';
+}
+
+function showError(message) {
+    const errorDiv = document.getElementById('errorMessage');
+    if (errorDiv) {
+        errorDiv.textContent = message;
+        errorDiv.style.display = 'block';
+        setTimeout(() => {
+            errorDiv.style.display = 'none';
+        }, 5000);
+    }
+}
+
+function toggleSeparationField(show) {
+    const separationField = document.getElementById('separation_field');
+    if (show) {
+        separationField.classList.add('active');
+    } else {
+        separationField.classList.remove('active');
+    }
+}
+
+function validateInputs() {
+    const modulesCount = parseInt(document.getElementById('modules_count').value);
+    const alphaUoc = parseFloat(document.getElementById('alpha_uoc').value);
+    const tMin = parseFloat(document.getElementById('t_min').value);
+    
+    if (modulesCount <= 0) {
+        showError(translations[currentLang].error_negative_modules);
+        return false;
+    }
+    
+    if (alphaUoc > 0) {
+        showError(translations[currentLang].error_positive_alpha);
+        return false;
+    }
+    
+    if (tMin > 25) {
+        showError(translations[currentLang].error_high_temp);
+        return false;
+    }
+    
+    return true;
+}
+
+function areInputsValid() {
+    const uocStc = parseFloat(document.getElementById('uoc_stc').value);
+    const alphaUoc = parseFloat(document.getElementById('alpha_uoc').value);
+    const modulesCount = parseInt(document.getElementById('modules_count').value);
+    const tMin = parseFloat(document.getElementById('t_min').value);
+    
+    return !(isNaN(uocStc) || isNaN(alphaUoc) || isNaN(modulesCount) || isNaN(tMin));
+}
+
+function roundToStandardVoltage(voltage) {
+    const standards = [600, 800, 1000, 1100, 1500];
+    for (let std of standards) {
+        if (voltage <= std) {
+            return std;
+        }
+    }
+    return Math.ceil(voltage / 100) * 100;
+}
+
+function calculateSPD() {
+    if (!areInputsValid()) {
+        showError(translations[currentLang].error_empty);
+        document.getElementById('results').style.display = 'none';
+        return;
+    }
+    
+    if (!validateInputs()) {
+        document.getElementById('results').style.display = 'none';
+        return;
+    }
+    
+    hideError();
+    
+    const uocStc = parseFloat(document.getElementById('uoc_stc').value);
+    const alphaUoc = parseFloat(document.getElementById('alpha_uoc').value);
+    const modulesCount = parseInt(document.getElementById('modules_count').value);
+    const tMin = parseFloat(document.getElementById('t_min').value);
+    
+    const lpsRadio = document.querySelector('input[name="lps"]:checked');
+    const lps = lpsRadio ? lpsRadio.value : 'no';
+    
+    let separation = null;
+    if (lps === 'yes') {
+        const separationRadio = document.querySelector('input[name="separation"]:checked');
+        separation = separationRadio ? separationRadio.value : 'no';
+    }
+    
+    const uocStringStc = uocStc * modulesCount;
+    const ku = 1 + (alphaUoc / 100) * (tMin - 25);
+    const uocMax = uocStringStc * ku;
+    
+    const isVoltageInvalid = uocMax > 2000;
+    
+    let spdType = '';
+    if (lps === 'no') {
+        spdType = translations[currentLang].spd_type_2;
+    } else {
+        if (separation === 'yes') {
+            spdType = translations[currentLang].spd_type_2;
+        } else {
+            spdType = translations[currentLang].spd_type_1_2;
+        }
+    }
+    
+    const spdVoltage = roundToStandardVoltage(uocMax);
+    
+    let spdRecommendation = '';
+    if (isVoltageInvalid) {
+        spdRecommendation = '—';
+    } else {
+        if (spdType === translations[currentLang].spd_type_2) {
+            spdRecommendation = `SPD ${spdType} ${spdVoltage} В, In = 20 кА (8/20 мкс)`;
+        } else {
+            spdRecommendation = `SPD ${spdType} ${spdVoltage} В, Iimp = 12,5 кА (10/350 мкс), In = 20 кА (8/20 мкс)`;
+        }
+    }
+    
+    lastResult = {
+        uoc_stc: uocStc,
+        alpha: alphaUoc,
+        count: modulesCount,
+        t_min: tMin,
+        lps: lps === 'yes' ? translations[currentLang].lps_yes_text : translations[currentLang].lps_no_text,
+        separation: separation ? `${translations[currentLang].separation_text}${separation === 'yes' ? translations[currentLang].separation_yes : translations[currentLang].separation_no}` : '',
+        uoc_string: uocStringStc,
+        ku: ku,
+        uoc_max: uocMax,
+        spd: spdRecommendation
+    };
+    
+    document.getElementById('uoc_string_value').innerHTML = Math.round(uocStringStc) + ' <span class="result-unit">В</span>';
+    document.getElementById('ku_value').innerHTML = ku.toFixed(3);
+    document.getElementById('uoc_max_value').innerHTML = Math.round(uocMax) + ' <span class="result-unit">В</span>';
+    document.getElementById('spd_recommendation').innerHTML = spdRecommendation;
+    
+    const warningContainer = document.getElementById('warningContainer');
+    warningContainer.innerHTML = '';
+    
+    if (isVoltageInvalid) {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'warning-box';
+        warningDiv.textContent = translations[currentLang].warning_invalid_params;
+        warningContainer.appendChild(warningDiv);
+    } else if (uocMax > 1500) {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'warning-box';
+        let warningText = translations[currentLang].warning_over_1500;
+        warningText = warningText.replace('{uoc_max}', Math.round(uocMax));
+        warningDiv.textContent = warningText;
+        warningContainer.appendChild(warningDiv);
+    } else if (uocMax > 1000) {
+        const warningDiv = document.createElement('div');
+        warningDiv.className = 'warning-box';
+        let warningText = translations[currentLang].warning_over_1000;
+        warningText = warningText.replace('{uoc_max}', Math.round(uocMax))
+                                 .replace('{spd_voltage}', spdVoltage);
+        warningDiv.textContent = warningText;
+        warningContainer.appendChild(warningDiv);
+    }
+    
+    document.getElementById('results').style.display = 'block';
+}
+
+function copyResults() {
+    if (!lastResult) {
+        showError(translations[currentLang].error_empty);
+        return;
+    }
+    
+    let text = translations[currentLang].share_text;
+    text = text.replace('{uoc_stc}', lastResult.uoc_stc)
+               .replace('{alpha}', lastResult.alpha)
+               .replace('{count}', lastResult.count)
+               .replace('{t_min}', lastResult.t_min)
+               .replace('{lps}', lastResult.lps)
+               .replace('{separation}', lastResult.separation)
+               .replace('{uoc_string}', Math.round(lastResult.uoc_string))
+               .replace('{ku}', lastResult.ku.toFixed(3))
+               .replace('{uoc_max}', Math.round(lastResult.uoc_max))
+               .replace('{spd}', lastResult.spd);
+    
+    navigator.clipboard.writeText(text).then(() => {
+        showToast(translations[currentLang].copied);
+    }).catch(() => {
+        showError('Failed to copy');
+    });
+}
+
+function setupTooltips() {
+    const tooltipIcons = document.querySelectorAll('.tooltip-icon');
+    let currentTooltip = null;
+
+    tooltipIcons.forEach(icon => {
+        icon.addEventListener('mouseenter', function(e) {
+            const text = this.getAttribute('data-tooltip');
+            if (!text) return;
+
+            if (currentTooltip) {
+                currentTooltip.remove();
+            }
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'tooltip-message';
+            tooltip.textContent = text;
+            document.body.appendChild(tooltip);
+
+            const rect = this.getBoundingClientRect();
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.top - tooltip.offsetHeight - 8) + 'px';
+
+            currentTooltip = tooltip;
+        });
+
+        icon.addEventListener('mouseleave', function() {
+            if (currentTooltip) {
+                currentTooltip.remove();
+                currentTooltip = null;
+            }
+        });
+    });
+}
+
+function setupAutoCalculation() {
+    const inputs = document.querySelectorAll('input, select');
+    inputs.forEach(input => {
+        input.addEventListener('input', () => {
+            if (areInputsValid()) {
+                calculateSPD();
+            } else {
+                document.getElementById('results').style.display = 'none';
+            }
+        });
+    });
+}
+
+const savedLang = localStorage.getItem('lang') || 'ru';
+currentLang = savedLang;
+updateTexts();
+updatePlaceholders();
+updateTooltips();
+setupTooltips();
+setupAutoCalculation();
+</script>
+</body>
+</html>
